@@ -1,56 +1,54 @@
 [app]
 
-# App name shown on Android
+# App name
 title = Advanced Calculator
 
-# Internal package name (no spaces)
+# Package name (no spaces)
 package.name = advancedcalculator
 
 # Package domain
 package.domain = org.example
 
+# App version (required)
+version = 1.0
 
-# Main folder containing main.py
+
+# Location of main.py
 source.dir = .
 
 
-# Files to include
+# Files included in build
 source.include_exts = py,png,jpg,kv
 
 
-# Python + Kivy dependencies
+# Python dependencies
 requirements = python3,kivy
 
 
-# App orientation
+# Phone settings
 orientation = portrait
 
-
-# Don't run fullscreen
 fullscreen = 0
 
 
 
 [buildozer]
 
-# Build log detail
+# Log level
 log_level = 2
 
 
 
 [android]
 
-# Modern Android architecture
+# Android architecture
 android.archs = arm64-v8a
-
 
 # Minimum Android version
 android.minapi = 21
 
-
 # Target Android version
 android.api = 35
 
-
-# Use AndroidX
+# AndroidX support
 android.enable_androidx = True
