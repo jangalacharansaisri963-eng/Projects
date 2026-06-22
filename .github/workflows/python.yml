@@ -34,4 +34,4 @@ jobs:
           name: advanced-python-calculator
           path: |
             calculator.py
-            .github/workflows/python.yml
+            
