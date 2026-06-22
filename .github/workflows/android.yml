@@ -4,14 +4,16 @@ on:
   push:
   workflow_dispatch:
 
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
+
     steps:
 
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
 
@@ -24,6 +26,11 @@ jobs:
       - name: Install Buildozer
         run: |
           pip install --user buildozer cython
+
+
+      - name: Accept Android SDK licenses
+        run: |
+          yes | sdkmanager --licenses || true
 
 
       - name: Build APK
