@@ -26,12 +26,13 @@ jobs:
 
       - name: Test calculator
         run: |
-          echo "2+2" | python calculator.py
+          python calculator_app.py
 
       - name: Create artifact
         uses: actions/upload-artifact@v4
         with:
           name: advanced-python-calculator
           path: |
-            calculator.py
+            calculator_app.py
+            .github/workflows/python.yml
             
