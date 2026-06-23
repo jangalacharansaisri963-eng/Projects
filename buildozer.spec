@@ -23,8 +23,6 @@ orientation = portrait
 fullscreen = 0
 
 
-# Android settings
-
 android.api = 35
 
 android.minapi = 23
@@ -37,18 +35,8 @@ android.ndk = 25c
 android.archs = arm64-v8a,armeabi-v7a
 
 
-# Avoid weird SDK auto choices
-
-android.accept_sdk_license = True
-
-
-# App icon later if needed
-# icon.filename = %(source.dir)s/icon.png
-
-
-
 [buildozer]
 
-log_level = 2
+log_level = 3
 
 warn_on_root = 1
