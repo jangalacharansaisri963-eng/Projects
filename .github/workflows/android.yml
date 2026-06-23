@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +25,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
 
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y \
@@ -34,18 +35,17 @@ jobs:
             openjdk-17-jdk
 
 
-      - name: Accept Android licenses
+      - name: Accept Android Licenses
         run: |
           yes | sdkmanager --licenses
 
 
-      - name: Install Android SDK packages
+      - name: Install Android SDK Packages
         run: |
           sdkmanager \
             "platform-tools" \
             "platforms;android-35" \
-            "build-tools;35.0.0" \
-            "cmdline-tools;latest"
+            "build-tools;35.0.0"
 
 
       - name: Install Buildozer
@@ -55,12 +55,15 @@ jobs:
           pip install cython==0.29.36
 
 
-      - name: Clean old Buildozer files
+      - name: Clean Buildozer
         run: |
           rm -rf .buildozer
 
 
       - name: Build APK
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_HOME }}
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
         run: |
           buildozer android debug
 
