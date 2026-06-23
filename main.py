@@ -3,12 +3,15 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-import math
+
+import sympy as sp
 
 
 class CalculatorApp(App):
 
     def build(self):
+
+        self.title = "Advanced Calculator"
 
         layout = BoxLayout(
             orientation="vertical",
@@ -17,17 +20,17 @@ class CalculatorApp(App):
         )
 
         self.entry = TextInput(
-            hint_text="Enter equation",
+            hint_text="Example: sqrt(25) or x+5",
             multiline=False,
             font_size=24
         )
 
-        calculate = Button(
+        button = Button(
             text="Calculate",
             font_size=20
         )
 
-        calculate.bind(
+        button.bind(
             on_press=self.calculate
         )
 
@@ -37,7 +40,7 @@ class CalculatorApp(App):
         )
 
         layout.add_widget(self.entry)
-        layout.add_widget(calculate)
+        layout.add_widget(button)
         layout.add_widget(self.result)
 
         return layout
@@ -46,23 +49,30 @@ class CalculatorApp(App):
     def calculate(self, instance):
 
         try:
-            answer = eval(
-                self.entry.text,
-                {
-                    "__builtins__": None,
-                    "sqrt": math.sqrt,
-                    "sin": math.sin,
-                    "cos": math.cos,
-                    "tan": math.tan,
-                    "pi": math.pi,
-                    "e": math.e
+
+            expression = self.entry.text
+
+            x = sp.Symbol("x")
+
+            answer = sp.sympify(
+                expression,
+                locals={
+                    "sqrt": sp.sqrt,
+                    "sin": sp.sin,
+                    "cos": sp.cos,
+                    "tan": sp.tan,
+                    "log": sp.log,
+                    "pi": sp.pi,
+                    "E": sp.E,
+                    "x": x
                 }
             )
 
-            self.result.text = f"Answer: {answer}"
+            self.result.text = f"Answer: {sp.simplify(answer)}"
 
-        except:
-            self.result.text = "Error"
+        except Exception:
+
+            self.result.text = "Invalid equation"
 
 
 CalculatorApp().run()
