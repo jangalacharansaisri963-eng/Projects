@@ -6,6 +6,7 @@ on:
 
 
 jobs:
+
   build:
 
     runs-on: ubuntu-22.04
@@ -30,8 +31,18 @@ jobs:
         java-version: "17"
 
 
-    - name: Setup Android
+    - name: Setup Android SDK
       uses: android-actions/setup-android@v3
+
+
+    - name: Install Android packages
+      run: |
+        yes | sdkmanager --licenses || true
+
+        sdkmanager \
+        "platform-tools" \
+        "platforms;android-35" \
+        "build-tools;35.0.0"
 
 
     - name: Install Buildozer
@@ -41,28 +52,6 @@ jobs:
         pip install cython==0.29.36
 
 
-    - name: Prepare Buildozer SDK
-      run: |
-
-        mkdir -p ~/.buildozer/android/platform/android-sdk
-
-        yes | sdkmanager --licenses
-
-        sdkmanager \
-        --sdk_root=$HOME/.buildozer/android/platform/android-sdk \
-        "platform-tools" \
-        "platforms;android-35" \
-        "build-tools;35.0.0"
-
-
-    - name: Verify SDK
-      run: |
-
-        ls ~/.buildozer/android/platform/android-sdk/build-tools
-
-        ls ~/.buildozer/android/platform/android-sdk/build-tools/35.0.0
-
-
     - name: Clean
       run: |
         rm -rf .buildozer
@@ -70,12 +59,12 @@ jobs:
 
     - name: Build APK
       env:
-        ANDROIDSDK: $HOME/.buildozer/android/platform/android-sdk
+        ANDROIDSDK: /usr/local/lib/android/sdk
+        ANDROID_HOME: /usr/local/lib/android/sdk
         ANDROIDAPI: 35
         ANDROIDMINAPI: 23
 
       run: |
-
         buildozer -v android debug
 
 
