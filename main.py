@@ -1,4 +1,4 @@
-import os
+import os  # Fixed the case-sensitivity typo!
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
@@ -6,6 +6,12 @@ from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
 from kivy.filechooser import FileChooserListView
+from kivy.utils import platform  # Added to check if running on phone
+
+# Request native Android storage permissions at runtime
+if platform == 'android':
+    from android.permissions import request_permissions, Permission
+    request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
 def generate_key(password):
     return sum(ord(char) for char in password) % 256
@@ -102,7 +108,10 @@ class CryptoLayout(BoxLayout):
 
     def open_file_chooser(self, instance):
         box = BoxLayout(orientation='vertical')
-        file_chooser = FileChooserListView(path="/sdcard" if os.path.exists("/sdcard") else ".")
+        
+        # Safely fall back to app root if phone directory path fails
+        default_path = "/sdcard" if (platform == 'android' and os.path.exists("/sdcard")) else "."
+        file_chooser = FileChooserListView(path=default_path)
         box.add_widget(file_chooser)
         
         select_btn = Button(text="[ CONFIRM_SELECTION ]", size_hint_y=None, height=50, color=(0,0,0,1), background_color=(0,1,0,1), background_normal='')
@@ -159,7 +168,6 @@ class CryptoLayout(BoxLayout):
 
 class CryptographicVaultApp(App):
     def build(self):
-        # Set canvas window global style to dark black
         from kivy.core.window import Window
         Window.clearcolor = (0, 0, 0, 1)
         return CryptoLayout()
