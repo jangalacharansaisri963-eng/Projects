@@ -1,177 +1,213 @@
-import os  # Fixed the case-sensitivity typo!
+import random
 from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
 from kivy.uix.popup import Popup
-from kivy.filechooser import FileChooserListView
-from kivy.utils import platform  # Added to check if running on phone
 
-# Request native Android storage permissions at runtime
-if platform == 'android':
-    from android.permissions import request_permissions, Permission
-    request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
-
-def generate_key(password):
-    return sum(ord(char) for char in password) % 256
-
-def transform_data(data, key, mode='encrypt'):
-    output = bytearray()
-    for index, byte in enumerate(data):
-        position_salt = (index * 7) % 256
-        if mode == 'encrypt':
-            new_byte = (byte + key + position_salt) % 256
-        else:
-            new_byte = (byte - key - position_salt) % 256
-        output.append(new_byte)
-    return output
-
-class CryptoLayout(BoxLayout):
+class MenuScreen(Screen):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.orientation = 'vertical'
-        self.padding = 32
-        self.spacing = 20
-        self.selected_file_path = ""
-
-        # Title Header
-        self.add_widget(Label(
-            text="=== SYSTEM VAULT PROTOCOL ===",
-            color=(0, 1, 0, 1),
-            font_size='18sp',
-            size_hint_y=None,
-            height=40
-        ))
-
-        # File Selection Tracker Display
-        self.file_label = Label(
-            text="NO TARGET FILE SELECTED",
-            color=(1, 1, 0, 1),
-            font_size='14sp',
-            size_hint_y=None,
-            height=30
-        )
-        self.add_widget(self.file_label)
-
-        # Browse Launcher Button
-        self.browse_btn = Button(
-            text="[ LAUNCH_FILE_BROWSER ]",
-            color=(0, 0, 0, 1),
-            background_color=(0, 1, 0, 1),
-            background_normal='',
-            size_hint_y=None,
-            height=50
-        )
-        self.browse_btn.bind(on_press=self.open_file_chooser)
-        self.add_widget(self.browse_btn)
-
-        # Password Access Layout Row Container
-        pass_row = BoxLayout(orientation='horizontal', size_hint_y=None, height=50, spacing=10)
-        pass_row.add_widget(Label(text="ACCESS_KEY:", color=(0, 1, 0, 1), size_hint_x=0.3))
+        super().__init__(name='menu', **kwargs)
+        layout = BoxLayout(orientation='vertical', padding=40, spacing=20)
         
-        self.pass_entry = TextInput(
-            hint_text="enter secret phrase",
-            password=True,
-            multiline=False,
-            background_color=(0.06, 0.06, 0.06, 1),
-            foreground_color=(0, 1, 0, 1),
-            cursor_color=(0, 1, 0, 1),
-            hint_text_color=(0, 0.5, 0, 0.5)
-        )
-        pass_row.add_widget(self.pass_entry)
-        self.add_widget(pass_row)
+        # Game Title matching your configuration
+        title = Label(text="Tic Tac Toe", font_size='36sp', size_hint_y=0.3, bold=True)
+        layout.add_widget(title)
+        
+        subtitle = Label(text="Select Difficulty to Start", font_size='18sp', size_hint_y=0.1)
+        layout.add_widget(subtitle)
+        
+        btn_layout = BoxLayout(orientation='vertical', spacing=15, size_hint_y=0.6)
+        
+        easy_btn = Button(text="Easy Mode", font_size='20sp', background_normal='', background_color=(0.18, 0.67, 0.38, 1))
+        med_btn = Button(text="Medium Mode", font_size='20sp', background_normal='', background_color=(0.15, 0.60, 0.35, 1))
+        hard_btn = Button(text="Hard Mode (Tryhard)", font_size='20sp', background_normal='', background_color=(0.12, 0.52, 0.30, 1))
+        
+        easy_btn.bind(on_press=lambda x: self.start_game('easy'))
+        med_btn.bind(on_press=lambda x: self.start_game('medium'))
+        hard_btn.bind(on_press=lambda x: self.start_game('hard'))
+        
+        btn_layout.add_widget(easy_btn)
+        btn_layout.add_widget(med_btn)
+        btn_layout.add_widget(hard_btn)
+        
+        layout.add_widget(btn_layout)
+        self.add_widget(layout)
 
-        # Action Buttons Execution Row
-        btn_row = BoxLayout(orientation='horizontal', size_hint_y=None, height=60, spacing=15)
-        
-        encrypt_btn = Button(
-            text="[ ENCRYPT ]",
-            color=(0, 0, 0, 1),
-            background_color=(0, 1, 0, 1),
-            background_normal=''
-        )
-        encrypt_btn.bind(on_press=lambda x: self.execute_cipher('encrypt'))
-        
-        decrypt_btn = Button(
-            text="[ DECRYPT ]",
-            color=(0, 1, 0, 1),
-            background_color=(0, 0, 0, 1),
-            background_normal='',
-            border=(2, 2, 2, 2)
-        )
-        decrypt_btn.bind(on_press=lambda x: self.execute_cipher('decrypt'))
+    def start_game(self, difficulty):
+        game_screen = self.manager.get_screen('game')
+        game_screen.set_difficulty(difficulty)
+        self.manager.current = 'game'
 
-        btn_row.add_widget(encrypt_btn)
-        btn_row.add_widget(decrypt_btn)
-        self.add_widget(btn_row)
 
-    def open_file_chooser(self, instance):
-        box = BoxLayout(orientation='vertical')
+class GameScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(name='game', **kwargs)
+        self.difficulty = 'easy'
+        self.board = [""] * 9
+        self.human = "X"
+        self.ai = "O"
         
-        # Safely fall back to app root if phone directory path fails
-        default_path = "/sdcard" if (platform == 'android' and os.path.exists("/sdcard")) else "."
-        file_chooser = FileChooserListView(path=default_path)
-        box.add_widget(file_chooser)
+        self.layout = BoxLayout(orientation='vertical', padding=10, spacing=5)
         
-        select_btn = Button(text="[ CONFIRM_SELECTION ]", size_hint_y=None, height=50, color=(0,0,0,1), background_color=(0,1,0,1), background_normal='')
-        box.add_widget(select_btn)
+        self.status_label = Label(text="Your Turn (X)", font_size='22sp', size_hint_y=0.1)
+        self.layout.add_widget(self.status_label)
         
-        popup = Popup(title="Select Target File Deck", content=box, size_hint=(0.9, 0.9))
+        self.grid = GridLayout(cols=3, spacing=5, padding=5)
+        self.buttons = []
+        for i in range(9):
+            btn = Button(text="", font_size='40sp', background_normal='', background_color=(0.2, 0.2, 0.2, 1))
+            btn.bind(on_press=lambda instance, idx=i: self.human_move(idx))
+            self.grid.add_widget(btn)
+            self.buttons.append(btn)
+        self.layout.add_widget(self.grid)
         
-        def confirm(obj):
-            if file_chooser.selection:
-                self.selected_file_path = file_chooser.selection[0]
-                self.file_label.text = f"TARGET: {os.path.basename(self.selected_file_path)}"
-                self.file_label.color = (0, 1, 0, 1)
-            popup.dismiss()
+        home_btn = Button(text="Quit to Home", size_hint_y=0.1, background_normal='', background_color=(0.7, 0.2, 0.2, 1))
+        home_btn.bind(on_press=self.go_home)
+        self.layout.add_widget(home_btn)
+        
+        self.add_widget(self.layout)
+
+    def set_difficulty(self, diff):
+        self.difficulty = diff
+        self.reset_game()
+
+    def human_move(self, index):
+        if self.board[index] != "" or self.check_winner(self.board):
+            return
             
-        select_btn.bind(on_press=confirm)
-        popup.open()
-
-    def execute_cipher(self, mode):
-        password = self.pass_entry.text.strip()
-        if not self.selected_file_path:
-            self.show_popup("ERROR", "No target workspace file selected.")
+        self.make_move(index, self.human)
+        
+        if self.handle_game_end():
             return
-        if not password:
-            self.show_popup("ERROR", "Access signature key empty.")
+            
+        self.status_label.text = "AI thinking..."
+        self.ai_move()
+
+    def ai_move(self):
+        available_moves = [i for i, val in enumerate(self.board) if val == ""]
+        if not available_moves:
             return
 
-        try:
-            with open(self.selected_file_path, 'rb') as f:
-                file_data = f.read()
-
-            key = generate_key(password)
-            processed_data = transform_data(file_data, key, mode)
-
-            if mode == 'encrypt' and not self.selected_file_path.endswith('.enc'):
-                output_path = self.selected_file_path + '.enc'
-            elif mode == 'decrypt' and self.selected_file_path.endswith('.enc'):
-                output_path = self.selected_file_path[:-4]
+        move = None
+        if self.difficulty == 'easy':
+            move = random.choice(available_moves)
+        elif self.difficulty == 'medium':
+            if random.random() < 0.5:
+                move = self.get_best_move()
             else:
-                output_path = self.selected_file_path + ('.dec' if mode == 'decrypt' else '.enc')
+                move = random.choice(available_moves)
+        elif self.difficulty == 'hard':
+            move = self.get_best_move()
 
-            with open(output_path, 'wb') as f:
-                f.write(processed_data)
+        if move is not None:
+            self.make_move(move, self.ai)
+            self.handle_game_end()
 
-            self.show_popup("SUCCESS", f"File processed!\nSaved as: {os.path.basename(output_path)}")
-            self.pass_entry.text = ""
-        except Exception as e:
-            self.show_popup("CRASH", f"Failure: {str(e)}")
+    def make_move(self, index, player):
+        self.board[index] = player
+        self.buttons[index].text = player
+        if player == self.human:
+            self.buttons[index].background_color = (0.3, 0.5, 0.9, 1)
+            self.status_label.text = "AI's Turn (O)"
+        else:
+            self.buttons[index].background_color = (0.9, 0.6, 0.2, 1)
+            self.status_label.text = "Your Turn (X)"
 
-    def show_popup(self, title, message):
-        lbl = Label(text=message, halign="center", valign="middle")
-        lbl.bind(size=lambda s, w: setattr(lbl, 'text_size', w))
-        popup = Popup(title=title, content=lbl, size_hint=(0.8, 0.4))
+    def get_best_move(self):
+        best_score = -float('inf')
+        move = None
+        for i in range(9):
+            if self.board[i] == "":
+                self.board[i] = self.ai
+                score = self.minimax(self.board, 0, False)
+                self.board[i] = ""
+                if score > best_score:
+                    best_score = score
+                    move = i
+        return move
+
+    def minimax(self, board, depth, is_maximizing):
+        winner = self.check_winner(board)
+        if winner == self.ai: return 10 - depth
+        if winner == self.human: return depth - 10
+        if "" not in board: return 0
+
+        if is_maximizing:
+            best_score = -float('inf')
+            for i in range(9):
+                if board[i] == "":
+                    board[i] = self.ai
+                    score = self.minimax(board, depth + 1, False)
+                    board[i] = ""
+                    best_score = max(score, best_score)
+            return best_score
+        else:
+            best_score = float('inf')
+            for i in range(9):
+                if board[i] == "":
+                    board[i] = self.human
+                    score = self.minimax(board, depth + 1, True)
+                    board[i] = ""
+                    best_score = min(score, best_score)
+            return best_score
+
+    def check_winner(self, board):
+        win_states = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ]
+        for win in win_states:
+            if board[win[0]] == board[win[1]] == board[win[2]] != "":
+                return board[win[0]]
+        return None
+
+    def handle_game_end(self):
+        winner = self.check_winner(self.board)
+        if winner:
+            msg = "You Won!" if winner == self.human else "The AI Beats You!"
+            self.show_end_popup(msg)
+            return True
+        elif "" not in self.board:
+            self.show_end_popup("It's a Draw Game!")
+            return True
+        return False
+
+    def show_end_popup(self, message):
+        content = BoxLayout(orientation='vertical', padding=15, spacing=10)
+        lbl = Label(text=message, font_size='20sp')
+        btn = Button(text="Return to Main Menu", size_hint_y=0.4, background_normal='', background_color=(0.18, 0.67, 0.38, 1))
+        
+        content.add_widget(lbl)
+        content.add_widget(btn)
+        
+        popup = Popup(title="Game Over", content=content, size_hint=(0.8, 0.4), auto_dismiss=False)
+        btn.bind(on_press=lambda x: (popup.dismiss(), self.go_home()))
         popup.open()
 
-class CryptographicVaultApp(App):
+    def go_home(self, *args):
+        self.manager.current = 'menu'
+
+    def reset_game(self):
+        self.board = [""] * 9
+        self.status_label.text = "Your Turn (X)"
+        for btn in self.buttons:
+            btn.text = ""
+            btn.background_color = (0.2, 0.2, 0.2, 1)
+
+
+class TicTacToeApp(App):
     def build(self):
-        from kivy.core.window import Window
-        Window.clearcolor = (0, 0, 0, 1)
-        return CryptoLayout()
+        # Setting application window parameters to match your identity strings
+        self.title = "Tic Tac Toe"
+        sm = ScreenManager()
+        sm.add_widget(MenuScreen())
+        sm.add_widget(GameScreen())
+        return sm
 
 if __name__ == "__main__":
-    CryptographicVaultApp().run()
-    
+    TicTacToeApp().run()
+        
