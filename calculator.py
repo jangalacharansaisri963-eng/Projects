@@ -1,8 +1,10 @@
+# calculator.py
 import math
-import cmath
 import os
 import re
 from fractions import Fraction
+# Import everything from our new engine file
+from math_engine import SAFE_DICT, inject_implicit_mul, format_result
 
 def clear_screen():
     """Clears the terminal screen for Windows or Linux/Android."""
@@ -13,100 +15,22 @@ def calculator():
     print("Features: +, -, *, /, sqrt(x), cbrt(x), pi(n), pi, pow(x, y), percent(x, y), sin(x), cos(x), tan(x), radians(x), degrees(x), log(x), ln(x)")
     print("Commands: 'ans' (last result), 'clear' (wipe screen), 'exit' (close)")
     
-    # Initialize the Ans memory buffer tracker
     ans_value = 0
-
-    # Custom helper for percentage calculations
-    def percent(x, y):
-        return (x / 100) * y
-
-    # Custom helper for pi with specified decimal precision: pi(n)
-    def pi_precision(n):
-        return round(math.pi, int(n))
-
-    # Smart square root handler to support complex numbers
-    def smart_sqrt(x):
-        if x >= 0:
-            return math.sqrt(x)
-        else:
-            return cmath.sqrt(x)
-
-    # Formatter to beautifully display complex outputs using 'i' instead of 'j'
-    def format_result(res):
-        if isinstance(res, complex):
-            real_part = 0 if math.isclose(res.real, 0, abs_tol=1e-15) else res.real
-            imag_part = 0 if math.isclose(res.imag, 0, abs_tol=1e-15) else res.imag
-            
-            if imag_part == 0:
-                return int(real_part) if real_part.is_integer() else real_part
-            elif real_part == 0:
-                if imag_part == 1: return "i"
-                if imag_part == -1: return "-i"
-                return f"{int(imag_part) if imag_part.is_integer() else imag_part}i"
-            else:
-                sign = "+" if imag_part > 0 else "-"
-                val = abs(imag_part)
-                val_str = "" if val == 1 else (int(val) if val.is_integer() else val)
-                r_str = int(real_part) if real_part.is_integer() else real_part
-                return f"{r_str} {sign} {val_str}i"
-        elif isinstance(res, (int, float)):
-            if math.isclose(res, 0, abs_tol=1e-15):
-                return 0
-            elif res.is_integer():
-                return int(res)
-        return res
-
-    # Smart trig functions to cleanly handle floating-point rounding artifacts
-    def smart_sin(x):
-        res = math.sin(x)
-        return 0 if math.isclose(res, 0, abs_tol=1e-15) else res
-
-    def smart_cos(x):
-        res = math.cos(x)
-        return 0 if math.isclose(res, 0, abs_tol=1e-15) else res
-
-    def smart_tan(x):
-        cosine = smart_cos(x)
-        if cosine == 0:
-            raise ValueError("Undefined (Tangent asymptote)")
-        res = math.tan(x)
-        return 0 if math.isclose(res, 0, abs_tol=1e-15) else res
-
-    # The namespace dictionary mapping string inputs to safe math entities
-    safe_dict = {
-        "sqrt": smart_sqrt,     # <-- Swapped for complex-aware sqrt module
-        "cbrt": math.cbrt,      
-        "pi": pi_precision,     
-        "pow": math.pow,      
-        "percent": percent,    
-        "sin": smart_sin,      
-        "cos": smart_cos,      
-        "tan": smart_tan,      
-        "radians": math.radians,
-        "degrees": math.degrees,
-        "log": math.log10,      # Added standard base-10 log
-        "ln": math.log          # Added natural log
-    }
 
     while True:
         try:
             expr = input("\n> ").lower().strip()
             
-            # Handle exit conditions
             if expr in ["exit", "quit"]:
                 print("Goodbye!")
                 break
-                
-            # Handle an empty input gracefully
             if not expr:
                 continue
-
-            # Handle screen clear command
             if expr in ["clear", "cls"]:
                 clear_screen()
                 continue
 
-            # --- BUFF 1: Replace 'ans' with the actual stored memory value ---
+            # Replace 'ans' with the actual stored memory value
             expr = re.sub(r'\bans\b', str(ans_value), expr)
 
             # --- EXTENSION: Intercept FR(start, end) count pattern ---
@@ -120,20 +44,13 @@ def calculator():
                     print("Error: Count must be 1 or greater.")
                     continue
                 
-                # Apply implicit multiplication injection to the inner bounds expressions
-                for _ in range(2): # Double pass for nested structures
-                    start_expr = re.sub(r'(\d)\(', r'\1*(', start_expr)
-                    start_expr = re.sub(r'\)\(', r')*(', start_expr)
-                    start_expr = re.sub(r'(\d)([a-z])', r'\1*\2', start_expr)
-                    
-                    end_expr = re.sub(r'(\d)\(', r'\1*(', end_expr)
-                    end_expr = re.sub(r'\)\(', r')*(', end_expr)
-                    end_expr = re.sub(r'(\d)([a-z])', r'\1*\2', end_expr)
+                # Use our new clean, deduplicated helper function here
+                start_expr = inject_implicit_mul(start_expr)
+                end_expr = inject_implicit_mul(end_expr)
 
                 local_dict = {"pi": math.pi}
-                eval_env = {**safe_dict, **local_dict}
+                eval_env = {**SAFE_DICT, **local_dict}
                 
-                # Parse bounds (handles trig, logs, fractions, negatives natively)
                 start_val = float(eval(start_expr, {"__builtins__": None}, eval_env))
                 end_val = float(eval(end_expr, {"__builtins__": None}, eval_env))
                 
@@ -154,30 +71,23 @@ def calculator():
                 ans_value = result_str
                 continue
 
-            # Special Case: If user types just 'pi' without brackets, return raw representation
+            # Special Case: Raw pi printout
             if expr == "pi":
                 result = math.pi
                 print(f"= {format(result, '.30f')}")
-                ans_value = result  # Update ans even for raw pi calls
+                ans_value = result
                 continue
 
-            # --- BUFF 2: Smart Implicit Multiplication Injector ---
-            expr = re.sub(r'(\d)\(', r'\1*(', expr)
-            expr = re.sub(r'\)\(', r')*(', expr)
-            expr = re.sub(r'(\d)([a-z])', r'\1*\2', expr)
+            # --- Use the clean deduplicated function helper here too ---
+            expr = inject_implicit_mul(expr)
 
-            # Build a local dictionary where 'pi' acts as a static constant value
             local_dict = {"pi": math.pi}
             
             # Safe parsing execution context
-            result = eval(expr, {"__builtins__": None}, {**safe_dict, **local_dict})
+            result = eval(expr, {"__builtins__": None}, {**SAFE_DICT, **local_dict})
             
-            # Clean up and clean format outputs using our custom handler
             output = format_result(result)
-
             print(f"= {output}")
-            
-            # Save final successful calculation back into the Ans buffer
             ans_value = result
             
         except ZeroDivisionError:
@@ -189,7 +99,6 @@ def calculator():
         except ValueError as e:
             print(f"Error: {e}")
         except Exception as e:
-            # Check if eval blew up specifically due to a hidden division by zero in float math
             if "division by zero" in str(e).lower():
                 print("Undefined")
             else:
@@ -197,4 +106,4 @@ def calculator():
 
 if __name__ == "__main__":
     calculator()
-    
+            
