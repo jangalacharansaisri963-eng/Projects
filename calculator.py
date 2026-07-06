@@ -1,4 +1,5 @@
 import math
+import cmath
 import os
 import re
 
@@ -22,6 +23,38 @@ def calculator():
     def pi_precision(n):
         return round(math.pi, int(n))
 
+    # Smart square root handler to support complex numbers
+    def smart_sqrt(x):
+        if x >= 0:
+            return math.sqrt(x)
+        else:
+            return cmath.sqrt(x)
+
+    # Formatter to beautifully display complex outputs using 'i' instead of 'j'
+    def format_result(res):
+        if isinstance(res, complex):
+            real_part = 0 if math.isclose(res.real, 0, abs_tol=1e-15) else res.real
+            imag_part = 0 if math.isclose(res.imag, 0, abs_tol=1e-15) else res.imag
+            
+            if imag_part == 0:
+                return int(real_part) if real_part.is_integer() else real_part
+            elif real_part == 0:
+                if imag_part == 1: return "i"
+                if imag_part == -1: return "-i"
+                return f"{int(imag_part) if imag_part.is_integer() else imag_part}i"
+            else:
+                sign = "+" if imag_part > 0 else "-"
+                val = abs(imag_part)
+                val_str = "" if val == 1 else (int(val) if val.is_integer() else val)
+                r_str = int(real_part) if real_part.is_integer() else real_part
+                return f"{r_str} {sign} {val_str}i"
+        elif isinstance(res, (int, float)):
+            if math.isclose(res, 0, abs_tol=1e-15):
+                return 0
+            elif res.is_integer():
+                return int(res)
+        return res
+
     # Smart trig functions to cleanly handle floating-point rounding artifacts
     def smart_sin(x):
         res = math.sin(x)
@@ -40,7 +73,7 @@ def calculator():
 
     # The namespace dictionary mapping string inputs to safe math entities
     safe_dict = {
-        "sqrt": math.sqrt,
+        "sqrt": smart_sqrt,     # <-- Swapped for complex-aware sqrt module
         "cbrt": math.cbrt,      
         "pi": pi_precision,     
         "pow": math.pow,      
@@ -81,11 +114,8 @@ def calculator():
                 continue
 
             # --- BUFF 2: Smart Implicit Multiplication Injector ---
-            # Fixes number touching open bracket: 2(3) -> 2*(3)
             expr = re.sub(r'(\d)\(', r'\1*(', expr)
-            # Fixes closing bracket touching open bracket: (2)(3) -> (2)*(3)
             expr = re.sub(r'\)\(', r')*(', expr)
-            # Fixes number touching a math word/constant: 2pi -> 2*pi or 2sqrt(4) -> 2*sqrt(4)
             expr = re.sub(r'(\d)([a-z])', r'\1*\2', expr)
 
             # Build a local dictionary where 'pi' acts as a static constant value
@@ -94,14 +124,10 @@ def calculator():
             # Safe parsing execution context
             result = eval(expr, {"__builtins__": None}, {**safe_dict, **local_dict})
             
-            # Clean up outputs (stripping floating point artifacts like -0 or .0)
-            if isinstance(result, (int, float)):
-                if math.isclose(result, 0, abs_tol=1e-15):
-                    result = 0
-                elif result.is_integer():
-                    result = int(result)
+            # Clean up and clean format outputs using our custom handler
+            output = format_result(result)
 
-            print(f"= {result}")
+            print(f"= {output}")
             
             # Save final successful calculation back into the Ans buffer
             ans_value = result
