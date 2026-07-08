@@ -3,7 +3,6 @@ import math
 import os
 import re
 from fractions import Fraction
-# Import everything from our new engine file
 from math_engine import SAFE_DICT, inject_implicit_mul, format_result
 
 def clear_screen():
@@ -12,7 +11,8 @@ def clear_screen():
 
 def calculator():
     print("--- Professional Calculator ---")
-    print("Features: +, -, *, /, sqrt(x), cbrt(x), pi(n), pi, pow(x, y), percent(x, y), sin(x), cos(x), tan(x), radians(x), degrees(x), log(x), ln(x)")
+    print("Features: +, -, *, /, sqrt(x), cbrt(x), pi(n), pi, pow(x, y), percent(x, y)")
+    print("Trig (Degrees Natively): sin(x), cos(x), tan(x), sec(x), csc(x), cot(x), log(x), ln(x)")
     print("Commands: 'ans' (last result), 'clear' (wipe screen), 'exit' (close)")
     
     ans_value = 0
@@ -33,7 +33,7 @@ def calculator():
             # Replace 'ans' with the actual stored memory value
             expr = re.sub(r'\bans\b', str(ans_value), expr)
 
-            # --- EXTENSION: Intercept FR(start, end) count pattern ---
+            # --- Intercept FR(start, end) count pattern ---
             fr_match = re.match(r'^fr\(([^,]+),([^)]+)\)\s+(\d+)$', expr)
             if fr_match:
                 start_expr = fr_match.group(1).strip()
@@ -44,7 +44,6 @@ def calculator():
                     print("Error: Count must be 1 or greater.")
                     continue
                 
-                # Use our new clean, deduplicated helper function here
                 start_expr = inject_implicit_mul(start_expr)
                 end_expr = inject_implicit_mul(end_expr)
 
@@ -71,19 +70,15 @@ def calculator():
                 ans_value = result_str
                 continue
 
-            # Special Case: Raw pi printout
             if expr == "pi":
                 result = math.pi
                 print(f"= {format(result, '.30f')}")
                 ans_value = result
                 continue
 
-            # --- Use the clean deduplicated function helper here too ---
             expr = inject_implicit_mul(expr)
-
             local_dict = {"pi": math.pi}
             
-            # Safe parsing execution context
             result = eval(expr, {"__builtins__": None}, {**SAFE_DICT, **local_dict})
             
             output = format_result(result)
@@ -106,4 +101,4 @@ def calculator():
 
 if __name__ == "__main__":
     calculator()
-            
+    
