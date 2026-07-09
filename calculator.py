@@ -1,27 +1,27 @@
-# calculator.py
-import math
 import os
 import re
-from fractions import Fraction
-from math_engine import SAFE_DICT, inject_implicit_mul, format_result
+from decimal import Decimal, getcontext
+from math_engine import SAFE_DICT, inject_implicit_mul, format_result, find_repeating_decimal, get_high_precision_pi
+
+# Align runtime evaluation precisions
+getcontext().prec = 105
 
 def clear_screen():
-    """Clears the terminal screen for Windows or Linux/Android."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def calculator():
-    print("--- Professional Calculator ---")
+    print("--- Professional 100-Digit Calculator ---")
     print("Features: +, -, *, /, sqrt(x), cbrt(x), pi(n), pi, pow(x, y), percent(x, y)")
-    print("Trig Forward (Degrees): sin(x), cos(x), tan(x), sec(x), csc(x), cot(x)")
-    print("Trig Inverse (Outputs Degrees): arcsin(x), arccos(x), arctan(x), log(x), ln(x)")
-    print("Commands: 'ans' (last result), 'clear' (wipe screen), 'exit' (close)")
+    print("Trig: sin(x), cos(x), tan(x), sec(x), csc(x), cot(x), arcsin(x), arccos(x), arctan(x)")
+    print("Logs: log(x) [Base-10], ln(x) [Natural]")
+    print("Rational Number Range Generator: fr(start, end) count")
+    print("Commands: 'ans', 'clear', 'exit'\n")
     
-    ans_value = 0
+    ans_value = "0"
 
     while True:
         try:
-            expr = input("\n> ").lower().strip()
-            
+            expr = input("> ").lower().strip()
             if expr in ["exit", "quit"]:
                 print("Goodbye!")
                 break
@@ -31,57 +31,61 @@ def calculator():
                 clear_screen()
                 continue
 
-            # Replace 'ans' with the actual stored memory value
             expr = re.sub(r'\bans\b', str(ans_value), expr)
 
-            # --- Intercept FR(start, end) count pattern ---
+            # --- High Precision Rational Range Generator Engine ---
             fr_match = re.match(r'^fr\(([^,]+),([^)]+)\)\s+(\d+)$', expr)
             if fr_match:
-                start_expr = fr_match.group(1).strip()
-                end_expr = fr_match.group(2).strip()
+                start_expr = inject_implicit_mul(fr_match.group(1).strip())
+                end_expr = inject_implicit_mul(fr_match.group(2).strip())
                 count = int(fr_match.group(3))
                 
                 if count <= 0:
                     print("Error: Count must be 1 or greater.")
                     continue
                 
-                start_expr = inject_implicit_mul(start_expr)
-                end_expr = inject_implicit_mul(end_expr)
-
-                local_dict = {"pi": math.pi}
-                eval_env = {**SAFE_DICT, **local_dict}
+                eval_env = {**SAFE_DICT, "pi": get_high_precision_pi()}
+                # Evaluate range limits natively as direct high-precision decimals
+                start_val = Decimal(str(eval(start_expr, {"__builtins__": None}, eval_env)))
+                end_val = Decimal(str(eval(end_expr, {"__builtins__": None}, eval_env)))
                 
-                start_val = float(eval(start_expr, {"__builtins__": None}, eval_env))
-                end_val = float(eval(end_expr, {"__builtins__": None}, eval_env))
-                
-                step = (end_val - start_val) / (count + 1)
+                step = (end_val - start_val) / Decimal(count + 1)
                 rational_numbers = []
                 
                 for i in range(1, count + 1):
-                    current_val = start_val + (step * i)
-                    frac = Fraction(current_val).limit_denominator(1000)
-                    
-                    if frac.denominator == 1:
-                        rational_numbers.append(str(frac.numerator))
+                    current_val = start_val + (step * Decimal(i))
+                    # Extract high precision ratio fractions directly via division parsing
+                    frac = current_val.as_integer_ratio()
+                    if frac[1] == 1:
+                        rational_numbers.append(str(frac[0]))
                     else:
-                        rational_numbers.append(f"{frac.numerator}/{frac.denominator}")
+                        # Feed directly into repeating bar engine logic check
+                        rational_numbers.append(find_repeating_decimal(frac[0], frac[1]))
                         
                 result_str = f"[{', '.join(rational_numbers)}]"
                 print(f"= {result_str}")
                 ans_value = result_str
                 continue
 
-            if expr == "pi":
-                result = math.pi
-                print(f"= {format(result, '.30f')}")
-                ans_value = result
+            # Standard Fraction Division Intercept Check (e.g. "1/3" or "div(1,3)")
+            div_match = re.match(r'^(\d+)\s*/\s*(\d+)$', expr)
+            if div_match:
+                output = find_repeating_decimal(div_match.group(1), div_match.group(2))
+                print(f"= {output}")
+                ans_value = output
                 continue
 
+            if expr == "pi":
+                output = format_result(get_high_precision_pi())
+                print(f"= {output}")
+                ans_value = output
+                continue
+
+            # Evaluate general high-precision equations
             expr = inject_implicit_mul(expr)
-            local_dict = {"pi": math.pi}
+            eval_env = {**SAFE_DICT, "pi": get_high_precision_pi()}
             
-            result = eval(expr, {"__builtins__": None}, {**SAFE_DICT, **local_dict})
-            
+            result = eval(expr, {"__builtins__": None}, eval_env)
             output = format_result(result)
             print(f"= {output}")
             ans_value = result
@@ -98,8 +102,8 @@ def calculator():
             if "division by zero" in str(e).lower():
                 print("Undefined")
             else:
-                print(f"Error: Invalid syntax.")
+                print("Error: Invalid syntax.")
 
 if __name__ == "__main__":
     calculator()
-                        
+            
