@@ -64,6 +64,11 @@ def get_pi():
 
 PI = get_pi()
 
+
+# ==========================================
+# E CONSTANT
+# ==========================================
+
 def get_e():
 
     old = getcontext().prec
@@ -91,4 +96,18 @@ def get_e():
 
     return +e
 
+
 E = get_e()
+
+
+# ==========================================
+# EXTRA SCIENTIFIC CONSTANTS
+# ==========================================
+
+# Golden ratio
+PHI = Decimal("1.6180339887498948482")
+
+
+# Speed of light in vacuum (m/s)
+SPEED_OF_LIGHT = Decimal("299792458")
+SPEED_OF_LIGHT_APPROX = Decimal("3e8")
