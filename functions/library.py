@@ -6,7 +6,7 @@ Builds the calculator function library.
 
 from decimal import Decimal
 
- import constants
+import constants
 
 from functions.trig import (
     sin,
@@ -71,4 +71,5 @@ MATH_LIB = {
     "Decimal": Decimal,
 
     "pi": constants.PI,
+    "e": constants.E,
 }
