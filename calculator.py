@@ -26,7 +26,12 @@ def run_calculator():
 
     while True:
 
-        cmd = input("calc:~$ ").strip()
+        try:
+            cmd = input("$ ").strip()
+
+        except (KeyboardInterrupt, EOFError):
+            print("\nGoodbye!")
+            break
 
         if not cmd:
             continue
