@@ -21,8 +21,10 @@ def evaluate(expression, precise=False):
         getcontext().prec = constants.DEFAULT_PRECISION
 
     constants.PI = constants.get_pi()
+    constants.E = constants.get_e()
 
     MATH_LIB["pi"] = constants.PI
+    MATH_LIB["e"] = constants.E
 
     expression = inject_implicit_mul(expression)
 
