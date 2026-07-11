@@ -31,10 +31,11 @@ jobs:
 
       - name: Build EXE
         run: |
-          pyinstaller --onefile --name ScientificCalculator calculator.py
+          pyinstaller --noconfirm --onefile --name ScientificCalculator calculator.py
 
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
           name: ScientificCalculator
           path: dist/ScientificCalculator.exe
+          retention-days: 90
