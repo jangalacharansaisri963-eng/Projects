@@ -43,13 +43,13 @@ Installation
 
 Clone the repository:
 
-git clone https://github.com/jangalacharansaisri963-eng/REPOSITORY.git
+git clone https://github.com/jangalacharansaisri963-eng/PythonProjects.git
 
-Run the calculator:
+Change into the project directory and run:
 
 python calculator.py
 
-Or download the Windows executable from the latest successful GitHub Actions build.
+Or download the Windows executable from the latest successful GitHub Actions workflow.
 
 Usage
 
@@ -98,7 +98,7 @@ Easter Eggs
 
 Download
 
-Download the Windows executable from the latest successful GitHub Actions workflow under the Actions tab of this repository.
+Download the latest Windows executable from the latest successful GitHub Actions workflow under the Actions tab of this repository.
 
 Contact
 
