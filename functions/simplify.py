@@ -1,5 +1,9 @@
 from fractions import Fraction
 
+
 def simplify(value):
 
-    return str(Fraction(value).limit_denominator())
+    if isinstance(value, Fraction):
+        return value
+
+    return Fraction(value).limit_denominator()
