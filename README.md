@@ -1,91 +1,167 @@
-Scientific Calculator
+🧮 Scientific Calculator
 
-A lightweight terminal-based scientific calculator written in Python.
+A lightweight yet powerful terminal-based scientific calculator written in Python.
 
-Features
+It supports standard arithmetic, scientific functions, high-precision calculations, integer utilities, fraction simplification, and more—all from a simple command-line interface.
 
-- High-precision arithmetic
-- Standard arithmetic operations
-- Trigonometric functions
-  - "sin"
-  - "cos"
-  - "tan"
-  - "asin"
-  - "acos"
-  - "atan"
-- Hyperbolic functions
-  - "sinh"
-  - "cosh"
-  - "tanh"
-- Logarithmic functions
-  - "ln"
-  - "log"
-- Roots
-  - "sqrt(x)"
-  - "cbrt(x)"
-  - "root(n, x)"
-- Factorial
-  - "factorial(n)"
-- Factors
-  - "factors(n)"
-  - "factorization(n)"
-- Rational number finder
-  - "fr(a, b) count"
-- Mathematical constants
-  - "pi"
-  - "e"
+---
+
+✨ Features
+
+📐 Arithmetic
+
+- ➕ Addition
+- ➖ Subtraction
+- ✖️ Multiplication ("*", "x", "X", "×")
+- ➗ Division
+- ⬆️ Exponents ("^" or "**")
+- 📎 Implicit multiplication
+  - "2pi"
+  - "2(sqrt(2))"
+  - "(2+3)(4+5)"
+
+---
+
+📏 Trigonometry
+
+- "sin(x)"
+- "cos(x)"
+- "tan(x)"
+- "asin(x)"
+- "acos(x)"
+- "atan(x)"
+
+📎 Modes
+
 - Degree mode
 - Radian mode
-- Optional 105-digit precise mode
-- Terminal easter eggs
 
-Installation
+---
 
-Clone the repository:
+🌊 Hyperbolic Functions
 
-git clone https://github.com/jangalacharansaisri963-eng/PythonProjects.git
+- "sinh(x)"
+- "cosh(x)"
+- "tanh(x)"
 
-Change into the project directory and run:
+---
 
-python calculator.py
+📈 Logarithms
 
-Or download the Windows executable from the latest successful GitHub Actions workflow.
+- "ln(x)"
+- "log(x)"
 
-Usage
+---
 
-Examples:
+🌱 Roots
 
-$ 2+2
-4
+- "sqrt(x)"
+- "cbrt(x)"
+- "root(n, x)"
 
-$ sin(90)
+---
 
-$ sqrt(2)
+🧮 Integer Functions
 
-$ root(5,32)
+- "gcd(a, b, ...)"
+- "hcf(a, b, ...)"
+- "lcm(a, b, ...)"
 
-$ factorial(10)
+📎 Supports 2–10 whole numbers.
 
-$ factors(360)
+Example:
 
-$ factorization(360)
+gcd(24,36,48)
+lcm(6,8,10)
 
-$ ln(e)
+---
 
-$ pi precise
+🔢 Fractions
 
-$ fr(3,4) 10
+Simplify
 
-Commands
+simplify(16/100)
+
+➡️ "4/25"
+
+simplify(0.16)
+
+➡️ "4/25"
+
+📎 Recurring Decimals
+
+Pure recurring:
+
+simplify(1.23r)
+
+Mixed recurring:
+
+simplify(1.2(34r))
+
+---
+
+🏷️ Factors
+
+- "factors(n)"
+- "factorization(n)"
+
+---
+
+❗ Factorial
+
+- "factorial(n)"
+
+---
+
+🎯 Rational Number Finder
+
+fr(a, b) count
+
+Example:
+
+fr(3,4) 10
+
+---
+
+📚 Mathematical Constants
+
+- "pi"
+- "e"
+- "phi"
+- "c" (Speed of Light)
+
+---
+
+🎯 Precision
+
+Normal mode:
+
+2/3
+
+High precision:
+
+2/3 precise
+
+📎 Uses 105-digit precision.
+
+---
+
+💻 Commands
 
 Command| Description
+"help"| Show calculator help
+"functions"| List supported functions
+"constants"| Show available constants
+"examples"| Show example expressions
 "mode degree"| Enable degree mode
 "mode radian"| Enable radian mode
-"clear"| Clear the terminal
+"clear" / "cls"| Clear the terminal
 "exit"| Exit the calculator
 "quit"| Exit the calculator
 
-Easter Eggs
+---
+
+🎉 Fun Commands
 
 - "about"
 - "version"
@@ -95,21 +171,85 @@ Easter Eggs
 - "42"
 - "god"
 - "boom"
+- "coin"
+- "dice"
+- "whoami"
+- "python"
+- "minecraft"
+- "rickroll"
 
-Download
+---
 
-Download the latest Windows executable from the latest successful GitHub Actions workflow under the Actions tab of this repository.
+🚀 Installation
 
-Contact
+Clone the repository:
 
-For updates, downloads, bug reports, feature requests, or app ideas, email:
+git clone https://github.com/jangalacharansaisri963-eng/PythonProjects.git
+
+Open the project directory:
+
+cd PythonProjects
+
+Run the calculator:
+
+python calculator.py
+
+---
+
+📝 Examples
+
+2+2
+
+sin(90)
+
+sqrt(2)
+
+root(5,32)
+
+factorial(10)
+
+factors(360)
+
+factorization(360)
+
+gcd(24,36)
+
+lcm(6,8,10)
+
+simplify(16/100)
+
+simplify(0.16)
+
+simplify(1.23r)
+
+simplify(1.2(34r))
+
+pi precise
+
+fr(3,4) 10
+
+---
+
+📥 Download
+
+Download the latest Windows executable from the latest successful GitHub Actions workflow.
+
+---
+
+📧 Contact
+
+For bug reports, feature requests, suggestions, or app ideas:
 
 jangalacharansaisri963@gmail.com
 
-Requirements
+---
+
+📦 Requirements
 
 - Python 3.12 or newer
 
-License
+---
+
+📄 License
 
 This project is open source.
