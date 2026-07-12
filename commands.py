@@ -4,6 +4,7 @@ commands.py
 Special calculator commands.
 """
 
+import random
 import re
 import sys
 
@@ -108,6 +109,115 @@ def execute(command):
         print("- Art and design")
         print("- Architecture")
         print("━━━━━━━━━━━━━━━━━━━━━━")
+
+        return True
+
+
+    # ==========================================
+    # INFORMATION COMMANDS
+    # ==========================================
+
+    if lower == "functions":
+
+        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print("Supported Functions")
+        print()
+        print("Trigonometry")
+        print("sin cos tan")
+        print("asin acos atan")
+        print("sinh cosh tanh")
+        print()
+        print("Roots")
+        print("sqrt cbrt root")
+        print()
+        print("Logarithms")
+        print("ln log")
+        print()
+        print("Integers")
+        print("gcd hcf lcm")
+        print()
+        print("Factors")
+        print("factors factorization")
+        print()
+        print("Fractions")
+        print("simplify")
+        print("━━━━━━━━━━━━━━━━━━━━━━")
+
+        return True
+
+
+    if lower == "constants":
+
+        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print("Available Constants")
+        print()
+        print("pi")
+        print("e")
+        print("phi")
+        print("c")
+        print("━━━━━━━━━━━━━━━━━━━━━━")
+
+        return True
+
+
+    if lower == "examples":
+
+        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print("Examples")
+        print()
+        print("sin(90)")
+        print("sqrt(2)")
+        print("gcd(24,18)")
+        print("lcm(12,18)")
+        print("simplify(16/100)")
+        print("factorization(360)")
+        print("━━━━━━━━━━━━━━━━━━━━━━")
+
+        return True
+
+
+    # ==========================================
+    # FUN COMMANDS
+    # ==========================================
+
+    if lower == "coin":
+
+        print(random.choice(("Heads", "Tails")))
+
+        return True
+
+
+    if lower == "dice":
+
+        print(random.randint(1, 6))
+
+        return True
+
+
+    if lower == "whoami":
+
+        print("You are the calculator operator.")
+
+        return True
+
+
+    if lower == "python":
+
+        print("import this")
+
+        return True
+
+
+    if lower == "minecraft":
+
+        print("⛏️ Creeper? Aww man...")
+
+        return True
+
+
+    if lower == "rickroll":
+
+        print("Never gonna give you up 🎵")
 
         return True
 
