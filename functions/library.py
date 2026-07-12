@@ -5,6 +5,7 @@ Builds the calculator function library.
 """
 
 from decimal import Decimal
+from fractions import Fraction
 
 import constants
 
@@ -40,11 +41,13 @@ from functions.factors import (
     factors,
     factorization,
 )
+
 from functions.integers import (
     gcd,
     lcm,
 )
-from functions.simplify import(
+
+from functions.simplify import (
     simplify,
 )
 
@@ -75,15 +78,17 @@ MATH_LIB = {
     "factors": factors,
     "factorization": factorization,
 
-    "Decimal": Decimal,
-
-    "pi": constants.PI,
-    "e": constants.E,
-
-    "phi": constants.PHI,
-    "c": constants.SPEED_OF_LIGHT,
     "gcd": gcd,
     "hcf": gcd,
     "lcm": lcm,
-    "simplify": simpilify,
+
+    "simplify": simplify,
+
+    "Decimal": Decimal,
+    "Fraction": Fraction,
+
+    "pi": constants.PI,
+    "e": constants.E,
+    "phi": constants.PHI,
+    "c": constants.SPEED_OF_LIGHT,
 }
