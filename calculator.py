@@ -22,13 +22,15 @@ from engine import evaluate
 
 
 def run_calculator():
-
-    banner()
+    # Attempt to print banner, but don't let it crash the whole program
+    try:
+        banner()
+    except Exception:
+        print("Scientific Calculator")
 
     while True:
-
         try:
-            # Added flush to force the prompt to appear in cloud environments
+            # Force prompt to show in cloud environments using sys.stdout
             sys.stdout.write("$ ")
             sys.stdout.flush()
             cmd = sys.stdin.readline().strip()
@@ -203,4 +205,4 @@ def run_calculator():
 if __name__ == "__main__":
 
     run_calculator()
-  
+    
