@@ -111,3 +111,34 @@ PHI = Decimal("1.6180339887498948482")
 # Speed of light in vacuum (m/s)
 SPEED_OF_LIGHT = Decimal("299792458")
 SPEED_OF_LIGHT_APPROX = Decimal("3e8")
+
+# ==========================================
+# RISHON'S CONSTANT (R15)
+# ==========================================
+
+def get_r15():
+
+    old = getcontext().prec
+    getcontext().prec += 5
+
+    r15 = Decimal(0)
+
+    n = 1
+
+    while True:
+
+        term = Decimal(1) / (Decimal(n) ** (n + 1))
+
+        if abs(term) < Decimal(10) ** (-getcontext().prec):
+            break
+
+        r15 += term
+
+        n += 1
+
+    getcontext().prec = old
+
+    return +r15
+
+
+R15 = get_r15()
