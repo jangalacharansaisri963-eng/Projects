@@ -102,7 +102,7 @@ def execute(command):
         print("Golden Ratio (φ)")
         print()
         print("Value:")
-        print("1.6180339887498948482")
+        print("1.6180339887498948482045868343656381177203091798057628621354486227052604628189024497072072041893911374")
         print()
         print("Used in:")
         print("- Mathematics")
