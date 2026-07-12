@@ -11,6 +11,11 @@ def inject_implicit_mul(expr):
 
     expr = expr.replace("^", "**")
 
+    # Allow x/X as multiplication
+    expr = expr.replace("×", "*")
+    expr = expr.replace("x", "*")
+    expr = expr.replace("X", "*")
+
     expr = re.sub(r"(\d)\(", r"\1*(", expr)
     expr = re.sub(r"\)\(", r")*(", expr)
 
