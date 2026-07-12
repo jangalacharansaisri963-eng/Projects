@@ -8,7 +8,7 @@ from decimal import getcontext
 
 import constants
 
-from parser import inject_implicit_mul
+from parser import preprocess
 
 from functions.library import MATH_LIB
 
@@ -26,7 +26,7 @@ def evaluate(expression, precise=False):
     MATH_LIB["pi"] = constants.PI
     MATH_LIB["e"] = constants.E
 
-    expression = inject_implicit_mul(expression)
+    expression = preprocess(expression)
 
     return eval(
         expression,
