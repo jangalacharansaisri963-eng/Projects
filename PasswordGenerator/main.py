@@ -18,6 +18,37 @@ def banner():
     print()
 
 
+def show_help():
+
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print("Commands")
+    print()
+    print("generate random(n)")
+    print("generate strong(n)")
+    print("generate letters(n)")
+    print("generate numbers(n)")
+    print("generate symbols(n)")
+    print()
+    print("Examples")
+    print("generate strong(16)")
+    print("generate letters(32)")
+    print("generate numbers(8)")
+    print("generate symbols(20)")
+    print("generate random(128)")
+    print()
+    print("Password Types")
+    print("- random  : All characters")
+    print("- strong  : Upper + lower + number + symbol")
+    print("- letters : Only letters")
+    print("- numbers : Only numbers")
+    print("- symbols : Only symbols")
+    print()
+    print("Rules")
+    print("- Minimum length: 3")
+    print("- Maximum length: 12000")
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+
 def run():
 
     banner()
@@ -34,7 +65,9 @@ def run():
 
             break
 
+
         lower = command.lower()
+
 
         # ==========================
         # EXIT
@@ -46,45 +79,41 @@ def run():
 
             break
 
+
         # ==========================
         # HELP
         # ==========================
 
         if lower == "help":
 
-            print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-            print("Commands")
-            print()
-            print("generate random(n)")
-            print()
-            print("Examples")
-            print("generate random(16)")
-            print("generate random(32)")
-            print("generate random(128)")
-            print()
-            print("Rules")
-            print("- Minimum length: 3")
-            print("- Maximum length: 12000")
-            print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            show_help()
 
             continue
 
+
         # ==========================
-        # GENERATE RANDOM
+        # GENERATE PASSWORD
         # ==========================
 
         match = re.fullmatch(
-            r"generate\s+random\s*\(\s*(\d+)\s*\)",
+            r"generate\s+(\w+)\s*\(\s*(\d+)\s*\)",
             lower,
         )
 
+
         if match:
 
-            length = int(match.group(1))
+            mode = match.group(1)
+            length = int(match.group(2))
+
 
             try:
 
-                password = generate_password(length)
+                password = generate_password(
+                    length,
+                    mode
+                )
+
 
                 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                 print("Generated Password")
@@ -92,13 +121,17 @@ def run():
                 print(password)
                 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
-            except Exception as ex:
+
+            except ValueError as ex:
 
                 print(ex)
 
+
             continue
 
+
         print("Unknown command. Type 'help'.")
+
 
 
 if __name__ == "__main__":
