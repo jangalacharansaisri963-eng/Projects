@@ -281,4 +281,6 @@ For bug reports, feature requests, suggestions, or app ideas:
 
 # 📄 License
 
-This project is open source.
+This project is licensed under the **MIT License**.
+
+See the [LICENSE](LICENSE) file for details.
