@@ -91,4 +91,6 @@ MATH_LIB = {
     "e": constants.E,
     "phi": constants.PHI,
     "c": constants.SPEED_OF_LIGHT,
+    "R15": constants.R15,
+    "r15": constants.R15,
 }
