@@ -11,6 +11,7 @@ import constants
 from parser import preprocess
 
 from functions.library import MATH_LIB
+from functions.first_degree_equation import solve
 
 
 def evaluate(expression, precise=False):
@@ -19,6 +20,10 @@ def evaluate(expression, precise=False):
         getcontext().prec = constants.PRECISE_PRECISION
     else:
         getcontext().prec = constants.DEFAULT_PRECISION
+
+    # Solve equations separately
+    if "=" in expression:
+        return solve(expression)
 
     expression = preprocess(expression)
 
