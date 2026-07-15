@@ -5,14 +5,21 @@
 #include <vector>
 
 
-using namespace std;
+class Tokenizer
+{
 
+private:
 
-// Converts input expression into tokens
+    std::string expression;
 
-vector<string> tokenize(
-    const string& expression
-);
+public:
 
+    Tokenizer(
+        const std::string& expression
+    );
+
+    std::vector<std::string> tokenize();
+
+};
 
 #endif
