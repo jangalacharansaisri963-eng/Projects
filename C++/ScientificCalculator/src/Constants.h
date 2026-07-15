@@ -2,22 +2,47 @@
 #define CONSTANTS_H
 
 #include <cmath>
+#include <string>
 
 
 // =======================
-// Calculator Constants
+// Mathematical Constants
 // =======================
 
-const double PI = acos(-1.0);
+namespace Constants
+{
 
-const double E = exp(1.0);
+    inline constexpr double PI =
+        3.141592653589793238462643383279502884;
+
+    inline constexpr double E =
+        2.718281828459045235360287471352662498;
+
+}
 
 
 // =======================
-// Settings
+// Calculator Settings
 // =======================
 
-const int DEFAULT_PRECISION = 15;
+namespace Settings
+{
 
+    inline constexpr int DEFAULT_PRECISION = 15;
+
+    inline constexpr int MAX_PRECISION = 50;
+
+}
+
+
+// =======================
+// Angle Mode
+// =======================
+
+enum class AngleMode
+{
+    Radians,
+    Degrees
+};
 
 #endif
