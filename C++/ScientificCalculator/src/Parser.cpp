@@ -5,6 +5,7 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <cctype>
 
 
 using namespace std;
