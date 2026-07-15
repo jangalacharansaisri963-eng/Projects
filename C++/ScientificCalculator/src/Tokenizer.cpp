@@ -3,35 +3,72 @@
 #include <cctype>
 #include <stdexcept>
 
+using namespace std;
 
-vector<string> tokenize(
+
+
+// =======================
+// Constructor
+// =======================
+
+Tokenizer::Tokenizer(
     const string& expression
 )
+{
+    this->expression =
+        expression;
+}
+
+
+
+// =======================
+// Tokenize
+// =======================
+
+vector<string>
+Tokenizer::tokenize()
 {
 
     vector<string> tokens;
 
 
-    for(size_t i = 0; i < expression.length();)
+    for(
+        size_t i = 0;
+        i < expression.length();
+    )
     {
 
-        char c = expression[i];
+        char c =
+            expression[i];
 
 
+        // =======================
         // Ignore spaces
+        // =======================
 
-        if(isspace(c))
+        if(
+            isspace(
+                static_cast<unsigned char>(c)
+            )
+        )
         {
+
             i++;
+
             continue;
+
         }
 
 
 
-        // Numbers
+        // =======================
+        // Number
+        // =======================
 
         if(
-            isdigit(c) ||
+            isdigit(
+                static_cast<unsigned char>(c)
+            ) ||
             c == '.'
         )
         {
@@ -42,87 +79,123 @@ vector<string> tokenize(
             while(
                 i < expression.length() &&
                 (
-                    isdigit(expression[i]) ||
+                    isdigit(
+                        static_cast<unsigned char>(
+                            expression[i]
+                        )
+                    ) ||
                     expression[i] == '.'
                 )
             )
             {
 
-                number += expression[i];
+                number +=
+                    expression[i];
 
                 i++;
 
             }
 
 
-            tokens.push_back(number);
+            tokens.push_back(
+                number
+            );
 
             continue;
+
         }
 
 
 
-        // Names:
-        // sqrt, sin, root, pi, e
+        // =======================
+        // Identifier
+        // =======================
 
-        if(isalpha(c))
+        if(
+            isalpha(
+                static_cast<unsigned char>(c)
+            ) ||
+            c == '_'
+        )
         {
 
-            string name;
+            string identifier;
 
 
             while(
                 i < expression.length() &&
-                isalpha(expression[i])
+                (
+                    isalnum(
+                        static_cast<unsigned char>(
+                            expression[i]
+                        )
+                    ) ||
+                    expression[i] == '_'
+                )
             )
             {
 
-                name += expression[i];
+                identifier +=
+                    expression[i];
 
                 i++;
 
             }
 
 
-            tokens.push_back(name);
-
-            continue;
-        }
-
-
-
-        // Operators and brackets
-
-        if(
-            c == '+' ||
-            c == '-' ||
-            c == '*' ||
-            c == '/' ||
-            c == '%' ||
-            c == '^' ||
-            c == '(' ||
-            c == ')' ||
-            c == ','
-        )
-        {
-
             tokens.push_back(
-                string(1,c)
+                identifier
             );
 
-            i++;
-
             continue;
+
         }
 
 
 
-        throw runtime_error(
-            string("Unknown character: ") + c
-        );
+        // =======================
+        // Operators
+        // =======================
+
+        switch(c)
+        {
+
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+            case '%':
+            case '^':
+            case '(':
+            case ')':
+            case ',':
+
+                tokens.push_back(
+                    string(
+                        1,
+                        c
+                    )
+                );
+
+                i++;
+
+                break;
+
+
+
+            default:
+
+                throw runtime_error(
+                    string(
+                        "Unknown character: "
+                    ) + c
+                );
+
+        }
 
     }
 
 
     return tokens;
+
 }
