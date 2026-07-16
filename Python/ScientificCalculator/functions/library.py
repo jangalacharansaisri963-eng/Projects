@@ -18,6 +18,17 @@ from functions.trig import (
     atan,
 )
 
+from functions.complex_numbers import (
+    real,
+    imag,
+    conj,
+    mod,
+    arg,
+    polar,
+    rect,
+    cis,
+)
+
 from functions.hyperbolic import (
     sinh,
     cosh,
@@ -107,6 +118,30 @@ MATH_LIB = {
     "sqrt": sqrt,
     "cbrt": cbrt,
     "root": root,
+
+    # ======================================
+    # Complex Numbers
+    # ======================================
+
+    "real": real,
+    "imag": imag,
+
+    "conj": conj,
+
+    "mod": mod,
+    "arg": arg,
+
+    "polar": polar,
+    "rect": rect,
+
+    "cis": cis,
+
+    # ======================================
+    # Imaginary Numbers
+    # ======================================
+
+    "i": 1j,
+    "j": 1j,
     
     # ======================================
     # Basic Mathematics
