@@ -13,10 +13,10 @@ using namespace std;
 
 
 Parser::Parser(
-    vector<string> t
+    const vector<string>& tokens
 )
 {
-    tokens = t;
+    this->tokens = tokens;
 }
 
 
@@ -342,7 +342,7 @@ double Parser::parsePrimary()
     // =======================
 
     if(
-        if(FunctionLibrary::exists(token))
+        (FunctionLibrary::exists(token))
     )
     {
 
