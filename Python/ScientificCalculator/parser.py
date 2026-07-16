@@ -68,6 +68,24 @@ def convert_recurring(expr):
 def inject_implicit_mul(expr):
 
     expr = expr.replace("^", "**")
+    
+# ======================================
+# Complex Numbers
+# ======================================
+
+# Allow textbook notation using i.
+
+expr = re.sub(
+    r"(\d+)i\b",
+    r"\1j",
+    expr,
+)
+
+expr = re.sub(
+    r"(?<![A-Za-z0-9_])i\b",
+    "1j",
+    expr,
+)
 
     # Allow x/X as multiplication
     expr = expr.replace("×", "*")
