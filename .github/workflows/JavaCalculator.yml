@@ -1,0 +1,54 @@
+name: Build Java Scientific Calculator
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+
+      - name: Compile Java Calculator
+        run: |
+          mkdir -p build
+
+          javac \
+            -d build \
+            Java/ScientificCalculator/src/Main.java \
+            Java/ScientificCalculator/src/Engine.java \
+            Java/ScientificCalculator/src/parser/*.java \
+            Java/ScientificCalculator/src/functions/*.java \
+            Java/ScientificCalculator/src/library/*.java \
+            Java/ScientificCalculator/src/constants/*.java
+
+
+      - name: Create JAR
+        run: |
+          jar cfe ScientificCalculator.jar Main -C build .
+
+
+      - name: Test Calculator
+        run: |
+          echo -e "2+3\nsqrt(16)\n(5+7)*2\nexit" | java -jar ScientificCalculator.jar
+
+
+      - name: Upload Calculator JAR
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ScientificCalculator-Java
+          path: ScientificCalculator.jar
