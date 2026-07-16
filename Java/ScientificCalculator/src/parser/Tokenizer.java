@@ -19,40 +19,49 @@ public class Tokenizer {
                 new ArrayList<>();
 
 
-        StringBuilder number =
+        StringBuilder current =
                 new StringBuilder();
 
 
+
         for (int i = 0; i < expression.length(); i++) {
+
 
             char c =
                     expression.charAt(i);
 
 
+
             // ==========================
-            // Numbers
+            // Numbers / Names
             // ==========================
 
             if (
                 Character.isDigit(c)
-                || c == '.'
+                ||
+                c == '.'
+                ||
+                Character.isLetter(c)
             ) {
 
-                number.append(c);
+                current.append(c);
                 continue;
             }
 
 
-            // Finish number before operator
 
-            if (number.length() > 0) {
+            // Finish current token
+
+            if (current.length() > 0) {
 
                 tokens.add(
-                    number.toString()
+                    current.toString()
                 );
 
-                number.setLength(0);
+                current.setLength(0);
+
             }
+
 
 
             // ==========================
@@ -62,21 +71,29 @@ public class Tokenizer {
             if (
                 Character.isWhitespace(c)
             ) {
+
                 continue;
+
             }
 
 
+
             // ==========================
-            // Operators
+            // Operators + Brackets
             // ==========================
 
             if (
                 c == '+'
-                || c == '-'
-                || c == '*'
-                || c == '/'
-                || c == '('
-                || c == ')'
+                ||
+                c == '-'
+                ||
+                c == '*'
+                ||
+                c == '/'
+                ||
+                c == '('
+                ||
+                c == ')'
             ) {
 
                 tokens.add(
@@ -90,22 +107,25 @@ public class Tokenizer {
                 throw new RuntimeException(
                     "Unknown character: " + c
                 );
+
             }
 
         }
 
 
-        // Add final number
 
-        if (number.length() > 0) {
+        if (current.length() > 0) {
 
             tokens.add(
-                number.toString()
+                current.toString()
             );
+
         }
 
 
+
         return tokens;
+
     }
 
 }
