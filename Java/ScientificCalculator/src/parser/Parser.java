@@ -31,8 +31,10 @@ public class Parser {
 
     public double parse() {
 
+
         double result =
                 parseExpression();
+
 
 
         if (position != tokens.size()) {
@@ -41,10 +43,12 @@ public class Parser {
                 "Unexpected token: "
                 + tokens.get(position)
             );
+
         }
 
 
         return result;
+
     }
 
 
@@ -55,14 +59,18 @@ public class Parser {
 
     private double parseExpression() {
 
+
         double value =
                 parseTerm();
 
 
+
         while (position < tokens.size()) {
+
 
             String operator =
                     tokens.get(position);
+
 
 
             if (
@@ -70,18 +78,24 @@ public class Parser {
                 &&
                 !operator.equals("-")
             ) {
+
                 break;
+
             }
 
 
+
             position++;
+
 
 
             double next =
                     parseTerm();
 
 
+
             if (operator.equals("+")) {
+
 
                 value =
                     Arithmetic.add(
@@ -91,7 +105,9 @@ public class Parser {
 
             }
 
+
             else {
+
 
                 value =
                     Arithmetic.subtract(
@@ -101,11 +117,14 @@ public class Parser {
 
             }
 
+
         }
 
 
         return value;
+
     }
+
 
 
 
@@ -115,8 +134,9 @@ public class Parser {
 
     private double parseTerm() {
 
+
         double value =
-                parseFactor();
+                parsePower();
 
 
 
@@ -135,6 +155,7 @@ public class Parser {
             ) {
 
                 break;
+
             }
 
 
@@ -142,12 +163,14 @@ public class Parser {
             position++;
 
 
+
             double next =
-                    parseFactor();
+                    parsePower();
 
 
 
             if (operator.equals("*")) {
+
 
                 value =
                     Arithmetic.multiply(
@@ -157,7 +180,9 @@ public class Parser {
 
             }
 
+
             else {
+
 
                 value =
                     Arithmetic.divide(
@@ -167,76 +192,11 @@ public class Parser {
 
             }
 
+
         }
 
 
         return value;
-    }
-
-
-
-    // ==========================
-// Numbers + Brackets + Functions
-// ==========================
-
-private double parseFactor() {
-
-
-    String token =
-            tokens.get(position++);
-
-
-
-    // ==========================
-    // Function
-    // ==========================
-
-    if (
-        FunctionLibrary.exists(token)
-    ) {
-
-
-        if (
-            position >= tokens.size()
-            ||
-            !tokens.get(position).equals("(")
-        ) {
-
-            throw new RuntimeException(
-                "Expected ( after function"
-            );
-
-        }
-
-
-        position++;
-
-
-        double argument =
-                parseExpression();
-
-
-
-        if (
-            position >= tokens.size()
-            ||
-            !tokens.get(position).equals(")")
-        ) {
-
-            throw new RuntimeException(
-                "Missing ) after function"
-            );
-
-        }
-
-
-        position++;
-
-
-        return FunctionLibrary.call(
-            token,
-            argument
-        );
 
     }
 
@@ -244,33 +204,41 @@ private double parseFactor() {
 
 
     // ==========================
-    // Brackets
+    // Powers
     // ==========================
 
-    if (
-        token.equals("(")
-    ) {
+    private double parsePower() {
 
 
         double value =
-                parseExpression();
+                parseFactor();
 
 
 
-        if (
-            position >= tokens.size()
-            ||
-            !tokens.get(position).equals(")")
+        while (
+            position < tokens.size()
+            &&
+            tokens.get(position)
+                    .equals("^")
         ) {
 
-            throw new RuntimeException(
-                "Missing )"
-            );
+
+            position++;
+
+
+            double exponent =
+                    parseFactor();
+
+
+
+            value =
+                Math.pow(
+                    value,
+                    exponent
+                );
+
 
         }
-
-
-        position++;
 
 
         return value;
@@ -279,12 +247,193 @@ private double parseFactor() {
 
 
 
+
     // ==========================
-    // Number
+    // Numbers
+    // Functions
+    // Brackets
+    // Negative
     // ==========================
 
-    return Double.parseDouble(token);
+    private double parseFactor() {
 
-}
+
+
+        String token =
+                tokens.get(position);
+
+
+
+        // Negative numbers
+
+        if (token.equals("-")) {
+
+
+            position++;
+
+
+            return -parseFactor();
+
+        }
+
+
+
+
+        // Positive sign
+
+        if (token.equals("+")) {
+
+
+            position++;
+
+
+            return parseFactor();
+
+        }
+
+
+
+
+
+        position++;
+
+
+
+
+        // ==========================
+        // Functions
+        // ==========================
+
+        if (
+            FunctionLibrary.exists(token)
+        ) {
+
+
+
+            if (
+                position >= tokens.size()
+                ||
+                !tokens.get(position)
+                    .equals("(")
+            ) {
+
+
+                throw new RuntimeException(
+                    "Expected ( after function"
+                );
+
+            }
+
+
+
+            position++;
+
+
+
+            double argument =
+                    parseExpression();
+
+
+
+            if (
+                position >= tokens.size()
+                ||
+                !tokens.get(position)
+                    .equals(")")
+            ) {
+
+
+                throw new RuntimeException(
+                    "Missing )"
+                );
+
+            }
+
+
+
+            position++;
+
+
+
+            return FunctionLibrary.call(
+                    token,
+                    argument
+            );
+
+        }
+
+
+
+
+
+        // ==========================
+        // Constants
+        // ==========================
+
+        if (
+            FunctionLibrary.constantExists(token)
+        ) {
+
+
+            return FunctionLibrary.constant(
+                    token
+            );
+
+        }
+
+
+
+
+
+        // ==========================
+        // Parentheses
+        // ==========================
+
+        if (
+            token.equals("(")
+        ) {
+
+
+            double value =
+                    parseExpression();
+
+
+
+            if (
+                position >= tokens.size()
+                ||
+                !tokens.get(position)
+                    .equals(")")
+            ) {
+
+
+                throw new RuntimeException(
+                    "Missing )"
+                );
+
+            }
+
+
+
+            position++;
+
+
+
+            return value;
+
+        }
+
+
+
+
+
+        // ==========================
+        // Number
+        // ==========================
+
+        return Double.parseDouble(token);
+
+    }
+
 
 }
