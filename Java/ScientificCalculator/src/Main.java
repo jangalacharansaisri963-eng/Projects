@@ -1,5 +1,7 @@
 import java.util.Scanner;
 
+import library.FunctionLibrary;
+
 
 public class Main {
 
@@ -9,10 +11,17 @@ public class Main {
     ) {
 
 
+        // Load calculator functions/constants
+
+        FunctionLibrary.initialize();
+
+
+
         Scanner scanner =
                 new Scanner(
                     System.in
                 );
+
 
 
         System.out.println(
@@ -20,8 +29,11 @@ public class Main {
         );
 
         System.out.println(
-            "Type exit to quit\n"
+            "Type exit or quit to close"
         );
+
+        System.out.println();
+
 
 
         while (true) {
@@ -33,7 +45,8 @@ public class Main {
 
 
             String expression =
-                    scanner.nextLine();
+                    scanner.nextLine()
+                           .trim();
 
 
 
@@ -43,6 +56,10 @@ public class Main {
                 expression.equalsIgnoreCase("quit")
             ) {
 
+                System.out.println(
+                    "Goodbye!"
+                );
+
                 break;
 
             }
@@ -50,7 +67,7 @@ public class Main {
 
 
             if (
-                expression.trim().isEmpty()
+                expression.isEmpty()
             ) {
 
                 continue;
@@ -79,14 +96,32 @@ public class Main {
             catch (Exception e) {
 
 
+                String message =
+                        e.getMessage();
+
+
+
+                if (message == null) {
+
+                    message =
+                        "Invalid expression";
+
+                }
+
+
+
                 System.out.println(
                     "Error: "
-                    + e.getMessage()
+                    + message
                 );
 
             }
 
+
+            System.out.println();
+
         }
+
 
 
         scanner.close();
