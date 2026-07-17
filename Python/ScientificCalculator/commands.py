@@ -7,14 +7,86 @@ Special calculator commands.
 import random
 import re
 import sys
+import pyperclip
 
 from engine import evaluate
 from functions.rationals import fr
 
 
+# Stores latest calculator answer
+latest_answer = 0
+
+
+
+def set_answer(value):
+    global latest_answer
+    latest_answer = value
+
+
+
 def execute(command):
 
+    global latest_answer
+
     lower = command.lower().strip()
+
+
+    # ==========================================
+    # Answer Memory Commands
+    # ==========================================
+
+    if lower == "ans":
+
+        print(latest_answer)
+
+        return True
+
+
+
+    if lower == "copy ans":
+
+        pyperclip.copy(
+            str(latest_answer)
+        )
+
+        print("Copied Ans to clipboard.")
+
+        return True
+
+
+
+    if lower == "paste":
+
+        print(
+            pyperclip.paste()
+        )
+
+        return True
+
+
+
+    # ==========================================
+    # Replace Ans inside expressions
+    # ==========================================
+
+    if "ans" in lower:
+
+        command = re.sub(
+            r"\bans\b",
+            str(latest_answer),
+            command,
+            flags=re.IGNORECASE
+        )
+
+        result = evaluate(command)
+
+        set_answer(result)
+
+        print(result)
+
+        return True
+
+
 
     # ==========================================
     # Easter Eggs
@@ -36,6 +108,7 @@ def execute(command):
         print("Scientific Calculator v1.0")
 
         return True
+
 
     if lower in ("readmind", "mind", "telepathy"):
 
@@ -104,12 +177,15 @@ def execute(command):
         return True
 
 
+    # ==========================================
+    # CONSTANT INFO
+    # ==========================================
+
     if lower == "phi":
 
         print("━━━━━━━━━━━━━━━━━━━━━━")
         print("Golden Ratio (φ)")
         print()
-        print("Value:")
         print("1.6180339887498948482045868343656381177203091798057628621354486227052604628189024497072072041893911374")
         print()
         print("Used in:")
@@ -125,35 +201,6 @@ def execute(command):
     # INFORMATION COMMANDS
     # ==========================================
 
-    if lower == "functions":
-
-        print("━━━━━━━━━━━━━━━━━━━━━━")
-        print("Supported Functions")
-        print()
-        print("Trigonometry")
-        print("sin cos tan")
-        print("asin acos atan")
-        print("sinh cosh tanh")
-        print()
-        print("Roots")
-        print("sqrt cbrt root")
-        print()
-        print("Logarithms")
-        print("ln log")
-        print()
-        print("Integers")
-        print("gcd hcf lcm")
-        print()
-        print("Factors")
-        print("factors factorization")
-        print()
-        print("Fractions")
-        print("simplify")
-        print("━━━━━━━━━━━━━━━━━━━━━━")
-
-        return True
-
-
     if lower == "constants":
 
         print("━━━━━━━━━━━━━━━━━━━━━━")
@@ -168,21 +215,6 @@ def execute(command):
 
         return True
 
-
-    if lower == "examples":
-
-        print("━━━━━━━━━━━━━━━━━━━━━━")
-        print("Examples")
-        print()
-        print("sin(90)")
-        print("sqrt(2)")
-        print("gcd(24,18)")
-        print("lcm(12,18)")
-        print("simplify(16/100)")
-        print("factorization(360)")
-        print("━━━━━━━━━━━━━━━━━━━━━━")
-
-        return True
 
 
     # ==========================================
@@ -231,6 +263,7 @@ def execute(command):
         return True
 
 
+
     # ==========================================
     # fr(a,b) n
     # ==========================================
@@ -239,6 +272,7 @@ def execute(command):
         r"fr\s*\(\s*([^,]+)\s*,\s*([^)]+)\s*\)\s*(\d+)",
         command,
     )
+
 
     if match:
 
@@ -251,6 +285,7 @@ def execute(command):
         fr(left, right, amount)
 
         return True
+
 
 
     return False
