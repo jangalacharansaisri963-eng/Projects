@@ -71,6 +71,14 @@ def show_help():
     print("  5a - 3 = 2a + 9")
     print()
 
+    print("Quadratic Equations")
+    print("  quadratic(a,b,c)")
+    print("  roots(a,b,c)")
+    print("  discriminant(a,b,c)")
+    print("  nature(a,b,c)")
+    print("  repeated_root(a,b,c)")
+    print()
+
     print("Comparison")
     print("  compare(a,b)")
     print("  compare3(a,b)")
@@ -92,6 +100,18 @@ def show_help():
     print("  phi")
     print("  r15")
     print("  c")
+    print()
+
+    print("Answer Memory")
+    print("  Ans")
+    print("  Ans + expression")
+    print("  Ans * expression")
+    print("  Ans / expression")
+    print()
+
+    print("Clipboard")
+    print("  copy Ans")
+    print("  paste")
     print()
 
     print("Modes")
