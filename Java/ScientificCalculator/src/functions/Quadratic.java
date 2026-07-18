@@ -1,6 +1,5 @@
 package functions;
 
-
 /*
  * Quadratic
  *
@@ -41,7 +40,6 @@ public class Quadratic {
             double c
     ) {
 
-
         double d =
                 discriminant(
                         a,
@@ -56,19 +54,99 @@ public class Quadratic {
 
         }
 
-
         else if (d == 0) {
 
             return "Two equal real roots";
 
         }
 
-
         else {
 
             return "Two complex roots";
 
         }
+
+    }
+
+
+
+    // ==========================
+    // Root 1
+    // ==========================
+
+    public static double root1(
+            double a,
+            double b,
+            double c
+    ) {
+
+        if (a == 0) {
+
+            throw new ArithmeticException(
+                    "Not a quadratic equation"
+            );
+
+        }
+
+        double d =
+                discriminant(
+                        a,
+                        b,
+                        c
+                );
+
+        if (d < 0) {
+
+            throw new ArithmeticException(
+                    "Complex roots"
+            );
+
+        }
+
+        return (-b + Math.sqrt(d))
+                /
+                (2 * a);
+
+    }
+
+
+
+    // ==========================
+    // Root 2
+    // ==========================
+
+    public static double root2(
+            double a,
+            double b,
+            double c
+    ) {
+
+        if (a == 0) {
+
+            throw new ArithmeticException(
+                    "Not a quadratic equation"
+            );
+
+        }
+
+        double d =
+                discriminant(
+                        a,
+                        b,
+                        c
+                );
+
+        if (d < 0) {
+
+            throw new ArithmeticException(
+                    "Complex roots"
+            );
+
+        }
+
+        return (-b - Math.sqrt(d))
+                /
+                (2 * a);
 
     }
 
@@ -86,19 +164,90 @@ public class Quadratic {
             double c
     ) {
 
-
         if (
-            discriminant(a,b,c) != 0
+                discriminant(a, b, c) != 0
         ) {
 
             throw new ArithmeticException(
-                "Roots are not equal"
+                    "Roots are not equal"
             );
 
         }
 
+        return -b / (2 * a);
+
+    }
+
+
+
+    // ==========================
+    // Axis of symmetry
+    //
+    // x = -b / 2a
+    // ==========================
+
+    public static double axisOfSymmetry(
+            double a,
+            double b,
+            double c
+    ) {
+
+        if (a == 0) {
+
+            throw new ArithmeticException(
+                    "Not a quadratic equation"
+            );
+
+        }
 
         return -b / (2 * a);
+
+    }
+
+
+
+    // ==========================
+    // Vertex X
+    // ==========================
+
+    public static double vertexX(
+            double a,
+            double b,
+            double c
+    ) {
+
+        return axisOfSymmetry(
+                a,
+                b,
+                c
+        );
+
+    }
+
+
+
+    // ==========================
+    // Vertex Y
+    // ==========================
+
+    public static double vertexY(
+            double a,
+            double b,
+            double c
+    ) {
+
+        double x =
+                vertexX(
+                        a,
+                        b,
+                        c
+                );
+
+        return (a * x * x)
+                +
+                (b * x)
+                +
+                c;
 
     }
 
@@ -114,15 +263,13 @@ public class Quadratic {
             double c
     ) {
 
-
         if (a == 0) {
 
             throw new ArithmeticException(
-                "Not a quadratic equation"
+                    "Not a quadratic equation"
             );
 
         }
-
 
         double d =
                 discriminant(
@@ -132,19 +279,6 @@ public class Quadratic {
                 );
 
 
-        double root1 =
-                (-b + Math.sqrt(d))
-                /
-                (2 * a);
-
-
-        double root2 =
-                (-b - Math.sqrt(d))
-                /
-                (2 * a);
-
-
-
         if (d < 0) {
 
             return "Complex roots";
@@ -152,13 +286,39 @@ public class Quadratic {
         }
 
 
+        if (d == 0) {
+
+            return "("
+                    +
+                    repeatedRoot(
+                            a,
+                            b,
+                            c
+                    )
+                    +
+                    ")";
+
+        }
+
+
         return "("
-                + root1
-                + ", "
-                + root2
-                + ")";
+                +
+                root1(
+                        a,
+                        b,
+                        c
+                )
+                +
+                ", "
+                +
+                root2(
+                        a,
+                        b,
+                        c
+                )
+                +
+                ")";
 
     }
-
 
 }
