@@ -1,238 +1,109 @@
 package library;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
-import constants.Constants;
-
-import functions.Arithmetic;
-import functions.Roots;
-import functions.Logarithms;
-import functions.Trigonometry;
-import functions.Factorial;
-import functions.Quadratic;
-
-
+/*
+ * FunctionLibrary
+ *
+ * Main registry for all calculator functions.
+ *
+ * Other libraries register their functions here.
+ */
 
 public class FunctionLibrary {
 
+    // =========================================
+    // Function Interface
+    // =========================================
 
+    @FunctionalInterface
+    public interface CalculatorFunction {
 
-    public static final Map<String, Function<Double, Double>> FUNCTIONS =
+        double apply(List<Double> arguments);
+
+    }
+
+    // =========================================
+    // Function Registry
+    // =========================================
+
+    private static final Map<String, CalculatorFunction> FUNCTIONS =
             new HashMap<>();
 
-
-    public static final Map<String, Double> CONSTANTS =
-            new HashMap<>();
-
-
-
-    // ==========================
+    // =========================================
     // Initialize
-    // ==========================
+    // =========================================
 
     public static void initialize() {
 
+        FUNCTIONS.clear();
 
+        BasicFunctionLibrary.register();
 
-        // ==========================
-        // Roots
-        // ==========================
+        AdvancedFunctionLibrary.register();
 
-        FUNCTIONS.put(
-            "sqrt",
-            Roots::sqrt
-        );
+        EquationFunctionLibrary.register();
 
+        ConstantLibrary.register();
 
-        FUNCTIONS.put(
-            "cbrt",
-            Roots::cbrt
-        );
+    }
 
+    // =========================================
+    // Register Function
+    // =========================================
 
-
-        // ==========================
-        // Logarithms
-        // ==========================
+    public static void register(
+            String name,
+            CalculatorFunction function
+    ) {
 
         FUNCTIONS.put(
-            "ln",
-            Logarithms::ln
-        );
-
-
-        FUNCTIONS.put(
-            "log",
-            Logarithms::log
-        );
-
-
-
-        // ==========================
-        // Trigonometry
-        // ==========================
-
-        FUNCTIONS.put(
-            "sin",
-            Trigonometry::sin
-        );
-
-
-        FUNCTIONS.put(
-            "cos",
-            Trigonometry::cos
-        );
-
-
-        FUNCTIONS.put(
-            "tan",
-            Trigonometry::tan
-        );
-
-
-        FUNCTIONS.put(
-            "arcsin",
-            Trigonometry::arcsin
-        );
-
-
-        FUNCTIONS.put(
-            "arccos",
-            Trigonometry::arccos
-        );
-
-
-        FUNCTIONS.put(
-            "arctan",
-            Trigonometry::arctan
-        );
-
-
-
-        // ==========================
-        // Constants
-        // ==========================
-
-        CONSTANTS.put(
-            "pi",
-            Math.PI
-        );
-
-
-        CONSTANTS.put(
-            "PI",
-            Math.PI
-        );
-
-
-        CONSTANTS.put(
-            "e",
-            Math.E
-        );
-
-
-        CONSTANTS.put(
-            "E",
-            Math.E
+                name.toLowerCase(),
+                function
         );
 
     }
 
-
-
-
-
-    // ==========================
-    // Function Exists
-    // ==========================
+    // =========================================
+    // Exists
+    // =========================================
 
     public static boolean exists(
             String name
     ) {
 
         return FUNCTIONS.containsKey(
-                name
+                name.toLowerCase()
         );
 
     }
 
-
-
-
-    // ==========================
-    // Call Function
-    // ==========================
+    // =========================================
+    // Call
+    // =========================================
 
     public static double call(
             String name,
-            double value
+            List<Double> arguments
     ) {
 
+        CalculatorFunction function =
+                FUNCTIONS.get(
+                        name.toLowerCase()
+                );
 
-        if (!exists(name)) {
+        if (function == null) {
 
             throw new RuntimeException(
-                "Unknown function: "
-                + name
+                    "Unknown function: " + name
             );
 
         }
 
-
-        return FUNCTIONS
-                .get(name)
-                .apply(value);
+        return function.apply(arguments);
 
     }
-
-
-
-
-
-    // ==========================
-    // Constant Exists
-    // ==========================
-
-    public static boolean constantExists(
-            String name
-    ) {
-
-        return CONSTANTS.containsKey(
-                name
-        );
-
-    }
-
-
-
-
-
-    // ==========================
-    // Get Constant
-    // ==========================
-
-    public static double constant(
-            String name
-    ) {
-
-
-        if (!constantExists(name)) {
-
-            throw new RuntimeException(
-                "Unknown constant: "
-                + name
-            );
-
-        }
-
-
-        return CONSTANTS.get(
-                name
-        );
-
-    }
-
 
 }
