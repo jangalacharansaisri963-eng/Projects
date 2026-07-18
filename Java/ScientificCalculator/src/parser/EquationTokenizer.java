@@ -3,7 +3,6 @@ package parser;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /*
  * EquationTokenizer
  *
@@ -21,80 +20,48 @@ import java.util.List;
 
 public class EquationTokenizer {
 
-
     // ==========================
     // Tokenize
     // ==========================
 
-    public static List<String> tokenize(
-            String expression
-    ) {
+    public static List<String> tokenize(String expression) {
 
-        List<String> tokens =
-                new ArrayList<>();
+        List<String> tokens = new ArrayList<>();
 
-
-        expression =
-                expression.replace(
-                        " ",
-                        ""
-                );
-
+        expression = expression.replace(" ", "");
 
         for (int i = 0; i < expression.length(); i++) {
 
-
-            char current =
-                    expression.charAt(i);
-
-
+            char current = expression.charAt(i);
 
             // ==========================
             // Numbers
             // ==========================
 
-            if (Character.isDigit(current)
-                    || current == '.') {
+            if (Character.isDigit(current) || current == '.') {
 
-
-                StringBuilder number =
-                        new StringBuilder();
-
+                StringBuilder number = new StringBuilder();
 
                 while (
                         i < expression.length()
-                        &&
-                        (
-                            Character.isDigit(
-                                expression.charAt(i)
-                            )
-                            ||
-                            expression.charAt(i) == '.'
-                        )
+                                &&
+                                (
+                                        Character.isDigit(expression.charAt(i))
+                                                || expression.charAt(i) == '.'
+                                )
                 ) {
 
-                    number.append(
-                            expression.charAt(i)
-                    );
-
+                    number.append(expression.charAt(i));
                     i++;
 
                 }
 
-
                 i--;
 
-
-                addToken(
-                        tokens,
-                        number.toString()
-                );
-
+                addToken(tokens, number.toString());
                 continue;
 
             }
-
-
 
             // ==========================
             // Variable
@@ -102,82 +69,41 @@ public class EquationTokenizer {
 
             if (Character.isLetter(current)) {
 
-                addToken(
-                        tokens,
-                        String.valueOf(current)
-                );
-
+                addToken(tokens, String.valueOf(current));
                 continue;
 
             }
 
-
-
             // ==========================
-            // Operators
+            // Operators / Parentheses
             // ==========================
 
             if (
                     current == '+'
-                    ||
-                    current == '-'
-                    ||
-                    current == '*'
-                    ||
-                    current == '/'
-                    ||
-                    current == '='
+                            || current == '-'
+                            || current == '*'
+                            || current == '/'
+                            || current == '^'
+                            || current == '='
+                            || current == '('
+                            || current == ')'
+                            || current == ','
             ) {
 
-
-                addToken(
-                        tokens,
-                        String.valueOf(current)
-                );
-
+                addToken(tokens, String.valueOf(current));
                 continue;
 
             }
-
-
-
-            // ==========================
-            // Parentheses
-            // ==========================
-
-            if (
-                    current == '('
-                    ||
-                    current == ')'
-            ) {
-
-
-                addToken(
-                        tokens,
-                        String.valueOf(current)
-                );
-
-                continue;
-
-            }
-
-
 
             throw new IllegalArgumentException(
-                    "Invalid character: "
-                    + current
+                    "Invalid character: " + current
             );
 
         }
 
-
-        return addImplicitMultiplication(
-                tokens
-        );
+        return addImplicitMultiplication(tokens);
 
     }
-
-
 
     // ==========================
     // Add token helper
@@ -192,50 +118,27 @@ public class EquationTokenizer {
 
     }
 
-
-
     // ==========================
     // Implicit multiplication
     // ==========================
 
-    private static List<String>
-    addImplicitMultiplication(
+    private static List<String> addImplicitMultiplication(
             List<String> tokens
     ) {
 
+        List<String> result = new ArrayList<>();
 
-        List<String> result =
-                new ArrayList<>();
+        for (int i = 0; i < tokens.size(); i++) {
 
-
-        for (
-                int i = 0;
-                i < tokens.size();
-                i++
-        ) {
-
-
-            String current =
-                    tokens.get(i);
-
+            String current = tokens.get(i);
 
             result.add(current);
 
-
-
             if (i + 1 < tokens.size()) {
 
+                String next = tokens.get(i + 1);
 
-                String next =
-                        tokens.get(i + 1);
-
-
-
-                if (needsMultiplication(
-                        current,
-                        next
-                )) {
-
+                if (needsMultiplication(current, next)) {
 
                     result.add("*");
 
@@ -245,12 +148,9 @@ public class EquationTokenizer {
 
         }
 
-
         return result;
 
     }
-
-
 
     // ==========================
     // Check multiplication
@@ -261,30 +161,19 @@ public class EquationTokenizer {
             String b
     ) {
 
-
         boolean left =
                 isNumber(a)
-                ||
-                a.equals("x")
-                ||
-                a.equals(")");
-
-
+                        || a.equals("x")
+                        || a.equals(")");
 
         boolean right =
                 isNumber(b)
-                ||
-                b.equals("x")
-                ||
-                b.equals("(");
-
-
+                        || b.equals("x")
+                        || b.equals("(");
 
         return left && right;
 
     }
-
-
 
     // ==========================
     // Number check
@@ -297,12 +186,9 @@ public class EquationTokenizer {
         try {
 
             Double.parseDouble(value);
-
             return true;
 
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
 
             return false;
 
