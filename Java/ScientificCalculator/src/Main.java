@@ -1,7 +1,8 @@
 import java.util.Scanner;
 
 import library.FunctionLibrary;
-
+import commands.Commands;
+import state.CalculatorState;
 
 public class Main {
 
@@ -45,8 +46,15 @@ public class Main {
 
 
             String expression =
-                    scanner.nextLine()
-                           .trim();
+        scanner.nextLine()
+               .trim();
+
+if (Commands.execute(expression)) {
+    System.out.println();
+    continue;
+}
+
+expression = Commands.preprocess(expression);
 
 
 
@@ -80,14 +88,19 @@ public class Main {
 
 
                 double result =
-                        Engine.evaluate(
-                            expression
-                        );
+        Engine.evaluate(
+            expression
+        );
 
+CalculatorState.setLastAnswer(result);
 
-                System.out.println(
-                    "= " + result
-                );
+CalculatorState.addHistory(
+        expression + " = " + result
+);
+
+System.out.println(
+    "= " + result
+);
 
 
             }
