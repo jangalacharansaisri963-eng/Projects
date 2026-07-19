@@ -42,6 +42,7 @@ jobs:
           }
 
           pip install pyinstaller
+          pip install pyperclip
 
 
 
