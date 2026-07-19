@@ -14,6 +14,7 @@ except ImportError:
 
 from engine import evaluate
 from functions.rationals import fr
+from formatter import LINE
 
 
 # Stores latest calculator answer
@@ -102,11 +103,11 @@ def execute(command):
 
     if lower == "about":
 
-        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print(LINE)
         print("Scientific Calculator")
         print("Version 1.0")
         print("Made with Python")
-        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print(LINE)
 
         return True
 
@@ -175,12 +176,12 @@ def execute(command):
 
     if lower == "c":
 
-        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print(LINE)
         print("Speed of light (vacuum)")
         print()
         print("Approximately: 3 × 10⁸ m/s")
         print("Precisely: 299792458 m/s")
-        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print(LINE)
 
         return True
 
@@ -191,7 +192,7 @@ def execute(command):
 
     if lower == "phi":
 
-        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print(LINE)
         print("Golden Ratio (φ)")
         print()
         print("1.6180339887498948482045868343656381177203091798057628621354486227052604628189024497072072041893911374")
@@ -200,7 +201,7 @@ def execute(command):
         print("- Mathematics")
         print("- Art and design")
         print("- Architecture")
-        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print(LINE)
 
         return True
 
@@ -211,7 +212,7 @@ def execute(command):
 
     if lower == "constants":
 
-        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print(LINE)
         print("Available Constants")
         print()
         print("pi")
@@ -219,7 +220,7 @@ def execute(command):
         print("phi")
         print("c")
         print("R15")
-        print("━━━━━━━━━━━━━━━━━━━━━━")
+        print(LINE)
 
         return True
 
@@ -297,3 +298,4 @@ def execute(command):
 
 
     return False
+    
