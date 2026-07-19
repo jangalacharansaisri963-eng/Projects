@@ -6,9 +6,8 @@ Find rational numbers between two values.
 
 import math
 from fractions import Fraction
-
-
-LINE = "━━━━━━━━━━━━━━━━━━━━━━"
+# Import the clean LINE variable from your formatter
+from formatter import LINE
 
 
 def fr(a, b, count):
@@ -44,6 +43,7 @@ def fr(a, b, count):
     found.sort()
 
     print()
+    # Now using the standard dash LINE from formatter.py
     print(LINE)
     print(f"{count} Rational Numbers")
     print(f"Between {float(a)} and {float(b)}")
@@ -53,3 +53,4 @@ def fr(a, b, count):
         print(f"{f} = {float(f)}")
 
     print(LINE)
+    
