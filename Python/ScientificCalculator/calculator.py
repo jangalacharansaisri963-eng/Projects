@@ -6,11 +6,15 @@ Main application.
 
 import os
 import sys
+import traceback
+from datetime import datetime
+
 # Safe import: readline may not be available on Windows
 try:
     import readline
 except Exception:
     readline = None
+
 import constants
 
 from formatter import (
@@ -21,29 +25,48 @@ from formatter import (
 )
 
 from commands import execute
-
 from engine import evaluate
-
 from functions.help_command import show_help
 
 
+LOG_FILE = "latestlog.txt"
+
+
+def write_log(message):
+    with open(LOG_FILE, "a", encoding="utf-8") as log:
+        log.write(message + "\n")
+
+
 def run_calculator():
-    # Attempt to print banner, but don't let it crash the whole program
+
+    # Create fresh log every launch
+    with open(LOG_FILE, "w", encoding="utf-8") as log:
+        log.write("=== Scientific Calculator ===\n")
+        log.write(f"Started: {datetime.now()}\n\n")
+
+    # Attempt to print banner
     try:
         banner()
     except Exception:
         print("Scientific Calculator")
+        write_log("Banner failed to load.")
 
     while True:
+
         try:
-            # Force prompt to show in cloud environments using sys.stdout
             sys.stdout.write("$ ")
             sys.stdout.flush()
             cmd = sys.stdin.readline().strip()
 
         except (KeyboardInterrupt, EOFError):
             print("\nGoodbye!")
+            write_log("Program exited normally.")
             break
+
+        except Exception:
+            write_log("INPUT ERROR")
+            write_log(traceback.format_exc())
+            raise
 
         if not cmd:
             continue
@@ -55,6 +78,7 @@ def run_calculator():
         # ==========================
 
         if lower in ("exit", "quit"):
+            write_log("User exited.")
             break
 
         # ==========================
@@ -65,7 +89,10 @@ def run_calculator():
 
             os.system("cls" if os.name == "nt" else "clear")
 
-            banner()
+            try:
+                banner()
+            except Exception:
+                print("Scientific Calculator")
 
             continue
 
@@ -74,9 +101,7 @@ def run_calculator():
         # ==========================
 
         if lower == "help":
-
             show_help()
-
             continue
 
         # ==========================
@@ -84,19 +109,13 @@ def run_calculator():
         # ==========================
 
         if lower == "mode degree":
-
             constants.DEGREE_MODE = True
-
             success("Degree mode enabled.")
-
             continue
 
         if lower == "mode radian":
-
             constants.DEGREE_MODE = False
-
             success("Radian mode enabled.")
-
             continue
 
         # ==========================
@@ -106,9 +125,7 @@ def run_calculator():
         precise = False
 
         if lower.endswith(" precise"):
-
             precise = True
-
             cmd = cmd[:-8].strip()
 
         # ==========================
@@ -122,10 +139,10 @@ def run_calculator():
                     readline.add_history(cmd)
                 continue
 
-        except Exception as ex:
-
-            error(ex)
-
+        except Exception:
+            error("Command failed.")
+            write_log("COMMAND ERROR")
+            write_log(traceback.format_exc())
             continue
 
         # ==========================
@@ -148,22 +165,34 @@ def run_calculator():
                 readline.add_history(cmd)
 
         except ZeroDivisionError:
-
             error("Division by zero.")
+            write_log("Division by zero.")
 
         except OverflowError:
-
             error("Number too large.")
+            write_log("Overflow.")
 
         except ValueError:
-
             error("Invalid mathematical operation.")
+            write_log("ValueError.")
 
-        except Exception as ex:
-
-            error(ex)
+        except Exception:
+            error("Unexpected error.")
+            write_log("EVALUATION ERROR")
+            write_log(traceback.format_exc())
 
 
 if __name__ == "__main__":
 
-    run_calculator()
+    try:
+        run_calculator()
+
+    except Exception:
+
+        with open(LOG_FILE, "a", encoding="utf-8") as log:
+
+            log.write("\n=== FATAL CRASH ===\n")
+            traceback.print_exc(file=log)
+
+        print("\nA fatal error occurred.")
+        print("See latestlog.txt for details.")
