@@ -7,7 +7,10 @@ Special calculator commands.
 import random
 import re
 import sys
-import pyperclip
+try:
+    import pyperclip
+except ImportError:
+    pyperclip = None
 
 from engine import evaluate
 from functions.rationals import fr
@@ -45,11 +48,14 @@ def execute(command):
 
     if lower == "copy ans":
 
-        pyperclip.copy(
-            str(latest_answer)
-        )
+        if pyperclip:
+            pyperclip.copy(
+                str(latest_answer)
+            )
 
-        print("Copied Ans to clipboard.")
+            print("Copied Ans to clipboard.")
+        else:
+            print("Clipboard support is unavailable.")
 
         return True
 
@@ -57,9 +63,11 @@ def execute(command):
 
     if lower == "paste":
 
-        print(
-            pyperclip.paste()
-        )
+        if pyperclip:
+            text = pyperclip.paste()
+            print(text)
+        else:
+            print("Clipboard support is unavailable.")
 
         return True
 
