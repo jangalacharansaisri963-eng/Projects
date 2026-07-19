@@ -8,8 +8,6 @@ import java.util.Map;
  * FunctionLibrary
  *
  * Main registry for all calculator functions.
- *
- * Other libraries register their functions here.
  */
 
 public class FunctionLibrary {
@@ -29,8 +27,8 @@ public class FunctionLibrary {
     // Function Registry
     // =========================================
 
-    public static final Map<String, Function<Double, Double>> FUNCTIONS =
-        new HashMap<>();
+    public static final Map<String, CalculatorFunction> FUNCTIONS =
+            new HashMap<>();
 
     // =========================================
     // Initialize
@@ -67,7 +65,7 @@ public class FunctionLibrary {
     }
 
     // =========================================
-    // Exists
+    // Function Exists
     // =========================================
 
     public static boolean exists(
@@ -81,7 +79,7 @@ public class FunctionLibrary {
     }
 
     // =========================================
-    // Call
+    // Call Function
     // =========================================
 
     public static double call(
