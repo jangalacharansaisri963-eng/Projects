@@ -24,7 +24,7 @@ from formatter import (
     success,
 )
 
-from commands import execute
+from commands import execute, set_answer
 from engine import evaluate
 from functions.help_command import show_help
 
@@ -155,6 +155,8 @@ def run_calculator():
                 cmd,
                 precise=precise
             )
+
+            set_answer(answer)
 
             result(
                 answer,
