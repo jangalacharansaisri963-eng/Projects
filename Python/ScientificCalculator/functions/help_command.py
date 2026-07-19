@@ -4,12 +4,13 @@ help_command.py
 Displays the calculator help menu.
 """
 
+from formatter import LINE
 
 def show_help():
 
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(LINE)
     print("Scientific Calculator Help")
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print(LINE)
     print()
 
     print("Trigonometry")
@@ -124,5 +125,6 @@ def show_help():
     print("  help")
     print("  clear / cls")
     print("  exit / quit")
-
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print()
+    print(LINE)
+    
