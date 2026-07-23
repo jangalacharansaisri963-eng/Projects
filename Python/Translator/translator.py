@@ -25,7 +25,7 @@ def get_lang_code(target):
         "latvian": "lv", "lithuanian": "lt", "turkish": "tr", "indonesian": "id", 
         "malay": "ms", "filipino": "tl", "vietnamese": "vi", "irish": "ga", 
         "welsh": "cy", "afrikaans": "af", "swahili": "sw", "latin": "la",
-        "japanese": "ja", "chinese": "zh-CN"
+        "japanese": "ja", "chinese": "zh-CN", "hindi": "hi", "telugu": "te"
     }
     return mapping.get(target)
 
@@ -42,6 +42,7 @@ def run_translator():
     print("ROMANIAN, HUNGARIAN, CROATIAN, SLOVENIAN, ALBANIAN, ESTONIAN")
     print("LATVIAN, LITHUANIAN, TURKISH, INDONESIAN, MALAY, FILIPINO")
     print("VIETNAMESE, IRISH, WELSH, AFRIKAANS, SWAHILI, LATIN, JAPANESE, CHINESE")
+    print("HINDI, TELUGU")
     print("\nOperations:")
     print("  Forward: [text] (func translate to [target])")
     print("  Reverse: [payload] (func decode from [target])")
@@ -135,7 +136,8 @@ def run_translator():
                 print("Translator: Syntax Error. Use [text] (func translate to [target]) or (func decode from [target])")
                 continue
 
-            payload = translate_match.strip_match = translate_match.group(1).strip()
+            # FIXED: Removed the buggy '.strip_match =' assignment pattern 
+            payload = translate_match.group(1).strip()
             target = translate_match.group(2).strip().lower()
 
             payload_bytes = payload.encode("utf-8")
