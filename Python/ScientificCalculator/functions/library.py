@@ -62,8 +62,18 @@ from functions.roots import (
     sqrt,
     cbrt,
     root,
+
     sqrtrem,
     cbrtrem,
+
+    nextsquare,
+    prevsquare,
+
+    nextcube,
+    prevcube,
+
+    isperfectsquare,
+    isperfectcube,
 )
 
 from functions.logarithms import (
@@ -126,8 +136,18 @@ MATH_LIB = {
     "sqrt": sqrt,
     "cbrt": cbrt,
     "root": root,
+
     "sqrtrem": sqrtrem,
     "cbrtrem": cbrtrem,
+
+    "nextsquare": nextsquare,
+    "prevsquare": prevsquare,
+
+    "nextcube": nextcube,
+    "prevcube": prevcube,
+
+    "isperfectsquare": isperfectsquare,
+    "isperfectcube": isperfectcube,
 
     # ======================================
     # Complex Numbers
