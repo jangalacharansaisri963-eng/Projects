@@ -6,8 +6,6 @@ Main application.
 
 import os
 import sys
-import traceback
-from datetime import datetime
 
 # Safe import: readline may not be available on Windows
 try:
@@ -28,27 +26,12 @@ from commands import execute, set_answer
 from engine import evaluate
 
 
-LOG_FILE = "latestlog.txt"
-
-
-def write_log(message):
-    with open(LOG_FILE, "a", encoding="utf-8") as log:
-        log.write(message + "\n")
-
-
 def run_calculator():
 
-    # Create fresh log every launch
-    with open(LOG_FILE, "w", encoding="utf-8") as log:
-        log.write("=== Scientific Calculator ===\n")
-        log.write(f"Started: {datetime.now()}\n\n")
-
-    # Attempt to print banner
     try:
         banner()
     except Exception:
         print("Scientific Calculator")
-        write_log("Banner failed to load.")
 
     while True:
 
@@ -59,13 +42,7 @@ def run_calculator():
 
         except (KeyboardInterrupt, EOFError):
             print("\nGoodbye!")
-            write_log("Program exited normally.")
             break
-
-        except Exception:
-            write_log("INPUT ERROR")
-            write_log(traceback.format_exc())
-            raise
 
         if not cmd:
             continue
@@ -77,7 +54,6 @@ def run_calculator():
         # ==========================
 
         if lower in ("exit", "quit"):
-            write_log("User exited.")
             break
 
         # ==========================
@@ -132,8 +108,6 @@ def run_calculator():
 
         except Exception:
             error("Command failed.")
-            write_log("COMMAND ERROR")
-            write_log(traceback.format_exc())
             continue
 
         # ==========================
@@ -159,20 +133,15 @@ def run_calculator():
 
         except ZeroDivisionError:
             error("Division by zero.")
-            write_log("Division by zero.")
 
         except OverflowError:
             error("Number too large.")
-            write_log("Overflow.")
 
         except ValueError:
             error("Invalid mathematical operation.")
-            write_log("ValueError.")
 
         except Exception:
             error("Unexpected error.")
-            write_log("EVALUATION ERROR")
-            write_log(traceback.format_exc())
 
 
 if __name__ == "__main__":
@@ -181,11 +150,6 @@ if __name__ == "__main__":
         run_calculator()
 
     except Exception:
-
-        with open(LOG_FILE, "a", encoding="utf-8") as log:
-
-            log.write("\n=== FATAL CRASH ===\n")
-            traceback.print_exc(file=log)
-
         print("\nA fatal error occurred.")
-        print("See latestlog.txt for details.")
+        import traceback
+        traceback.print_exc()
