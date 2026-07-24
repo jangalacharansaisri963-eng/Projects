@@ -1,20 +1,19 @@
+"""
+simplify.py
+
+Simplifies numeric values and expressions.
+"""
+
 from fractions import Fraction
-from math import sqrt
 
-
-def cbrt(x):
-    return x ** (Fraction(1, 3))
-
-
-def root(x, n):
-    return x ** (Fraction(1, n))
+from functions.library import MATH_LIB
 
 
 def repeating_decimal(value):
     """
     Converts repeating decimals.
 
-    Example:
+    Examples:
     0.(3) -> 1/3
     1.2(3) -> 37/30
     """
@@ -22,131 +21,135 @@ def repeating_decimal(value):
     if "(" not in value:
         return None
 
-    non_repeat, repeat = value.split("(")
-
+    before, repeat = value.split("(")
     repeat = repeat.replace(")", "")
 
-    if "." in non_repeat:
+    if "." not in before:
+        return None
 
-        whole, decimal = non_repeat.split(".")
+    whole, decimal = before.split(".")
 
-        numerator = (
-            int(whole + decimal + repeat)
-            -
-            int(whole + decimal)
-        )
+    numerator = (
+        int(whole + decimal + repeat)
+        -
+        int(whole + decimal)
+    )
 
-        denominator = (
-            (10 ** len(decimal))
-            *
-            (10 ** len(repeat) - 1)
-        )
+    denominator = (
+        (10 ** len(decimal))
+        *
+        (10 ** len(repeat) - 1)
+    )
 
-        return Fraction(
-            numerator,
-            denominator
-        )
-
-    return None
+    return Fraction(
+        numerator,
+        denominator
+    ).limit_denominator()
 
 
 def simplify(value):
+    """
+    Simplify numbers and evaluate expressions.
 
-    # Already Fraction
+    Examples:
+
+    simplify("1/2+2/5")
+    -> 9/10
+
+    simplify("sqrt(25)")
+    -> 5
+
+    simplify("factorial(5)")
+    -> 120
+
+    simplify("0.(3)")
+    -> 1/3
+    """
+
+    # Fraction
     if isinstance(value, Fraction):
         return value.limit_denominator()
-
 
     # Integer
     if isinstance(value, int):
         return value
 
-
     # Float
     if isinstance(value, float):
 
-        f = Fraction(value).limit_denominator()
+        fraction = Fraction(
+            value
+        ).limit_denominator()
 
-        if f.denominator == 1:
-            return f.numerator
+        if fraction.denominator == 1:
+            return fraction.numerator
 
-        return f
-
+        return fraction
 
     # Complex
     if isinstance(value, complex):
         return value
 
-
-    # String input
-    if isinstance(value, str):
-
-        value = value.strip()
-
-
-        # Repeating decimal
-        repeat = repeating_decimal(value)
-
-        if repeat:
-            return repeat
-
-
-        # Expression evaluator
-
-        scope = {
-            "__builtins__": None,
-
-            "sqrt": lambda x:
-                Fraction(
-                    sqrt(float(x))
-                ),
-
-            "cbrt": cbrt,
-
-            "root": root,
-
-            "Fraction": Fraction
-        }
-
-
-        try:
-            result = eval(
-                value,
-                scope
-            )
-
-            return simplify(result)
-
-        except Exception:
-            pass
-
-
-        # Plain fraction string
+    # Other numeric values
+    if not isinstance(value, str):
 
         try:
 
-            f = Fraction(value)
+            fraction = Fraction(
+                value
+            ).limit_denominator()
 
-            if f.denominator == 1:
-                return f.numerator
+            if fraction.denominator == 1:
+                return fraction.numerator
 
-            return f.limit_denominator()
+            return fraction
 
         except Exception:
 
             return value
 
+    # String input
+    value = value.strip()
 
-    # Other numeric values
+    # Repeating decimals
+    repeat = repeating_decimal(value)
+
+    if repeat is not None:
+        return repeat
+
+    # Evaluate expressions
+    scope = {
+        "__builtins__": None,
+    }
+
+    scope.update(MATH_LIB)
 
     try:
 
-        f = Fraction(value).limit_denominator()
+        result = eval(
+            value,
+            scope
+        )
 
-        if f.denominator == 1:
-            return f.numerator
+        if result == value:
+            return result
 
-        return f
+        return simplify(result)
+
+    except Exception:
+        pass
+
+    # Plain fraction string
+    try:
+
+        fraction = Fraction(
+            value
+        ).limit_denominator()
+
+        if fraction.denominator == 1:
+            return fraction.numerator
+
+        return fraction
 
     except Exception:
 
