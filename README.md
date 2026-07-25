@@ -1,3 +1,3 @@
 # Projects
-This is the main projects repository created my Dan
+This is the main projects repository created by Dan Studios. It is still 
 Under Progress
