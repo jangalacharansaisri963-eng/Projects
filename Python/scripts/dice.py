@@ -1,25 +1,25 @@
 import random
 
-print("=== Coin Flip Guessing Game ===")
+print("=== Dice Guessing Game ===")
 
 wins = 0
 losses = 0
 
 while True:
 
-    guess = input("\nGuess (heads/tails): ").lower()
+    guess = int(input("\nGuess a number (1-6): "))
 
-    if guess not in ["heads", "tails"]:
-        print("Please type 'heads' or 'tails'.")
+    if guess < 1 or guess > 6:
+        print("Choose a number from 1 to 6.")
         continue
 
-    input("Press Enter to flip the coin...")
+    input("Press Enter to roll the dice...")
 
-    result = random.choice(["heads", "tails"])
+    roll = random.randint(1, 6)
 
-    print(f"\nCoin landed on: {result}")
+    print(f"\nDice rolled: {roll}")
 
-    if guess == result:
+    if guess == roll:
         wins += 1
         print("🎉 Correct!")
     else:
