@@ -355,6 +355,93 @@ def prime_stats(limit):
         print(f"Largest Gap     : {max(gaps)}")
         print(f"Average Gap     : {sum(gaps) / len(gaps):.2f}")
 
-    print("======================================")      
+    print("======================================")
+
+def main():
+    while True:
+        print("""
+========== PrimeTerminal ==========
+1. Check Prime
+2. Generate Primes
+3. Find Primes in Range
+4. Count Primes
+5. Next Prime
+6. Previous Prime
+7. Nth Prime
+8. Prime Factors
+9. Prime Statistics
+10. Random Prime
+11. Twin Primes
+12. Goldbach
+13. Exit
+===================================
+""")
+
+        choice = input("Choose an option: ")
+
+        try:
+            if choice == "1":
+                n = int(input("Enter number: "))
+                print("Prime" if is_prime(n) else "Not Prime")
+
+            elif choice == "2":
+                limit = int(input("Limit: "))
+                generate_primes(limit)
+
+            elif choice == "3":
+                start = int(input("Start: "))
+                end = int(input("End: "))
+                find_primes(start, end)
+
+            elif choice == "4":
+                limit = int(input("Limit: "))
+                print("Count:", count_primes(limit))
+
+            elif choice == "5":
+                n = int(input("Number: "))
+                print(next_prime(n))
+
+            elif choice == "6":
+                n = int(input("Number: "))
+                print(previous_prime(n))
+
+            elif choice == "7":
+                n = int(input("Which prime: "))
+                print(nth_prime(n))
+
+            elif choice == "8":
+                n = int(input("Number: "))
+                print(prime_factors(n))
+
+            elif choice == "9":
+                n = int(input("Limit: "))
+                prime_stats(n)
+
+            elif choice == "10":
+                start = int(input("Start: "))
+                end = int(input("End: "))
+                print(random_prime(start, end))
+
+            elif choice == "11":
+                limit = int(input("Limit: "))
+                print(twin_primes(limit))
+
+            elif choice == "12":
+                n = int(input("Even number: "))
+                goldbach(n)
+
+            elif choice == "13":
+                print("Closing PrimeTerminal...")
+                break
+
+            else:
+                print("Invalid option.")
+
+        except ValueError:
+            print("Please enter valid numbers.")
+
+
+if __name__ == "__main__":
+    main()
 
           
