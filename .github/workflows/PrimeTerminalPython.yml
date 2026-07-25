@@ -1,4 +1,4 @@
-name: Build Prime Terminal
+name: Build Python EXE
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
 
       - name: Build EXE
         run: |
-          pyinstaller --onefile --name PrimeTerminal prime.py
+          pyinstaller --onefile --name PrimeTerminal Python/PrimeTerminal/prime.py
 
       - name: Upload EXE
         uses: actions/upload-artifact@v4
