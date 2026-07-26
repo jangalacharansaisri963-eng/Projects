@@ -16,6 +16,7 @@ draws = 0
 
 highest_player_score = 0
 highest_robot_score = 0
+difficulty = "normal"
 
 
 # -----------------------------
@@ -27,6 +28,47 @@ def show_title():
     print("=" * 45)
     print("         HAND CRICKET TERMINAL")
     print("=" * 45)
+
+
+# -----------------------------
+# DIFFICULTY SELECTION
+# -----------------------------
+
+def choose_difficulty():
+
+    global difficulty
+
+    print("\n========== SELECT DIFFICULTY ==========")
+    print("1. Easy")
+    print("2. Normal")
+    print("3. Hard")
+    print("========================================")
+
+    while True:
+
+        choice = input("Enter your choice (1/2/3): ").strip()
+
+        if choice == "1":
+
+            difficulty = "easy"
+            print("🎮 Difficulty set to EASY")
+            return
+
+        elif choice == "2":
+
+            difficulty = "normal"
+            print("🎮 Difficulty set to NORMAL")
+            return
+
+        elif choice == "3":
+
+            difficulty = "hard"
+            print("🎮 Difficulty set to HARD")
+            return
+
+        else:
+
+            print("Please enter 1, 2, or 3.")
 
 
 # -----------------------------
@@ -516,4 +558,4 @@ def main():
 
 if __name__ == "__main__":
 
-    main()                                            
+    main()
