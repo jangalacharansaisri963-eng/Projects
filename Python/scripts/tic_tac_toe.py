@@ -93,6 +93,7 @@ def input_spot(player, board):
 
 # Robot move implementations
 
+
 def robot_move_easy(board):
     choices = [i for i, v in enumerate(board) if v not in ("X", "O")]
     return random.choice(choices)
@@ -122,6 +123,7 @@ def robot_move_normal(board, robot_sym, player_sym):
 
 
 # Minimax for hard difficulty
+
 
 def minimax(board, depth, is_maximizing, robot_sym, player_sym):
     winner = check_winner(board)
@@ -276,35 +278,44 @@ def main_menu():
                     diff = {'e': 'easy', 'n': 'normal', 'h': 'hard'}[d]
                     break
                 print("Enter e, n, or h.")
-            # Play vs robot
-            winner, board, player_sym, robot_sym = play_vs_robot(diff)
-            if winner == 'Quit':
-                print("Match aborted.")
-            else:
-                draw_board(board)
-                if winner == 'Draw':
-                    print("It's a draw!")
-                    update_stats('Draw', 'vs_robot')
+            # Play vs robot - allow continuing matches in the same mode/difficulty
+            while True:
+                winner, board, player_sym, robot_sym = play_vs_robot(diff)
+                if winner == 'Quit':
+                    print("Match aborted.")
                 else:
-                    if winner == player_sym:
-                        print("You win! Congratulations!")
-                        update_stats(winner, 'vs_robot', player_sym, robot_sym)
+                    draw_board(board)
+                    if winner == 'Draw':
+                        print("It's a draw!")
+                        update_stats('Draw', 'vs_robot')
                     else:
-                        print("Robot wins! Better luck next time.")
-                        update_stats(winner, 'vs_robot', player_sym, robot_sym)
+                        if winner == player_sym:
+                            print("You win! Congratulations!")
+                            update_stats(winner, 'vs_robot', player_sym, robot_sym)
+                        else:
+                            print("Robot wins! Better luck next time.")
+                            update_stats(winner, 'vs_robot', player_sym, robot_sym)
+                again = input("\nPlay again in vs Robot mode? (y/n): ").strip().lower()
+                if again != 'y':
+                    break
 
         elif choice == '2':
-            winner, board = play_two_player()
-            if winner == 'Quit':
-                print("Match aborted.")
-            else:
-                draw_board(board)
-                if winner == 'Draw':
-                    print("It's a draw!")
-                    update_stats('Draw', '2_player')
+            # Two-player mode with continue option
+            while True:
+                winner, board = play_two_player()
+                if winner == 'Quit':
+                    print("Match aborted.")
                 else:
-                    print(f"Player {winner} wins!")
-                    update_stats(winner, '2_player')
+                    draw_board(board)
+                    if winner == 'Draw':
+                        print("It's a draw!")
+                        update_stats('Draw', '2_player')
+                    else:
+                        print(f"Player {winner} wins!")
+                        update_stats(winner, '2_player')
+                again = input("\nPlay again in Two Player mode? (y/n): ").strip().lower()
+                if again != 'y':
+                    break
 
         elif choice == '3':
             show_stats()
