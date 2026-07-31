@@ -1,0 +1,204 @@
+/* ==========================================
+   MY DINO GAME
+   style.css
+   ========================================== */
+
+
+/* ------------------------------------------
+   PAGE
+   ------------------------------------------ */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    min-height: 100%;
+
+    font-family: Arial, sans-serif;
+
+    background: #ffffff;
+}
+
+
+/* ------------------------------------------
+   GAME CONTAINER
+   ------------------------------------------ */
+
+#game-container {
+    position: relative;
+
+    width: 100%;
+    max-width: 1000px;
+
+    margin: 40px auto 0;
+
+    text-align: center;
+}
+
+
+/* ------------------------------------------
+   SCORE
+   ------------------------------------------ */
+
+#score {
+    position: absolute;
+
+    top: 10px;
+    right: 30px;
+
+    z-index: 10;
+
+    font-family: monospace;
+    font-size: 18px;
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    color: #535353;
+}
+
+
+/* ------------------------------------------
+   GAME CANVAS
+   ------------------------------------------ */
+
+#game {
+    display: block;
+
+    width: 900px;
+    height: 300px;
+
+    max-width: 100%;
+
+    margin: 0 auto;
+
+    background: #ffffff;
+
+    border: none;
+
+    image-rendering: pixelated;
+}
+
+
+/* ------------------------------------------
+   GAME OVER
+   ------------------------------------------ */
+
+#game-over {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 300px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(255, 255, 255, 0.85);
+
+    z-index: 20;
+}
+
+
+/* Hide Game Over initially */
+
+#game-over.hidden {
+    display: none;
+}
+
+
+/* ------------------------------------------
+   GAME OVER TITLE
+   ------------------------------------------ */
+
+#game-over h1 {
+    margin: 0 0 15px;
+
+    font-family: monospace;
+    font-size: 32px;
+
+    letter-spacing: 3px;
+
+    color: #535353;
+}
+
+
+/* ------------------------------------------
+   GAME OVER MESSAGE
+   ------------------------------------------ */
+
+#game-over p {
+    margin: 0;
+
+    font-family: monospace;
+    font-size: 16px;
+
+    color: #535353;
+}
+
+
+/* ------------------------------------------
+   MOBILE DEVICES
+   ------------------------------------------ */
+
+@media (max-width: 700px) {
+
+    #game-container {
+        margin-top: 20px;
+    }
+
+    #game {
+        width: 100%;
+        height: auto;
+
+        aspect-ratio: 3 / 1;
+    }
+
+    #score {
+        top: 8px;
+        right: 15px;
+
+        font-size: 14px;
+    }
+
+    #game-over h1 {
+        font-size: 24px;
+    }
+
+    #game-over p {
+        font-size: 14px;
+    }
+}
+
+
+/* ------------------------------------------
+   PREVENT UNWANTED SELECTION
+   ------------------------------------------ */
+
+body {
+    user-select: none;
+    -webkit-user-select: none;
+
+    overflow-x: hidden;
+}
+
+
+/* ------------------------------------------
+   TOUCH SUPPORT
+   ------------------------------------------ */
+
+#game {
+    touch-action: none;
+}
