@@ -3,14 +3,14 @@
    style.css
    ========================================== */
 
+* {
+    box-sizing: border-box;
+}
+
 
 /* ------------------------------------------
    PAGE
    ------------------------------------------ */
-
-* {
-    box-sizing: border-box;
-}
 
 html,
 body {
@@ -23,6 +23,11 @@ body {
     font-family: Arial, sans-serif;
 
     background: #ffffff;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    overflow-x: hidden;
 }
 
 
@@ -34,11 +39,13 @@ body {
     position: relative;
 
     width: 100%;
-    max-width: 1000px;
+    max-width: 900px;
 
-    margin: 40px auto 0;
+    margin: 20px auto 0;
 
     text-align: center;
+
+    touch-action: none;
 }
 
 
@@ -50,17 +57,20 @@ body {
     position: absolute;
 
     top: 10px;
-    right: 30px;
+    right: 20px;
 
     z-index: 10;
 
     font-family: monospace;
+
     font-size: 18px;
     font-weight: bold;
 
     letter-spacing: 2px;
 
     color: #535353;
+
+    pointer-events: none;
 }
 
 
@@ -71,23 +81,21 @@ body {
 #game {
     display: block;
 
-    width: 900px;
-    height: 300px;
-
-    max-width: 100%;
-
-    margin: 0 auto;
+    width: 100%;
+    height: auto;
 
     background: #ffffff;
 
     border: none;
 
     image-rendering: pixelated;
+
+    touch-action: none;
 }
 
 
 /* ------------------------------------------
-   GAME OVER
+   GAME OVER SCREEN
    ------------------------------------------ */
 
 #game-over {
@@ -97,7 +105,7 @@ body {
     left: 0;
 
     width: 100%;
-    height: 300px;
+    height: 100%;
 
     display: flex;
 
@@ -112,7 +120,7 @@ body {
 }
 
 
-/* Hide Game Over initially */
+/* Hide Game Over */
 
 #game-over.hidden {
     display: none;
@@ -124,10 +132,11 @@ body {
    ------------------------------------------ */
 
 #game-over h1 {
-    margin: 0 0 15px;
+    margin: 0 0 20px;
 
     font-family: monospace;
-    font-size: 32px;
+
+    font-size: 30px;
 
     letter-spacing: 3px;
 
@@ -136,16 +145,41 @@ body {
 
 
 /* ------------------------------------------
-   GAME OVER MESSAGE
+   RESTART BUTTON
    ------------------------------------------ */
 
-#game-over p {
-    margin: 0;
+#restart-button {
+    width: 60px;
+    height: 60px;
 
-    font-family: monospace;
-    font-size: 16px;
+    padding: 0;
+
+    border: 3px solid #535353;
+
+    border-radius: 50%;
+
+    background: #ffffff;
 
     color: #535353;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 36px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* Button press effect */
+
+#restart-button:active {
+    transform: scale(0.9);
 }
 
 
@@ -156,49 +190,56 @@ body {
 @media (max-width: 700px) {
 
     #game-container {
-        margin-top: 20px;
+        margin-top: 10px;
     }
 
-    #game {
-        width: 100%;
-        height: auto;
-
-        aspect-ratio: 3 / 1;
-    }
 
     #score {
         top: 8px;
-        right: 15px;
+        right: 12px;
 
-        font-size: 14px;
+        font-size: 13px;
     }
+
 
     #game-over h1 {
         font-size: 24px;
+
+        margin-bottom: 16px;
     }
 
-    #game-over p {
-        font-size: 14px;
+
+    #restart-button {
+        width: 58px;
+        height: 58px;
+
+        font-size: 34px;
     }
 }
 
 
 /* ------------------------------------------
-   PREVENT UNWANTED SELECTION
+   VERY SMALL SCREENS
    ------------------------------------------ */
 
-body {
-    user-select: none;
-    -webkit-user-select: none;
+@media (max-width: 400px) {
 
-    overflow-x: hidden;
-}
+    #score {
+        font-size: 11px;
+
+        letter-spacing: 1px;
+    }
 
 
-/* ------------------------------------------
-   TOUCH SUPPORT
-   ------------------------------------------ */
+    #game-over h1 {
+        font-size: 21px;
+    }
 
-#game {
-    touch-action: none;
+
+    #restart-button {
+        width: 54px;
+        height: 54px;
+
+        font-size: 31px;
+    }
 }
