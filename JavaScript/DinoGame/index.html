@@ -11,47 +11,38 @@
 
     <title>My Dino Game</title>
 
-    <!-- Game Styling -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- ==========================================
-         GAME CONTAINER
-         ========================================== -->
-
     <main id="game-container">
 
-        <!-- Score -->
         <div id="score">
-            HI 00000
+            HI 00000 00000
         </div>
 
-        <!-- Game Canvas -->
         <canvas
             id="game"
             width="900"
             height="300"
         ></canvas>
 
-        <!-- Game Over Message -->
+
+        <!-- GAME OVER SCREEN -->
+
         <div id="game-over" class="hidden">
 
             <h1>GAME OVER</h1>
 
-            <p>
-                Press SPACE to restart
-            </p>
+            <button id="restart-button">
+                ↻
+            </button>
 
         </div>
 
     </main>
 
-
-    <!-- ==========================================
-         GAME JAVASCRIPT
-         ========================================== -->
 
     <script src="game.js"></script>
 
