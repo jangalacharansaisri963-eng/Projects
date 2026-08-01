@@ -56,6 +56,87 @@ from functions.basic_math import (
     digit_sum,
     digit_product,
     reverse_number,
+        add,
+    subtract,
+    multiply,
+    divide,
+
+    apsum,
+    apsub,
+    apterm,
+
+    gpsum,
+    gpterm,
+
+    arithmean,
+    average,
+
+    percentage,
+    percentof,
+    increase,
+    decrease,
+
+    ratio,
+    proportion,
+
+    simple_interest,
+    amount,
+    compound_amount,
+    compound_interest,
+
+    triangular,
+    nsum,
+    squaresum,
+    cubesum,
+    oddsum,
+    evensum,
+    sumofintegers,
+
+    remainder,
+    quotient,
+
+    distance,
+    speed,
+    time,
+    work,
+    power,
+
+    kineticenergy,
+    potentialenergy,
+
+    density,
+    mass,
+    volume,
+
+    pythagoras,
+    hypotenuse,
+
+    abs_value,
+    min_value,
+    max_value,
+    clamp,
+    midpoint,
+    range_value,
+
+    percent_change,
+
+    ratio_sum,
+    ratio_difference,
+
+    direct_proportion,
+    inverse_proportion,
+
+    nth_term,
+
+    arithmetic_mean,
+    geometric_mean,
+    harmonic_mean,
+
+    factorial_ratio,
+    permutation,
+    combination,
+
+    remainder_percentage,
 )
 
 from functions.roots import (
@@ -204,6 +285,88 @@ MATH_LIB = {
     "digit_product": digit_product,
 
     "reverse_number": reverse_number,
+
+        "add": add,
+    "subtract": subtract,
+    "multiply": multiply,
+    "divide": divide,
+
+    "apsum": apsum,
+    "apsub": apsub,
+    "apterm": apterm,
+
+    "gpsum": gpsum,
+    "gpterm": gpterm,
+
+    "arithmean": arithmean,
+    "average": average,
+
+    "percentage": percentage,
+    "percentof": percentof,
+    "increase": increase,
+    "decrease": decrease,
+
+    "ratio": ratio,
+    "proportion": proportion,
+
+    "simple_interest": simple_interest,
+    "amount": amount,
+    "compound_amount": compound_amount,
+    "compound_interest": compound_interest,
+
+    "triangular": triangular,
+    "nsum": nsum,
+    "squaresum": squaresum,
+    "cubesum": cubesum,
+    "oddsum": oddsum,
+    "evensum": evensum,
+    "sumofintegers": sumofintegers,
+
+    "remainder": remainder,
+    "quotient": quotient,
+
+    "distance": distance,
+    "speed": speed,
+    "time": time,
+    "work": work,
+    "power": power,
+
+    "kineticenergy": kineticenergy,
+    "potentialenergy": potentialenergy,
+
+    "density": density,
+    "mass": mass,
+    "volume": volume,
+
+    "pythagoras": pythagoras,
+    "hypotenuse": hypotenuse,
+
+    "abs_value": abs_value,
+    "min_value": min_value,
+    "max_value": max_value,
+    "clamp": clamp,
+    "midpoint": midpoint,
+    "range_value": range_value,
+
+    "percent_change": percent_change,
+
+    "ratio_sum": ratio_sum,
+    "ratio_difference": ratio_difference,
+
+    "direct_proportion": direct_proportion,
+    "inverse_proportion": inverse_proportion,
+
+    "nth_term": nth_term,
+
+    "arithmetic_mean": arithmetic_mean,
+    "geometric_mean": geometric_mean,
+    "harmonic_mean": harmonic_mean,
+
+    "factorial_ratio": factorial_ratio,
+    "permutation": permutation,
+    "combination": combination,
+
+    "remainder_percentage": remainder_percentage,
 
     # ======================================
     # Logarithms
