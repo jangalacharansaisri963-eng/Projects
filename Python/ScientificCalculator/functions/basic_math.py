@@ -369,3 +369,120 @@ def pythagoras(a, b):
 
 def hypotenuse(a, b):
     return (a ** 2 + b ** 2) ** 0.5
+
+def abs_value(x):
+    return abs(x)
+
+
+def min_value(a, b):
+    return min(a, b)
+
+
+def max_value(a, b):
+    return max(a, b)
+
+
+def clamp(x, minimum, maximum):
+    return max(minimum, min(x, maximum))
+
+
+def midpoint(a, b):
+    return (a + b) / 2
+
+
+def range_value(a, b):
+    return abs(b - a)
+
+
+def percent_change(old, new):
+    if old == 0:
+        raise ZeroDivisionError(
+            "Cannot calculate percentage change from zero."
+        )
+
+    return ((new - old) / old) * 100
+
+
+def ratio_sum(a, b):
+    return a + b
+
+
+def ratio_difference(a, b):
+    return a - b
+
+
+def direct_proportion(a, b, c):
+    return (b * c) / a
+
+
+def inverse_proportion(a, b, c):
+    return (a * b) / c
+
+
+def nth_term(a, d, n):
+    return a + (n - 1) * d
+
+
+def arithmetic_mean(*values):
+    if not values:
+        raise ValueError(
+            "At least one value is required."
+        )
+
+    return sum(values) / len(values)
+
+
+def geometric_mean(a, b):
+    if a < 0 or b < 0:
+        raise ValueError(
+            "Geometric mean requires non-negative values."
+        )
+
+    return (a * b) ** 0.5
+
+
+def harmonic_mean(a, b):
+    if a == 0 or b == 0:
+        raise ZeroDivisionError(
+            "Cannot calculate harmonic mean with zero."
+        )
+
+    return 2 * a * b / (a + b)
+
+
+def factorial_ratio(n, r):
+    if r < 0 or n < 0 or r > n:
+        raise ValueError(
+            "Invalid n or r."
+        )
+
+    return factorial(n) / factorial(n - r)
+
+
+def permutation(n, r):
+    if r < 0 or n < 0 or r > n:
+        raise ValueError(
+            "Invalid n or r."
+        )
+
+    return factorial(n) / factorial(n - r)
+
+
+def combination(n, r):
+    if r < 0 or n < 0 or r > n:
+        raise ValueError(
+            "Invalid n or r."
+        )
+
+    return factorial(n) / (
+        factorial(r) * factorial(n - r)
+    )
+
+
+def remainder_percentage(part, whole):
+    if whole == 0:
+        raise ZeroDivisionError(
+            "Whole cannot be zero."
+        )
+
+    return (part % whole) / whole * 100
