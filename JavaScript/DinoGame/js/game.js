@@ -6,6 +6,17 @@
 
 
 // ------------------------------------------
+// FPS TRACKING
+// ------------------------------------------
+
+let fps = 0;
+
+let fpsFrameCount = 0;
+
+let fpsLastTime = performance.now();
+
+
+// ------------------------------------------
 // GROUND
 // ------------------------------------------
 
@@ -95,7 +106,14 @@ function updateScore() {
 
 function updateDifficulty() {
 
-    // Slowly increase speed
+    // Don't automatically overwrite
+    // developer-controlled speed.
+
+    if (debugMode) {
+
+        return;
+    }
+
 
     gameSpeed =
         6 +
@@ -150,10 +168,13 @@ function resetGame() {
 
     nextObstacleTime = 100;
 
+
     obstacles = [];
 
 
     // Reset Dino
+
+    dino.x = 80;
 
     dino.y =
         GROUND_Y -
@@ -168,13 +189,136 @@ function resetGame() {
     dino.runTimer = 0;
 
 
-    // Start game
+    // Reset game state
 
     gameRunning = true;
+
+    gamePaused = false;
 
 
     gameOverElement.classList.add(
         "hidden"
+    );
+}
+
+
+// ------------------------------------------
+// DEBUG INFORMATION
+// ------------------------------------------
+
+function drawDebugInfo() {
+
+    if (!debugMode) {
+
+        return;
+    }
+
+
+    ctx.fillStyle = "#535353";
+
+    ctx.font =
+        "12px monospace";
+
+
+    const lines = [
+
+        "DEBUG MODE",
+
+        "FPS: " + fps,
+
+        "Speed: " + gameSpeed,
+
+        "Score: " + Math.floor(score),
+
+        "Dino X: " + Math.floor(dino.x),
+
+        "Dino Y: " + Math.floor(dino.y),
+
+        "Velocity Y: " +
+            dino.velocityY.toFixed(2),
+
+        "Grounded: " + dino.grounded,
+
+        "Obstacles: " + obstacles.length,
+
+        "God: " + godMode,
+
+        "Noclip: " + noClip,
+
+        "Frozen: " + dinoFrozen,
+
+        "Infinite Jump: " +
+            infiniteJump
+    ];
+
+
+    let y = 20;
+
+
+    for (const line of lines) {
+
+        ctx.fillText(
+            line,
+            10,
+            y
+        );
+
+        y += 15;
+    }
+}
+
+
+// ------------------------------------------
+// FPS CALCULATION
+// ------------------------------------------
+
+function updateFPS() {
+
+    fpsFrameCount++;
+
+
+    const currentTime =
+        performance.now();
+
+
+    const elapsed =
+        currentTime -
+        fpsLastTime;
+
+
+    if (elapsed >= 1000) {
+
+        fps = fpsFrameCount;
+
+        fpsFrameCount = 0;
+
+        fpsLastTime = currentTime;
+    }
+}
+
+
+// ------------------------------------------
+// FPS DISPLAY
+// ------------------------------------------
+
+function drawFPS() {
+
+    if (!showFPS) {
+
+        return;
+    }
+
+
+    ctx.fillStyle = "#535353";
+
+    ctx.font =
+        "14px monospace";
+
+
+    ctx.fillText(
+        "FPS: " + fps,
+        GAME_WIDTH - 80,
+        20
     );
 }
 
@@ -220,6 +364,13 @@ function draw() {
     // Obstacles
 
     drawObstacles();
+
+
+    // Developer information
+
+    drawDebugInfo();
+
+    drawFPS();
 }
 
 
@@ -229,7 +380,20 @@ function draw() {
 
 function update() {
 
+    updateFPS();
+
+
+    // Game Over
+
     if (!gameRunning) {
+
+        return;
+    }
+
+
+    // Developer pause
+
+    if (gamePaused) {
 
         return;
     }
