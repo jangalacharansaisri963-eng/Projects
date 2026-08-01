@@ -180,6 +180,28 @@ def reverse_number(n):
 
     return reversed_number
 
+
+def add(a, b):
+    return a + b
+
+
+def subtract(a, b):
+    return a - b
+
+
+def multiply(a, b):
+    return a * b
+
+
+def divide(a, b):
+    if b == 0:
+        raise ZeroDivisionError(
+            "Cannot divide by zero."
+        )
+
+    return a / b
+
+
 def apsum(a, b):
     return (a + b) * b / 2
 
@@ -192,18 +214,19 @@ def apterm(a, d, n):
     return a + (n - 1) * d
 
 
-def apsum(a, d, n):
-    return n * (2 * a + (n - 1) * d) / 2
-
-
 def gpsum(a, r, n):
     if r == 1:
         return a * n
+
     return a * (r ** n - 1) / (r - 1)
 
 
 def gpterm(a, r, n):
     return a * r ** (n - 1)
+
+
+def arithmean(a, b):
+    return (a + b) / 2
 
 
 def average(a, b):
@@ -263,6 +286,10 @@ def triangular(n):
     return n * (n + 1) / 2
 
 
+def nsum(n):
+    return n * (n + 1) / 2
+
+
 def squaresum(n):
     return n * (n + 1) * (2 * n + 1) / 6
 
@@ -271,8 +298,29 @@ def cubesum(n):
     return (n * (n + 1) / 2) ** 2
 
 
+def oddsum(n):
+    return n ** 2
+
+
+def evensum(n):
+    return n * (n + 1)
+
+
 def sumofintegers(a, b):
     return (a + b) * (b - a + 1) / 2
+
+
+def remainder(a, b):
+    return a % b
+
+
+def quotient(a, b):
+    if b == 0:
+        raise ZeroDivisionError(
+            "Cannot divide by zero."
+        )
+
+    return a // b
 
 
 def distance(speed, time):
@@ -332,4 +380,4 @@ def quadratic(a, b, c):
     return (
         (-b + discriminant ** 0.5) / (2 * a),
         (-b - discriminant ** 0.5) / (2 * a)
-    )
+        )
