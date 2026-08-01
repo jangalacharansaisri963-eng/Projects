@@ -18,6 +18,13 @@ from functions.trig import (
     atan,
 )
 
+from functions.physics import (
+    convert_temperature
+    calculate_acceleration
+    calculate_velocity
+    distance_circle
+    displacement_circle
+
 from functions.complex_numbers import (
     real,
     imag,
