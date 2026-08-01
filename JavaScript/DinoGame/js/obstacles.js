@@ -96,6 +96,25 @@ class Cactus {
                 18
             );
         }
+
+
+        // ----------------------------------
+        // DEBUG HITBOX
+        // ----------------------------------
+
+        if (showHitbox) {
+
+            ctx.strokeStyle = "#ff0000";
+
+            ctx.lineWidth = 1;
+
+            ctx.strokeRect(
+                this.x,
+                this.y,
+                this.width,
+                this.height
+            );
+        }
     }
 
 
@@ -129,6 +148,14 @@ function createObstacle() {
 // ------------------------------------------
 
 function updateObstacles() {
+
+    // Don't update obstacles while paused
+
+    if (gamePaused) {
+
+        return;
+    }
+
 
     obstacleTimer++;
 
@@ -197,6 +224,19 @@ function drawObstacles() {
 
 function checkCollision() {
 
+    // --------------------------------------
+    // GOD MODE / NOCLIP
+    // --------------------------------------
+
+    if (
+        godMode ||
+        noClip
+    ) {
+
+        return;
+    }
+
+
     // Slightly smaller Dino hitbox
     // makes the game feel fairer.
 
@@ -212,7 +252,9 @@ function checkCollision() {
     };
 
 
-    // Check every cactus
+    // --------------------------------------
+    // CHECK EVERY CACTUS
+    // --------------------------------------
 
     for (
         const obstacle of obstacles
