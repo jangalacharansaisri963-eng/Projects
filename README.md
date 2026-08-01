@@ -3,6 +3,27 @@ This is the main projects repository created by Dan Studios. It is still
 under progress.
 Dan means Developer Authority Nature
 
+## The Foreshadowing
+
+Once upon a time, a boy decided to make a calculator.
+
+Why?
+
+Because one day, he encountered a trigonometry question that required
+an inverse tangent and somehow produced an answer like `26.27°`.
+
+He sat there without a calculator thinking:
+
+> "Where the hell did that number come from?"
+
+The teacher simply announced the answer.
+
+And thus...
+
+**The Scientific Calculator Project was born.**
+
+Foreshadowing.
+
 Here is a tutorial of the repository:
 
 # Path: Python/scripts/
