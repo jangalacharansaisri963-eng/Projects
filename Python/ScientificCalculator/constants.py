@@ -68,6 +68,9 @@ def get_phi():
 def get_r15():
     return R15
 
+def get_W():
+    return W
+
 
 # ==========================================
 # DIGIT HELPERS
@@ -101,6 +104,7 @@ if __name__ == "__main__":
     print("E =", E)
     print("PHI =", PHI)
     print("R15 =", R15)
+    print("W =", W)
 
     print("\nFirst 25 digits:")
 
