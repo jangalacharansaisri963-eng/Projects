@@ -7,10 +7,13 @@ Algorithms for generating mathematical constants.
 from decimal import Decimal, getcontext
 
 
-def calculate_pi():
+def calculate_pi(digits=None):
     """
     Compute π using the Gauss-Legendre algorithm.
     """
+    old_prec = getcontext().prec
+    if digits is not None:
+        getcontext().prec = digits + 5  # Guard digits for rounding accuracy
 
     one = Decimal(1)
     two = Decimal(2)
@@ -32,22 +35,29 @@ def calculate_pi():
 
         a, b, t, p = an, bn, tn, pn
 
-    return ((a + b) ** 2) / (four * t)
+    result = ((a + b) ** 2) / (four * t)
+    
+    if digits is not None:
+        getcontext().prec = old_prec
+        return +result  # Unary plus applies the original precision context
+    return result
 
 
-def calculate_e():
+def calculate_e(digits=None):
     """
     Compute Euler's number using:
 
         e = Σ 1/n!
     """
+    old_prec = getcontext().prec
+    if digits is not None:
+        getcontext().prec = digits + 5
 
     result = Decimal(0)
     factorial = 1
     n = 0
 
     while True:
-
         if n > 0:
             factorial *= n
 
@@ -59,29 +69,42 @@ def calculate_e():
         result += term
         n += 1
 
+    if digits is not None:
+        getcontext().prec = old_prec
+        return +result
     return result
 
 
-def calculate_phi():
+def calculate_phi(digits=None):
     """
     Golden ratio.
     """
+    old_prec = getcontext().prec
+    if digits is not None:
+        getcontext().prec = digits + 5
 
-    return (Decimal(1) + Decimal(5).sqrt()) / Decimal(2)
+    result = (Decimal(1) + Decimal(5).sqrt()) / Decimal(2)
+
+    if digits is not None:
+        getcontext().prec = old_prec
+        return +result
+    return result
 
 
-def calculate_r15():
+def calculate_r15(digits=None):
     """
     R15 = Σ 1 / n^(n+1)
     """
+    old_prec = getcontext().prec
+    if digits is not None:
+        getcontext().prec = digits + 5
 
     result = Decimal(0)
     n = 1
 
     while True:
-
+        # Decimal values automatically respect current context precision limits
         denominator = Decimal(n) ** Decimal(n + 1)
-
         term = Decimal(1) / denominator
 
         if term == 0:
@@ -90,4 +113,8 @@ def calculate_r15():
         result += term
         n += 1
 
+    if digits is not None:
+        getcontext().prec = old_prec
+        return +result
     return result
+
