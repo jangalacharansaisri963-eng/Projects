@@ -275,15 +275,6 @@ def compound_interest(p, r, n, t):
     return compound_amount(p, r, n, t) - p
 
 
-def factorial(n):
-    result = 1
-
-    for i in range(1, n + 1):
-        result *= i
-
-    return result
-
-
 def triangular(n):
     return n * (n + 1) / 2
 
