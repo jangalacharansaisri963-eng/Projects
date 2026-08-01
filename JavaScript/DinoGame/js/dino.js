@@ -167,6 +167,25 @@ const dino = {
                 7
             );
         }
+
+
+        // ----------------------------------
+        // DEBUG HITBOX
+        // ----------------------------------
+
+        if (showHitbox) {
+
+            ctx.strokeStyle = "#ff0000";
+
+            ctx.lineWidth = 1;
+
+            ctx.strokeRect(
+                this.x + 8,
+                this.y + 5,
+                this.width - 12,
+                this.height - 7
+            );
+        }
     },
 
 
@@ -176,7 +195,16 @@ const dino = {
 
     update() {
 
+        // Freeze command
+
+        if (dinoFrozen) {
+
+            return;
+        }
+
+
         // Gravity
+
         this.velocityY += this.gravity;
 
         this.y += this.velocityY;
@@ -233,10 +261,40 @@ const dino = {
 
     jump() {
 
-        if (
-            !this.grounded ||
-            !gameRunning
-        ) {
+        // Game must be running
+
+        if (!gameRunning) {
+
+            return;
+        }
+
+
+        // Frozen Dino cannot jump
+
+        if (dinoFrozen) {
+
+            return;
+        }
+
+
+        // Infinite jump allows jumping
+        // even while airborne
+
+        if (infiniteJump) {
+
+            this.velocityY =
+                this.jumpStrength;
+
+            this.grounded = false;
+
+            return;
+        }
+
+
+        // Normal jump
+
+        if (!this.grounded) {
+
             return;
         }
 
