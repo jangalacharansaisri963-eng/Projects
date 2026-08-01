@@ -10,6 +10,8 @@ from math import isqrt
 def square(x):
     return x * x
 
+def pow(x, y):
+    return x**y
 
 def cube(x):
     return x * x * x
