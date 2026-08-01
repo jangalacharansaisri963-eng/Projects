@@ -24,6 +24,10 @@ from functions.physics import (
     calculate_velocity
     distance_circle
     displacement_circle
+    calculate_force
+    calculate_friction
+    resultant_density_by_volume
+    resultant_density_by_mass
 
 from functions.complex_numbers import (
     real,
@@ -295,7 +299,7 @@ MATH_LIB = {
 
     "reverse_number": reverse_number,
 
-        "add": add,
+    "add": add,
     "subtract": subtract,
     "multiply": multiply,
     "divide": divide,
@@ -377,6 +381,20 @@ MATH_LIB = {
 
     "remainder_percentage": remainder_percentage,
 
+    # ======================================
+    # Physics
+    # ======================================
+
+    "convert_temperature": convert_temperature,
+    "calculate_acceleration": calculate_acceleration
+    "calculate_velocity": calculate_velocity
+    "distance_circle": distance_circle
+    "displacement_circle": displacement_circle
+    "calculate_force": calculate_force
+    "calculate_friction": calculate_friction
+    "resultant_density_by_volume": resultant_density_by_volume
+    "resultant_density_by_mass": resultant_density_by_mass
+    
     # ======================================
     # Logarithms
     # ======================================
