@@ -106,25 +106,53 @@ function updateScore() {
 
 function updateDifficulty() {
 
-    // Don't automatically overwrite
-    // developer-controlled speed.
+    // --------------------------------------
+    // NORMAL SPEED INCREASE
+    // --------------------------------------
 
-    if (debugMode) {
+    if (score < 100) {
 
-        return;
-    }
+        gameSpeed = 6;
 
+    } else if (score < 500) {
 
-    gameSpeed =
-        6 +
-        Math.floor(score / 100) * 0.5;
+        gameSpeed = 7;
 
+    } else if (score < 1000) {
 
-    // Maximum speed
+        gameSpeed = 8;
 
-    if (gameSpeed > 12) {
+    } else if (score < 5000) {
+
+        gameSpeed = 9;
+
+    } else if (score < 10000) {
+
+        gameSpeed = 10;
+
+    } else if (score < 50000) {
 
         gameSpeed = 12;
+
+    } else if (score < 100000) {
+
+        gameSpeed = 14;
+
+    } else if (score < 500000) {
+
+        gameSpeed = 16;
+
+    } else if (score < 1000000) {
+
+        gameSpeed = 18;
+
+    } else {
+
+        // ----------------------------------
+        // 1 MILLION+ SCORE
+        // ----------------------------------
+
+        gameSpeed = 20;
     }
 }
 
