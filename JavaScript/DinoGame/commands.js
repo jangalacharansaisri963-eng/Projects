@@ -11,18 +11,13 @@
 // ------------------------------------------
 
 let godMode = false;
-
 let noClip = false;
-
 let dinoFrozen = false;
-
 let infiniteJump = false;
-
 let showHitbox = false;
-
 let debugMode = false;
-
 let showFPS = false;
+let gamePaused = false;
 
 
 // ------------------------------------------
@@ -36,12 +31,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     help: {
-
         description: "Show all developer commands.",
 
         execute() {
 
-            consolePrint("Available commands:");
+            consolePrint("===== DEVELOPER COMMANDS =====");
 
             consolePrint("/help");
             consolePrint("/clear");
@@ -67,6 +61,8 @@ const DEV_COMMANDS = {
             consolePrint("/hitbox");
             consolePrint("/debug");
             consolePrint("/teleport <x>");
+
+            consolePrint("==============================");
         }
     },
 
@@ -76,13 +72,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     clear: {
-
         description: "Clear console.",
 
         execute() {
 
             consoleClear();
-
         }
     },
 
@@ -92,7 +86,6 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     speed: {
-
         description: "Set game speed.",
 
         execute(args) {
@@ -106,10 +99,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
-            const value =
-                Number(args[0]);
-
+            const value = Number(args[0]);
 
             if (!Number.isFinite(value)) {
 
@@ -120,7 +110,6 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
             if (value < 0) {
 
                 consolePrint(
@@ -130,13 +119,10 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
             gameSpeed = value;
 
-
             consolePrint(
-                "Game speed set to " +
-                value
+                "Game speed set to " + value
             );
         }
     },
@@ -147,7 +133,6 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     score: {
-
         description: "Set current score.",
 
         execute(args) {
@@ -161,12 +146,12 @@ const DEV_COMMANDS = {
                 return;
             }
 
+            const value = Number(args[0]);
 
-            const value =
-                Number(args[0]);
-
-
-            if (!Number.isFinite(value)) {
+            if (
+                !Number.isFinite(value) ||
+                value < 0
+            ) {
 
                 consolePrint(
                     "Invalid score."
@@ -175,19 +160,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
-            if (value < 0) {
-
-                consolePrint(
-                    "Score cannot be negative."
-                );
-
-                return;
-            }
-
-
             score = value;
-
 
             consolePrint(
                 "Score set to " +
@@ -202,7 +175,6 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     highscore: {
-
         description: "Set high score.",
 
         execute(args) {
@@ -216,10 +188,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
-            const value =
-                Number(args[0]);
-
+            const value = Number(args[0]);
 
             if (
                 !Number.isFinite(value) ||
@@ -233,9 +202,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
             highScore = value;
-
 
             consolePrint(
                 "High score set to " +
@@ -250,8 +217,7 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     jump: {
-
-        description: "Change Dino jump strength.",
+        description: "Set Dino jump strength.",
 
         execute(args) {
 
@@ -264,10 +230,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
-            const value =
-                Number(args[0]);
-
+            const value = Number(args[0]);
 
             if (!Number.isFinite(value)) {
 
@@ -278,9 +241,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
             dino.jumpStrength = value;
-
 
             consolePrint(
                 "Jump strength set to " +
@@ -295,8 +256,7 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     gravity: {
-
-        description: "Change Dino gravity.",
+        description: "Set Dino gravity.",
 
         execute(args) {
 
@@ -309,10 +269,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
-            const value =
-                Number(args[0]);
-
+            const value = Number(args[0]);
 
             if (!Number.isFinite(value)) {
 
@@ -323,9 +280,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
             dino.gravity = value;
-
 
             consolePrint(
                 "Gravity set to " +
@@ -340,7 +295,6 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     spawn: {
-
         description: "Spawn an obstacle.",
 
         execute(args) {
@@ -357,9 +311,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
             createObstacle();
-
 
             consolePrint(
                 "Cactus spawned."
@@ -373,13 +325,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     clearobstacles: {
-
         description: "Remove all obstacles.",
 
         execute() {
 
             obstacles = [];
-
 
             consolePrint(
                 "All obstacles cleared."
@@ -393,13 +343,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     god: {
-
         description: "Toggle invincibility.",
 
         execute() {
 
             godMode = !godMode;
-
 
             consolePrint(
                 "God mode: " +
@@ -414,13 +362,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     kill: {
-
         description: "Force Game Over.",
 
         execute() {
 
             gameOver();
-
 
             consolePrint(
                 "Game Over triggered."
@@ -434,13 +380,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     restart: {
-
         description: "Restart the game.",
 
         execute() {
 
             resetGame();
-
 
             consolePrint(
                 "Game restarted."
@@ -454,13 +398,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     pause: {
-
         description: "Pause the game.",
 
         execute() {
 
-            gameRunning = false;
-
+            gamePaused = true;
 
             consolePrint(
                 "Game paused."
@@ -474,18 +416,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     resume: {
-
         description: "Resume the game.",
 
         execute() {
 
-            gameRunning = true;
-
-
-            gameOverElement.classList.add(
-                "hidden"
-            );
-
+            gamePaused = false;
 
             consolePrint(
                 "Game resumed."
@@ -499,13 +434,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     fps: {
-
         description: "Toggle FPS counter.",
 
         execute() {
 
             showFPS = !showFPS;
-
 
             consolePrint(
                 "FPS display: " +
@@ -520,29 +453,20 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     coords: {
-
         description: "Show Dino coordinates.",
 
         execute() {
 
             consolePrint(
-                "Dino X: " +
-                dino.x
+                "Dino X: " + dino.x
             );
 
             consolePrint(
-                "Dino Y: " +
-                dino.y
+                "Dino Y: " + dino.y
             );
 
             consolePrint(
-                "Dino grounded: " +
-                dino.grounded
-            );
-
-            consolePrint(
-                "Game running: " +
-                gameRunning
+                "Grounded: " + dino.grounded
             );
         }
     },
@@ -553,7 +477,6 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     version: {
-
         description: "Show game version.",
 
         execute() {
@@ -574,7 +497,6 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     about: {
-
         description: "Show game information.",
 
         execute() {
@@ -584,7 +506,7 @@ const DEV_COMMANDS = {
             );
 
             consolePrint(
-                "A custom Chrome Dino-style game."
+                "Custom Chrome Dino-style game."
             );
 
             consolePrint(
@@ -599,13 +521,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     noclip: {
-
         description: "Toggle collision detection.",
 
         execute() {
 
             noClip = !noClip;
-
 
             consolePrint(
                 "Noclip: " +
@@ -620,13 +540,11 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     freeze: {
-
         description: "Freeze/unfreeze Dino.",
 
         execute() {
 
             dinoFrozen = !dinoFrozen;
-
 
             consolePrint(
                 "Dino freeze: " +
@@ -641,14 +559,12 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     infinitejump: {
-
         description: "Toggle unlimited jumping.",
 
         execute() {
 
             infiniteJump =
                 !infiniteJump;
-
 
             consolePrint(
                 "Infinite jump: " +
@@ -667,14 +583,12 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     hitbox: {
-
         description: "Toggle collision hitboxes.",
 
         execute() {
 
             showHitbox =
                 !showHitbox;
-
 
             consolePrint(
                 "Hitboxes: " +
@@ -693,14 +607,12 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     debug: {
-
-        description: "Toggle debug information.",
+        description: "Toggle debug mode.",
 
         execute() {
 
             debugMode =
                 !debugMode;
-
 
             consolePrint(
                 "Debug mode: " +
@@ -719,7 +631,6 @@ const DEV_COMMANDS = {
     // --------------------------------------
 
     teleport: {
-
         description: "Move Dino horizontally.",
 
         execute(args) {
@@ -733,10 +644,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
-            const value =
-                Number(args[0]);
-
+            const value = Number(args[0]);
 
             if (!Number.isFinite(value)) {
 
@@ -747,9 +655,7 @@ const DEV_COMMANDS = {
                 return;
             }
 
-
             dino.x = value;
-
 
             consolePrint(
                 "Dino teleported to X=" +
@@ -766,23 +672,22 @@ const DEV_COMMANDS = {
 
 function executeCommand(input) {
 
-    const trimmed =
-        String(input).trim();
-
+    const trimmed = input.trim();
 
     if (trimmed === "") {
-
         return;
     }
 
 
-    // Remove leading slash
+    // Remove /
 
     const commandText =
         trimmed.startsWith("/")
             ? trimmed.substring(1)
             : trimmed;
 
+
+    // Split command
 
     const parts =
         commandText.split(/\s+/);
@@ -792,17 +697,14 @@ function executeCommand(input) {
         parts.shift().toLowerCase();
 
 
-    const args =
-        parts;
+    const args = parts;
 
+
+    // Find command
 
     const command =
         DEV_COMMANDS[commandName];
 
-
-    // --------------------------------------
-    // UNKNOWN COMMAND
-    // --------------------------------------
 
     if (!command) {
 
@@ -819,9 +721,7 @@ function executeCommand(input) {
     }
 
 
-    // --------------------------------------
-    // EXECUTE COMMAND
-    // --------------------------------------
+    // Execute command
 
     try {
 
@@ -834,18 +734,15 @@ function executeCommand(input) {
             error.message
         );
 
-        console.error(
-            "Command error:",
-            error
-        );
+        console.error(error);
     }
 }
 
 
 // ------------------------------------------
-// COMMAND SYSTEM TEST
+// COMMAND SYSTEM LOADED MESSAGE
 // ------------------------------------------
 
-console.log(
-    "MY DINO GAME command system loaded."
+consolePrint(
+    "Command system loaded."
 );
