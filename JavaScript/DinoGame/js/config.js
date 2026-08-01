@@ -65,3 +65,23 @@ let obstacles = [];
 let obstacleTimer = 0;
 
 let nextObstacleTime = 100;
+
+// ------------------------------------------
+// DEVELOPER / DEBUG STATE
+// ------------------------------------------
+
+let godMode = false;
+
+let noClip = false;
+
+let dinoFrozen = false;
+
+let infiniteJump = false;
+
+let showHitbox = false;
+
+let debugMode = false;
+
+let showFPS = false;
+
+let gamePaused = false;
