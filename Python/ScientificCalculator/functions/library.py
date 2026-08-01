@@ -44,6 +44,7 @@ from functions.hyperbolic import (
 from functions.basic_math import (
     square,
     cube,
+    pow,
     reciprocal,
     lerp,
     is_even,
@@ -268,6 +269,7 @@ MATH_LIB = {
 
     "square": square,
     "cube": cube,
+    "pow": pow,
     "reciprocal": reciprocal,
     "lerp": lerp,
 
