@@ -2,7 +2,27 @@
 // MY DINO GAME
 // commands.js
 // Developer Commands
+// Version 1.0
 // ==========================================
+
+
+// ------------------------------------------
+// DEVELOPER VARIABLES
+// ------------------------------------------
+
+let godMode = false;
+
+let noClip = false;
+
+let dinoFrozen = false;
+
+let infiniteJump = false;
+
+let showHitbox = false;
+
+let debugMode = false;
+
+let showFPS = false;
 
 
 // ------------------------------------------
@@ -10,6 +30,10 @@
 // ------------------------------------------
 
 const DEV_COMMANDS = {
+
+    // --------------------------------------
+    // HELP
+    // --------------------------------------
 
     help: {
 
@@ -47,6 +71,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // CLEAR
+    // --------------------------------------
+
     clear: {
 
         description: "Clear console.",
@@ -54,9 +82,14 @@ const DEV_COMMANDS = {
         execute() {
 
             consoleClear();
+
         }
     },
 
+
+    // --------------------------------------
+    // SPEED
+    // --------------------------------------
 
     speed: {
 
@@ -109,6 +142,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // SCORE
+    // --------------------------------------
+
     score: {
 
         description: "Set current score.",
@@ -160,6 +197,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // HIGH SCORE
+    // --------------------------------------
+
     highscore: {
 
         description: "Set high score.",
@@ -204,6 +245,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // JUMP
+    // --------------------------------------
+
     jump: {
 
         description: "Change Dino jump strength.",
@@ -244,6 +289,10 @@ const DEV_COMMANDS = {
         }
     },
 
+
+    // --------------------------------------
+    // GRAVITY
+    // --------------------------------------
 
     gravity: {
 
@@ -286,6 +335,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // SPAWN
+    // --------------------------------------
+
     spawn: {
 
         description: "Spawn an obstacle.",
@@ -315,6 +368,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // CLEAR OBSTACLES
+    // --------------------------------------
+
     clearobstacles: {
 
         description: "Remove all obstacles.",
@@ -323,12 +380,17 @@ const DEV_COMMANDS = {
 
             obstacles = [];
 
+
             consolePrint(
                 "All obstacles cleared."
             );
         }
     },
 
+
+    // --------------------------------------
+    // GOD
+    // --------------------------------------
 
     god: {
 
@@ -347,6 +409,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // KILL
+    // --------------------------------------
+
     kill: {
 
         description: "Force Game Over.",
@@ -362,6 +428,10 @@ const DEV_COMMANDS = {
         }
     },
 
+
+    // --------------------------------------
+    // RESTART
+    // --------------------------------------
 
     restart: {
 
@@ -379,13 +449,17 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // PAUSE
+    // --------------------------------------
+
     pause: {
 
         description: "Pause the game.",
 
         execute() {
 
-            gamePaused = true;
+            gameRunning = false;
 
 
             consolePrint(
@@ -395,13 +469,22 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // RESUME
+    // --------------------------------------
+
     resume: {
 
         description: "Resume the game.",
 
         execute() {
 
-            gamePaused = false;
+            gameRunning = true;
+
+
+            gameOverElement.classList.add(
+                "hidden"
+            );
 
 
             consolePrint(
@@ -410,6 +493,10 @@ const DEV_COMMANDS = {
         }
     },
 
+
+    // --------------------------------------
+    // FPS
+    // --------------------------------------
 
     fps: {
 
@@ -428,6 +515,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // COORDS
+    // --------------------------------------
+
     coords: {
 
         description: "Show Dino coordinates.",
@@ -445,12 +536,21 @@ const DEV_COMMANDS = {
             );
 
             consolePrint(
-                "Grounded: " +
+                "Dino grounded: " +
                 dino.grounded
+            );
+
+            consolePrint(
+                "Game running: " +
+                gameRunning
             );
         }
     },
 
+
+    // --------------------------------------
+    // VERSION
+    // --------------------------------------
 
     version: {
 
@@ -468,6 +568,10 @@ const DEV_COMMANDS = {
         }
     },
 
+
+    // --------------------------------------
+    // ABOUT
+    // --------------------------------------
 
     about: {
 
@@ -490,6 +594,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // NOCLIP
+    // --------------------------------------
+
     noclip: {
 
         description: "Toggle collision detection.",
@@ -507,6 +615,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // FREEZE
+    // --------------------------------------
+
     freeze: {
 
         description: "Freeze/unfreeze Dino.",
@@ -523,6 +635,10 @@ const DEV_COMMANDS = {
         }
     },
 
+
+    // --------------------------------------
+    // INFINITE JUMP
+    // --------------------------------------
 
     infinitejump: {
 
@@ -546,6 +662,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // HITBOX
+    // --------------------------------------
+
     hitbox: {
 
         description: "Toggle collision hitboxes.",
@@ -568,6 +688,10 @@ const DEV_COMMANDS = {
     },
 
 
+    // --------------------------------------
+    // DEBUG
+    // --------------------------------------
+
     debug: {
 
         description: "Toggle debug information.",
@@ -589,6 +713,10 @@ const DEV_COMMANDS = {
         }
     },
 
+
+    // --------------------------------------
+    // TELEPORT
+    // --------------------------------------
 
     teleport: {
 
@@ -633,34 +761,13 @@ const DEV_COMMANDS = {
 
 
 // ------------------------------------------
-// DEVELOPER VARIABLES
-// ------------------------------------------
-
-let godMode = false;
-
-let noClip = false;
-
-let dinoFrozen = false;
-
-let infiniteJump = false;
-
-let showHitbox = false;
-
-let debugMode = false;
-
-let showFPS = false;
-
-let gamePaused = false;
-
-
-// ------------------------------------------
 // COMMAND EXECUTOR
 // ------------------------------------------
 
 function executeCommand(input) {
 
     const trimmed =
-        input.trim();
+        String(input).trim();
 
 
     if (trimmed === "") {
@@ -685,14 +792,17 @@ function executeCommand(input) {
         parts.shift().toLowerCase();
 
 
-    const args = parts;
+    const args =
+        parts;
 
 
     const command =
         DEV_COMMANDS[commandName];
 
 
-    // Unknown command
+    // --------------------------------------
+    // UNKNOWN COMMAND
+    // --------------------------------------
 
     if (!command) {
 
@@ -709,7 +819,9 @@ function executeCommand(input) {
     }
 
 
-    // Execute
+    // --------------------------------------
+    // EXECUTE COMMAND
+    // --------------------------------------
 
     try {
 
@@ -722,6 +834,18 @@ function executeCommand(input) {
             error.message
         );
 
-        console.error(error);
+        console.error(
+            "Command error:",
+            error
+        );
     }
-        }
+}
+
+
+// ------------------------------------------
+// COMMAND SYSTEM TEST
+// ------------------------------------------
+
+console.log(
+    "MY DINO GAME command system loaded."
+);
