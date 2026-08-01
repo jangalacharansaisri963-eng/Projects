@@ -243,3 +243,273 @@ body {
         font-size: 31px;
     }
 }
+
+/* ==========================================
+   DEVELOPER CONSOLE
+   ========================================== */
+
+#dev-console {
+    position: fixed;
+
+    left: 50%;
+    bottom: 20px;
+
+    transform: translateX(-50%);
+
+    width: min(700px, 94vw);
+
+    height: 320px;
+
+    display: none;
+
+    flex-direction: column;
+
+    background: #111111;
+
+    border: 2px solid #535353;
+
+    border-radius: 8px;
+
+    z-index: 1000;
+
+    font-family: monospace;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+
+/* Console visible */
+
+#dev-console.open {
+    display: flex;
+}
+
+
+/* ------------------------------------------
+   CONSOLE HEADER
+   ------------------------------------------ */
+
+#console-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 8px 12px;
+
+    background: #222222;
+
+    border-bottom: 1px solid #535353;
+}
+
+
+#console-title {
+    font-size: 14px;
+
+    font-weight: bold;
+}
+
+
+#console-close {
+    border: none;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    padding: 0 5px;
+}
+
+
+/* ------------------------------------------
+   CONSOLE OUTPUT
+   ------------------------------------------ */
+
+#console-output {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 10px;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+}
+
+
+/* ------------------------------------------
+   CONSOLE INPUT AREA
+   ------------------------------------------ */
+
+#console-input-area {
+    display: flex;
+
+    gap: 6px;
+
+    padding: 8px;
+
+    background: #222222;
+
+    border-top: 1px solid #535353;
+}
+
+
+#console-input {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 9px;
+
+    border: 1px solid #535353;
+
+    border-radius: 4px;
+
+    outline: none;
+
+    background: #111111;
+
+    color: #ffffff;
+
+    font-family: monospace;
+
+    font-size: 14px;
+}
+
+
+#console-input:focus {
+    border-color: #888888;
+}
+
+
+#console-submit {
+    padding: 8px 14px;
+
+    border: 1px solid #535353;
+
+    border-radius: 4px;
+
+    background: #333333;
+
+    color: #ffffff;
+
+    font-family: monospace;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+}
+
+
+#console-submit:active {
+    transform: scale(0.95);
+}
+
+
+/* ------------------------------------------
+   CONSOLE TOGGLE BUTTON
+   ------------------------------------------ */
+
+#console-toggle {
+    position: fixed;
+
+    right: 15px;
+    bottom: 15px;
+
+    width: 48px;
+    height: 48px;
+
+    border: 2px solid #535353;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    color: #535353;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    z-index: 999;
+
+    touch-action: manipulation;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+#console-toggle:active {
+    transform: scale(0.9);
+}
+
+
+/* ------------------------------------------
+   MOBILE CONSOLE
+   ------------------------------------------ */
+
+@media (max-width: 700px) {
+
+    #dev-console {
+        bottom: 10px;
+
+        width: 96vw;
+
+        height: 300px;
+    }
+
+
+    #console-input {
+        font-size: 16px;
+    }
+
+
+    #console-submit {
+        padding: 8px 12px;
+    }
+
+
+    #console-toggle {
+        right: 10px;
+        bottom: 10px;
+
+        width: 46px;
+        height: 46px;
+    }
+}
+
+
+/* ------------------------------------------
+   VERY SMALL SCREENS
+   ------------------------------------------ */
+
+@media (max-width: 400px) {
+
+    #dev-console {
+        height: 280px;
+    }
+
+
+    #console-title {
+        font-size: 12px;
+    }
+
+
+    #console-output {
+        font-size: 12px;
+    }
+   }
