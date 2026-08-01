@@ -369,15 +369,3 @@ def pythagoras(a, b):
 
 def hypotenuse(a, b):
     return (a ** 2 + b ** 2) ** 0.5
-
-
-def quadratic(a, b, c):
-    discriminant = b ** 2 - 4 * a * c
-
-    if discriminant < 0:
-        return None
-
-    return (
-        (-b + discriminant ** 0.5) / (2 * a),
-        (-b - discriminant ** 0.5) / (2 * a)
-        )
