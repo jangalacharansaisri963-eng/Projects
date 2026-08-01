@@ -13,7 +13,9 @@ document.addEventListener(
     "keydown",
     function (event) {
 
-        // Jump
+        // ----------------------------------
+        // JUMP
+        // ----------------------------------
 
         if (
             event.code === "Space" ||
@@ -23,14 +25,45 @@ document.addEventListener(
             event.preventDefault();
 
 
-            if (gameRunning) {
+            // Don't jump while console input
+            // is being used.
 
-                dino.jump();
+            if (
+                document.activeElement &&
+                (
+                    document.activeElement.tagName ===
+                    "INPUT" ||
 
-            } else {
+                    document.activeElement.tagName ===
+                    "TEXTAREA"
+                )
+            ) {
+
+                return;
+            }
+
+
+            // Game Over
+
+            if (!gameRunning) {
 
                 resetGame();
+
+                return;
             }
+
+
+            // Paused
+
+            if (gamePaused) {
+
+                return;
+            }
+
+
+            // Jump
+
+            dino.jump();
         }
     }
 );
@@ -47,8 +80,15 @@ canvas.addEventListener(
         event.preventDefault();
 
 
-        // Only jump while playing.
-        // Do NOT restart by tapping the canvas.
+        // Don't jump while paused
+
+        if (gamePaused) {
+
+            return;
+        }
+
+
+        // Only jump while game is running
 
         if (gameRunning) {
 
@@ -83,15 +123,41 @@ restartButton.addEventListener(
 // ------------------------------------------
 // MOUSE SUPPORT
 // ------------------------------------------
-// Useful when testing on a PC.
+// Useful when testing on PC.
 
 canvas.addEventListener(
     "mousedown",
-    function () {
+    function (event) {
+
+        event.preventDefault();
+
+
+        // Don't jump while paused
+
+        if (gamePaused) {
+
+            return;
+        }
+
+
+        // Jump
 
         if (gameRunning) {
 
             dino.jump();
         }
+    }
+);
+
+
+// ------------------------------------------
+// DOUBLE-CLICK PREVENTION
+// ------------------------------------------
+
+canvas.addEventListener(
+    "dblclick",
+    function (event) {
+
+        event.preventDefault();
     }
 );
