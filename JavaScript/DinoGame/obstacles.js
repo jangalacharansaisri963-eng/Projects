@@ -11,18 +11,102 @@
 
 class Cactus {
 
-    constructor() {
+    constructor(options = {}) {
 
-        this.width = 20;
+        this.width = options.width || 20;
 
         this.height =
-            35 + Math.random() * 25;
+            options.height ||
+            this.getRandomHeight();
 
         this.x =
+            options.x ??
             GAME_WIDTH + 20;
 
         this.y =
             GROUND_Y - this.height;
+    }
+
+
+    // --------------------------------------
+    // RANDOM HEIGHT
+    // --------------------------------------
+
+    getRandomHeight() {
+
+        // ----------------------------------
+        // EARLY GAME
+        // ----------------------------------
+
+        if (score < 500) {
+
+            return (
+                35 +
+                Math.random() * 25
+            );
+        }
+
+
+        // ----------------------------------
+        // 500+
+        // ----------------------------------
+
+        if (score < 1000) {
+
+            return (
+                40 +
+                Math.random() * 30
+            );
+        }
+
+
+        // ----------------------------------
+        // 1,000+
+        // ----------------------------------
+
+        if (score < 5000) {
+
+            return (
+                45 +
+                Math.random() * 35
+            );
+        }
+
+
+        // ----------------------------------
+        // 5,000+
+        // ----------------------------------
+
+        if (score < 10000) {
+
+            return (
+                50 +
+                Math.random() * 35
+            );
+        }
+
+
+        // ----------------------------------
+        // 10,000+
+        // ----------------------------------
+
+        if (score < 100000) {
+
+            return (
+                55 +
+                Math.random() * 40
+            );
+        }
+
+
+        // ----------------------------------
+        // 100,000+
+        // ----------------------------------
+
+        return (
+            60 +
+            Math.random() * 45
+        );
     }
 
 
@@ -45,7 +129,10 @@ class Cactus {
         ctx.fillStyle = "#535353";
 
 
-        // Main cactus
+        // ----------------------------------
+        // MAIN CACTUS
+        // ----------------------------------
+
         ctx.fillRect(
             this.x,
             this.y,
@@ -131,25 +218,193 @@ class Cactus {
 }
 
 
-// ------------------------------------------
+// ==========================================
 // CREATE OBSTACLE
-// ------------------------------------------
+// ==========================================
 
 function createObstacle() {
 
+    const firstCactus =
+        new Cactus();
+
     obstacles.push(
-        new Cactus()
+        firstCactus
+    );
+
+
+    // --------------------------------------
+    // DOUBLE CACTUS
+    // --------------------------------------
+
+    if (
+        score >= 5000 &&
+        Math.random() < 0.20
+    ) {
+
+        const spacing = 35;
+
+        const secondCactus =
+            new Cactus({
+                x:
+                    firstCactus.x +
+                    firstCactus.width +
+                    spacing
+            });
+
+        obstacles.push(
+            secondCactus
+        );
+    }
+
+
+    // --------------------------------------
+    // TRIPLE CACTUS
+    // --------------------------------------
+
+    if (
+        score >= 50000 &&
+        Math.random() < 0.10
+    ) {
+
+        const spacing = 35;
+
+        const lastObstacle =
+            obstacles[
+                obstacles.length - 1
+            ];
+
+        const thirdCactus =
+            new Cactus({
+                x:
+                    lastObstacle.x +
+                    lastObstacle.width +
+                    spacing
+            });
+
+        obstacles.push(
+            thirdCactus
+        );
+    }
+}
+
+
+// ==========================================
+// OBSTACLE SPAWN DISTANCE
+// ==========================================
+
+function getNextObstacleTime() {
+
+    // --------------------------------------
+    // EASY
+    // --------------------------------------
+
+    if (score < 500) {
+
+        return (
+            80 +
+            Math.floor(
+                Math.random() * 100
+            )
+        );
+    }
+
+
+    // --------------------------------------
+    // 500+
+    // --------------------------------------
+
+    if (score < 1000) {
+
+        return (
+            75 +
+            Math.floor(
+                Math.random() * 90
+            )
+        );
+    }
+
+
+    // --------------------------------------
+    // 1,000+
+    // --------------------------------------
+
+    if (score < 5000) {
+
+        return (
+            70 +
+            Math.floor(
+                Math.random() * 80
+            )
+        );
+    }
+
+
+    // --------------------------------------
+    // 5,000+
+    // --------------------------------------
+
+    if (score < 10000) {
+
+        return (
+            65 +
+            Math.floor(
+                Math.random() * 70
+            )
+        );
+    }
+
+
+    // --------------------------------------
+    // 10,000+
+    // --------------------------------------
+
+    if (score < 100000) {
+
+        return (
+            60 +
+            Math.floor(
+                Math.random() * 60
+            )
+        );
+    }
+
+
+    // --------------------------------------
+    // 100,000+
+    // --------------------------------------
+
+    if (score < 1000000) {
+
+        return (
+            55 +
+            Math.floor(
+                Math.random() * 55
+            )
+        );
+    }
+
+
+    // --------------------------------------
+    // 1 MILLION+
+    // --------------------------------------
+
+    return (
+        50 +
+        Math.floor(
+            Math.random() * 45
+        )
     );
 }
 
 
-// ------------------------------------------
+// ==========================================
 // UPDATE OBSTACLES
-// ------------------------------------------
+// ==========================================
 
 function updateObstacles() {
 
-    // Don't update obstacles while paused
+    // Don't update obstacles
+    // while paused.
 
     if (gamePaused) {
 
@@ -160,7 +415,9 @@ function updateObstacles() {
     obstacleTimer++;
 
 
-    // Create a new cactus
+    // --------------------------------------
+    // SPAWN
+    // --------------------------------------
 
     if (
         obstacleTimer >=
@@ -172,17 +429,14 @@ function updateObstacles() {
         obstacleTimer = 0;
 
 
-        // Random distance between cacti
-
         nextObstacleTime =
-            80 +
-            Math.floor(
-                Math.random() * 100
-            );
+            getNextObstacleTime();
     }
 
 
-    // Move all obstacles
+    // --------------------------------------
+    // MOVE OBSTACLES
+    // --------------------------------------
 
     for (
         const obstacle of obstacles
@@ -192,8 +446,9 @@ function updateObstacles() {
     }
 
 
-    // Remove obstacles that left
-    // the screen
+    // --------------------------------------
+    // REMOVE OLD OBSTACLES
+    // --------------------------------------
 
     obstacles =
         obstacles.filter(
@@ -203,9 +458,9 @@ function updateObstacles() {
 }
 
 
-// ------------------------------------------
+// ==========================================
 // DRAW OBSTACLES
-// ------------------------------------------
+// ==========================================
 
 function drawObstacles() {
 
@@ -218,9 +473,9 @@ function drawObstacles() {
 }
 
 
-// ------------------------------------------
+// ==========================================
 // COLLISION DETECTION
-// ------------------------------------------
+// ==========================================
 
 function checkCollision() {
 
@@ -237,23 +492,28 @@ function checkCollision() {
     }
 
 
-    // Slightly smaller Dino hitbox
-    // makes the game feel fairer.
+    // --------------------------------------
+    // DINO HITBOX
+    // --------------------------------------
 
     const dinoBox = {
 
-        x: dino.x + 8,
+        x:
+            dino.x + 8,
 
-        y: dino.y + 5,
+        y:
+            dino.y + 5,
 
-        width: dino.width - 12,
+        width:
+            dino.width - 12,
 
-        height: dino.height - 7
+        height:
+            dino.height - 7
     };
 
 
     // --------------------------------------
-    // CHECK EVERY CACTUS
+    // CHECK EVERY OBSTACLE
     // --------------------------------------
 
     for (
@@ -262,17 +522,23 @@ function checkCollision() {
 
         const cactusBox = {
 
-            x: obstacle.x,
+            x:
+                obstacle.x,
 
-            y: obstacle.y,
+            y:
+                obstacle.y,
 
-            width: obstacle.width,
+            width:
+                obstacle.width,
 
-            height: obstacle.height
+            height:
+                obstacle.height
         };
 
 
-        // Rectangle collision
+        // ----------------------------------
+        // RECTANGLE COLLISION
+        // ----------------------------------
 
         if (
 
@@ -299,4 +565,4 @@ function checkCollision() {
             return;
         }
     }
-}
+                }
