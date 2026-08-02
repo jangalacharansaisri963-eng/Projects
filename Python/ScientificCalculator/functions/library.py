@@ -8,6 +8,7 @@ from decimal import Decimal
 from fractions import Fraction
 
 import constants
+import inspect
 
 from functions.trig import (
     sin,
@@ -18,16 +19,8 @@ from functions.trig import (
     atan,
 )
 
-from functions.physics import (
-    convert_temperature
-    calculate_acceleration
-    calculate_velocity
-    distance_circle
-    displacement_circle
-    calculate_force
-    calculate_friction
-    resultant_density_by_volume
-    resultant_density_by_mass
+# Import the physics module as a whole so we can register many functions dynamically
+from functions import physics as physics_mod
 
 from functions.complex_numbers import (
     real,
@@ -382,20 +375,6 @@ MATH_LIB = {
     "remainder_percentage": remainder_percentage,
 
     # ======================================
-    # Physics
-    # ======================================
-
-    "convert_temperature": convert_temperature,
-    "calculate_acceleration": calculate_acceleration
-    "calculate_velocity": calculate_velocity
-    "distance_circle": distance_circle
-    "displacement_circle": displacement_circle
-    "calculate_force": calculate_force
-    "calculate_friction": calculate_friction
-    "resultant_density_by_volume": resultant_density_by_volume
-    "resultant_density_by_mass": resultant_density_by_mass
-    
-    # ======================================
     # Logarithms
     # ======================================
 
@@ -406,7 +385,6 @@ MATH_LIB = {
     # Factorial
     # ======================================
 
-    "factorial": factorial,
     "factorial": factorial,
     "doublefactorial": doublefactorial,
     "superfactorial": superfactorial,
@@ -509,3 +487,19 @@ MATH_LIB = {
     "r15_digits": constants.r15_digits,
 
 }
+
+# -----------------------------------------------------------------------------
+# Dynamically register public callables from the physics module into MATH_LIB.
+# This avoids maintaining a long explicit import list and keeps the library
+# up-to-date with new physics functions added to functions/physics.py.
+# -----------------------------------------------------------------------------
+for _name, _obj in inspect.getmembers(physics_mod):
+    if _name.startswith("_"):
+        continue
+    # register functions and other callables/objects
+    if callable(_obj):
+        if _name not in MATH_LIB:
+            MATH_LIB[_name] = _obj
+
+# Also expose the physics module under a key for convenience
+MATH_LIB["physics"] = physics_mod
