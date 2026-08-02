@@ -47,6 +47,8 @@ R15 = calculate_r15(DEFAULT_PRECISION)
 
 SPEED_OF_LIGHT = 299792458
 SPEED_OF_LIGHT_APPROX = 3e8
+PLANKS_CONSTANT = 6.625e-34
+AVAGADRO_NUMBER = 6.022e23
 
 
 # ==========================================
