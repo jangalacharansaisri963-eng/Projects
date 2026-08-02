@@ -489,17 +489,25 @@ MATH_LIB = {
 }
 
 # -----------------------------------------------------------------------------
-# Dynamically register public callables from the physics module into MATH_LIB.
-# This avoids maintaining a long explicit import list and keeps the library
-# up-to-date with new physics functions added to functions/physics.py.
+# Dynamically register public names from the physics module into MATH_LIB.
+# Register everything that is public (no leading underscore). Prefer physics_mod.__all__
+# if present; otherwise register all non-underscore attributes. This will include
+# callables (functions/classes) and constants (numbers) added in physics.py.
 # -----------------------------------------------------------------------------
-for _name, _obj in inspect.getmembers(physics_mod):
-    if _name.startswith("_"):
+public_names = getattr(physics_mod, "__all__", None)
+if public_names is None:
+    public_names = [n for n in dir(physics_mod) if not n.startswith("_")]
+
+for _name in public_names:
+    if _name in MATH_LIB:
+        # don't override existing explicit entries
         continue
-    # register functions and other callables/objects
-    if callable(_obj):
-        if _name not in MATH_LIB:
-            MATH_LIB[_name] = _obj
+    try:
+        _obj = getattr(physics_mod, _name)
+    except AttributeError:
+        continue
+    MATH_LIB[_name] = _obj
 
 # Also expose the physics module under a key for convenience
-MATH_LIB["physics"] = physics_mod
+if "physics" not in MATH_LIB:
+    MATH_LIB["physics"] = physics_mod
