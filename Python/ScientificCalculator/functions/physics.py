@@ -12,7 +12,26 @@ def pressure(force, area):
     return Decimal(str(force)) / Decimal(str(area))
 
 def impulse(force, time):
-    return Decimal(str(force)) / Decimal(star(time))
+    return Decimal(str(force)) / Decimal(str(time))
+
+def latent_heat(heat_energy_joules, mass_kg):
+    return Decimal(str(heat_energy_joules)) / Decimal(str(mass_kg))
+
+def calorific_value(total_heat_joules, mass_kg):
+    return Decimal(str(total_heat_joules)) / Decimal(str(mass_kg))
+
+def heat_for_phase_change(mass_kg, latent_heat_constant):
+    return Decimal(str(mass_kg)) * Decimal(str(latent_heat_constant))
+
+def heat_from_combustion(mass_fuel_kg, calorific_value_constant):
+    return Decimal(str(mass_fuel_kg)) * Decimal(str(calorific_value_constant))
+
+def specific_heat_capacity(heat, mass, delta_temperature):
+    mass_term = Decimal(str(mass)) * Decimal(str(delta_temperature))
+    return Decimal(str(heat)) / mass_term
+
+def heat_for_temperature_change(mass, specific_heat_constant, delta_temperature):
+    return (Decimal(str(mass)) * Decimal(str(specific_heat_constant)) * Decimal(str(delta_temperature)))
 
 def area(force, pressure):
     return Decimal(str(force)) / Decimal(str(pressure))
