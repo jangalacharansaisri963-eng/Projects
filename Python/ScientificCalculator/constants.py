@@ -35,10 +35,25 @@ DEGREE_MODE = True
 # MATHEMATICAL CONSTANTS
 # ==========================================
 
-PI = calculate_pi(DEFAULT_PRECISION)
-E = calculate_e(DEFAULT_PRECISION)
-PHI = calculate_phi(DEFAULT_PRECISION)
-R15 = calculate_r15(DEFAULT_PRECISION)
+PI = None
+E = None
+PHI = None
+R15 = None
+
+
+def _ensure_constants():
+    global PI, E, PHI, R15
+    if PI is None:
+        PI = calculate_pi(DEFAULT_PRECISION)
+    if E is None:
+        E = calculate_e(DEFAULT_PRECISION)
+    if PHI is None:
+        PHI = calculate_phi(DEFAULT_PRECISION)
+    if R15 is None:
+        R15 = calculate_r15(DEFAULT_PRECISION)
+
+
+_ensure_constants()
 
 
 # ==========================================

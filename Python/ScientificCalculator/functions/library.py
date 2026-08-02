@@ -46,7 +46,7 @@ from functions.hyperbolic import (
 )
 
 from functions import basic_math as basic_math_mod
-    
+
 from functions.roots import (
     sqrt,
     cbrt,
@@ -107,6 +107,9 @@ from functions.compare import (
     least,
 )
 
+
+# Register the basic math helpers from the module directly so the calculator
+# can import and evaluate them without relying on a fragile alias list.
 
 MATH_LIB = {
 
@@ -174,95 +177,95 @@ MATH_LIB = {
     # Basic Mathematics
     # ======================================
 
-    "square": square,
-    "cube": cube,
-    "pow": pow,
-    "reciprocal": reciprocal,
-    "lerp": lerp,
+    "square": basic_math_mod.square,
+    "cube": basic_math_mod.cube,
+    "pow": basic_math_mod.pow,
+    "reciprocal": basic_math_mod.reciprocal,
+    "lerp": basic_math_mod.lerp,
 
-    "is_even": is_even,
-    "is_odd": is_odd,
+    "is_even": basic_math_mod.is_even,
+    "is_odd": basic_math_mod.is_odd,
 
-    "is_prime": is_prime,
-    "next_prime": next_prime,
-    "previous_prime": previous_prime,
+    "is_prime": basic_math_mod.is_prime,
+    "next_prime": basic_math_mod.next_prime,
+    "previous_prime": basic_math_mod.previous_prime,
 
-    "prime_factors": prime_factors,
-    "factor_count": factor_count,
+    "prime_factors": basic_math_mod.prime_factors,
+    "factor_count": basic_math_mod.factor_count,
 
-    "digit_sum": digit_sum,
-    "digit_product": digit_product,
+    "digit_sum": basic_math_mod.digit_sum,
+    "digit_product": basic_math_mod.digit_product,
 
-    "reverse_number": reverse_number,
+    "reverse_number": basic_math_mod.reverse_number,
 
-    "add": add,
-    "subtract": subtract,
-    "multiply": multiply,
-    "divide": divide,
+    "add": basic_math_mod.add,
+    "subtract": basic_math_mod.subtract,
+    "multiply": basic_math_mod.multiply,
+    "divide": basic_math_mod.divide,
 
-    "apsum": apsum,
-    "apsub": apsub,
-    "apterm": apterm,
+    "apsum": basic_math_mod.apsum,
+    "apsub": basic_math_mod.apsub,
+    "apterm": basic_math_mod.apterm,
 
-    "gpsum": gpsum,
-    "gpterm": gpterm,
+    "gpsum": basic_math_mod.gpsum,
+    "gpterm": basic_math_mod.gpterm,
 
-    "arithmean": arithmean,
-    "average": average,
+    "arithmean": basic_math_mod.arithmean,
+    "average": basic_math_mod.average,
 
-    "percentage": percentage,
-    "percentof": percentof,
-    "increase": increase,
-    "decrease": decrease,
+    "percentage": basic_math_mod.percentage,
+    "percentof": basic_math_mod.percentof,
+    "increase": basic_math_mod.increase,
+    "decrease": basic_math_mod.decrease,
 
-    "ratio": ratio,
-    "proportion": proportion,
+    "ratio": basic_math_mod.ratio,
+    "proportion": basic_math_mod.proportion,
 
-    "simple_interest": simple_interest,
-    "amount": amount,
-    "compound_amount": compound_amount,
-    "compound_interest": compound_interest,
+    "simple_interest": basic_math_mod.simple_interest,
+    "amount": basic_math_mod.amount,
+    "compound_amount": basic_math_mod.compound_amount,
+    "compound_interest": basic_math_mod.compound_interest,
 
-    "triangular": triangular,
-    "nsum": nsum,
-    "squaresum": squaresum,
-    "cubesum": cubesum,
-    "oddsum": oddsum,
-    "evensum": evensum,
-    "sumofintegers": sumofintegers,
+    "triangular": basic_math_mod.triangular,
+    "nsum": basic_math_mod.nsum,
+    "squaresum": basic_math_mod.squaresum,
+    "cubesum": basic_math_mod.cubesum,
+    "oddsum": basic_math_mod.oddsum,
+    "evensum": basic_math_mod.evensum,
+    "sumofintegers": basic_math_mod.sumofintegers,
 
-    "remainder": remainder,
-    "quotient": quotient,
+    "remainder": basic_math_mod.remainder,
+    "quotient": basic_math_mod.quotient,
 
-    "pythagoras": pythagoras,
-    "hypotenuse": hypotenuse,
+    "pythagoras": basic_math_mod.pythagoras,
+    "hypotenuse": basic_math_mod.hypotenuse,
 
-    "abs_value": abs_value,
-    "min_value": min_value,
-    "max_value": max_value,
-    "clamp": clamp,
-    "midpoint": midpoint,
-    "range_value": range_value,
+    "abs_value": basic_math_mod.abs_value,
+    "min_value": basic_math_mod.min_value,
+    "max_value": basic_math_mod.max_value,
+    "clamp": basic_math_mod.clamp,
+    "midpoint": basic_math_mod.midpoint,
+    "range_value": basic_math_mod.range_value,
 
-    "percent_change": percent_change,
+    "percent_change": basic_math_mod.percent_change,
 
-    "ratio_sum": ratio_sum,
-    "ratio_difference": ratio_difference,
+    "ratio_sum": basic_math_mod.ratio_sum,
+    "ratio_difference": basic_math_mod.ratio_difference,
 
-    "direct_proportion": direct_proportion,
-    "inverse_proportion": inverse_proportion,
+    "direct_proportion": basic_math_mod.direct_proportion,
+    "inverse_proportion": basic_math_mod.inverse_proportion,
 
-    "nth_term": nth_term,
+    "nth_term": basic_math_mod.nth_term,
 
-    "arithmetic_mean": arithmetic_mean,
-    "geometric_mean": geometric_mean,
-    "harmonic_mean": harmonic_mean,
+    "arithmetic_mean": basic_math_mod.arithmetic_mean,
+    "geometric_mean": basic_math_mod.geometric_mean,
+    "harmonic_mean": basic_math_mod.harmonic_mean,
 
-    "factorial_ratio": factorial_ratio,
-    "permutation": permutation,
-    "combination": combination,
+    "factorial_ratio": basic_math_mod.factorial_ratio,
+    "permutation": basic_math_mod.permutation,
+    "combination": basic_math_mod.combination,
 
-    "remainder_percentage": remainder_percentage,
+    "remainder_percentage": basic_math_mod.remainder_percentage,
 
     # ======================================
     # Logarithms

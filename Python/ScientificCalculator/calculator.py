@@ -144,12 +144,40 @@ def run_calculator():
             error("Unexpected error.")
 
 
-if __name__ == "__main__":
+def main(argv=None):
+    args = sys.argv[1:] if argv is None else list(argv)
+
+    if args:
+        expression = " ".join(args)
+
+        try:
+            answer = evaluate(expression)
+            set_answer(answer)
+            result(answer, False)
+            return 0
+        except ZeroDivisionError:
+            error("Division by zero.")
+            return 1
+        except OverflowError:
+            error("Number too large.")
+            return 1
+        except ValueError:
+            error("Invalid mathematical operation.")
+            return 1
+        except Exception:
+            error("Unexpected error.")
+            return 1
 
     try:
         run_calculator()
+        return 0
 
     except Exception:
         print("\nA fatal error occurred.")
         import traceback
         traceback.print_exc()
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
