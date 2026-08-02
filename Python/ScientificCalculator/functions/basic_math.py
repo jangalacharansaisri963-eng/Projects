@@ -4,7 +4,7 @@ basic_math.py
 Basic mathematical utility functions.
 """
 
-from math import isqrt
+from math import isqrt, factorial
 
 
 def square(x):
@@ -316,46 +316,6 @@ def quotient(a, b):
     return a // b
 
 
-def distance(speed, time):
-    return speed * time
-
-
-def speed(distance, time):
-    return distance / time
-
-
-def time(distance, speed):
-    return distance / speed
-
-
-def work(force, distance):
-    return force * distance
-
-
-def power(work, time):
-    return work / time
-
-
-def kineticenergy(mass, velocity):
-    return 0.5 * mass * velocity ** 2
-
-
-def potentialenergy(mass, gravity, height):
-    return mass * gravity * height
-
-
-def density(mass, volume):
-    return mass / volume
-
-
-def mass(density, volume):
-    return density * volume
-
-
-def volume(mass, density):
-    return mass / density
-
-
 def pythagoras(a, b):
     return (a ** 2 + b ** 2) ** 0.5
 
@@ -479,3 +439,4 @@ def remainder_percentage(part, whole):
         )
 
     return (part % whole) / whole * 100
+    
