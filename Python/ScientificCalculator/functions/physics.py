@@ -235,4 +235,295 @@ def volume_by_density(mass, density):
         raise ZeroDivisionError("Density cannot be zero.")
     return Decimal(str(mass)) / d
 
-                                
+                                 
+# ==============================================================================
+# 7. PERIMETERS & AREAS (20+ SHAPES)
+# ==============================================================================
+
+# Helper constants
+PI_DEC = Decimal(str(math.pi))
+
+# 1) Circle
+def circle_circumference(radius):
+    r = Decimal(str(radius))
+    return Decimal('2') * PI_DEC * r
+
+def circle_area(radius):
+    r = Decimal(str(radius))
+    return PI_DEC * (r ** 2)
+
+# 2) Semicircle
+def semicircle_area(radius):
+    return circle_area(radius) / Decimal('2')
+
+def semicircle_perimeter(radius):
+    # perimeter includes diameter
+    r = Decimal(str(radius))
+    return PI_DEC * r + Decimal('2') * r
+
+# 3) Ellipse
+def ellipse_area(a, b):
+    return PI_DEC * Decimal(str(a)) * Decimal(str(b))
+
+def ellipse_perimeter(a, b):
+    # Ramanujan's approximation
+    a_d = Decimal(str(a))
+    b_d = Decimal(str(b))
+    term = (Decimal('3') * (a_d + b_d) - ((Decimal('3') * a_d + b_d) * (a_d + Decimal('3') * b_d)).sqrt())
+    return PI_DEC * term
+
+# 4) Square
+def square_perimeter(side):
+    s = Decimal(str(side))
+    return Decimal('4') * s
+
+def square_area(side):
+    s = Decimal(str(side))
+    return s ** 2
+
+# 5) Rectangle
+def rectangle_perimeter(length, width):
+    l = Decimal(str(length))
+    w = Decimal(str(width))
+    return Decimal('2') * (l + w)
+
+def rectangle_area(length, width):
+    return Decimal(str(length)) * Decimal(str(width))
+
+# 6) Parallelogram
+def parallelogram_perimeter(base, side):
+    b = Decimal(str(base))
+    s = Decimal(str(side))
+    return Decimal('2') * (b + s)
+
+def parallelogram_area(base, height):
+    return Decimal(str(base)) * Decimal(str(height))
+
+# 7) Triangle (general)
+def triangle_perimeter(a, b, c):
+    return Decimal(str(a)) + Decimal(str(b)) + Decimal(str(c))
+
+def triangle_area_heron(a, b, c):
+    a_d = Decimal(str(a))
+    b_d = Decimal(str(b))
+    c_d = Decimal(str(c))
+    s = (a_d + b_d + c_d) / Decimal('2')
+    inner = s * (s - a_d) * (s - b_d) * (s - c_d)
+    if inner < 0:
+        raise ValueError("Invalid triangle sides for area calculation (negative square root).")
+    return inner.sqrt()
+
+def triangle_area_base_height(base, height):
+    return Decimal(str(base)) * Decimal(str(height)) / Decimal('2')
+
+# 8) Right triangle
+def right_triangle_hypotenuse(a, b):
+    a_f = float(a)
+    b_f = float(b)
+    return Decimal(str(math.hypot(a_f, b_f)))
+
+def right_triangle_area(a, b):
+    return Decimal(str(a)) * Decimal(str(b)) / Decimal('2')
+
+# 9) Equilateral triangle
+def equilateral_triangle_area(side):
+    s = Decimal(str(side))
+    return (Decimal(str(math.sqrt(3))) / Decimal('4')) * (s ** 2)
+
+def equilateral_triangle_perimeter(side):
+    return Decimal('3') * Decimal(str(side))
+
+# 10) Isosceles triangle (given base and equal side)
+def isosceles_triangle_area(base, equal_side):
+    b = Decimal(str(base))
+    s = Decimal(str(equal_side))
+    # height = sqrt(s^2 - (b^2 /4))
+    inner = s**2 - (b**2 / Decimal('4'))
+    if inner < 0:
+        raise ValueError("Invalid dimensions for isosceles triangle (imaginary height).")
+    h = inner.sqrt()
+    return (b * h) / Decimal('2')
+
+# 11) Trapezoid
+def trapezoid_area(a, b, height):
+    return (Decimal(str(a)) + Decimal(str(b))) * Decimal(str(height)) / Decimal('2')
+
+def trapezoid_perimeter(a, b, c, d):
+    return Decimal(str(a)) + Decimal(str(b)) + Decimal(str(c)) + Decimal(str(d))
+
+# 12) Rhombus (by diagonals)
+def rhombus_area_by_diagonals(d1, d2):
+    return (Decimal(str(d1)) * Decimal(str(d2))) / Decimal('2')
+
+def rhombus_perimeter_from_diagonals(d1, d2):
+    half1 = (Decimal(str(d1)) / Decimal('2'))
+    half2 = (Decimal(str(d2)) / Decimal('2'))
+    side = (half1**2 + half2**2).sqrt()
+    return Decimal('4') * side
+
+# 13) Kite
+def kite_area_by_diagonals(d1, d2):
+    return (Decimal(str(d1)) * Decimal(str(d2))) / Decimal('2')
+
+def kite_perimeter(side1, side2):
+    return Decimal('2') * (Decimal(str(side1)) + Decimal(str(side2)))
+
+# 14) Regular polygon
+def regular_polygon_perimeter(n_sides, side_length):
+    n = Decimal(str(n_sides))
+    s = Decimal(str(side_length))
+    return n * s
+
+def regular_polygon_area(n_sides, side_length):
+    n = int(n_sides)
+    s = float(side_length)
+    # apothem = s / (2 * tan(pi/n))
+    apothem = s / (2.0 * math.tan(math.pi / n))
+    area = 0.5 * n * s * apothem
+    return Decimal(str(area))
+
+# 15) Regular pentagon, hexagon, octagon (convenience wrappers)
+def regular_pentagon_area(side):
+    return regular_polygon_area(5, side)
+
+def regular_pentagon_perimeter(side):
+    return regular_polygon_perimeter(5, side)
+
+def regular_hexagon_area(side):
+    s = Decimal(str(side))
+    # area = (3*sqrt(3)/2)*s^2
+    return (Decimal('3') * Decimal(str(math.sqrt(3))) / Decimal('2')) * (s ** 2)
+
+def regular_hexagon_perimeter(side):
+    return Decimal('6') * Decimal(str(side))
+
+def regular_octagon_area(side):
+    s = Decimal(str(side))
+    # area = 2*(1+sqrt(2))*s^2
+    return Decimal('2') * (Decimal('1') + Decimal(str(math.sqrt(2)))) * (s ** 2)
+
+def regular_octagon_perimeter(side):
+    return Decimal('8') * Decimal(str(side))
+
+# 16) Annulus
+def annulus_area(R, r):
+    R_d = Decimal(str(R))
+    r_d = Decimal(str(r))
+    return PI_DEC * (R_d**2 - r_d**2)
+
+def annulus_perimeter(R, r):
+    R_d = Decimal(str(R))
+    r_d = Decimal(str(r))
+    return Decimal('2') * PI_DEC * (R_d + r_d)
+
+# 17) Sector (area and arc length)
+def sector_area(radius, angle_degrees):
+    r = Decimal(str(radius))
+    theta = Decimal(str(angle_degrees)) * PI_DEC / Decimal('180')
+    return (r ** 2) * theta / Decimal('2')
+
+def sector_arc_length(radius, angle_degrees):
+    r = Decimal(str(radius))
+    theta = Decimal(str(angle_degrees)) * PI_DEC / Decimal('180')
+    return r * theta
+
+# 18) Regular star polygons and other specialized shapes are intentionally omitted,
+# but the regular_polygon_* functions generalize most regular shapes.
+
+
+# ==============================================================================
+# 8. VOLUMES (15+ SHAPES)
+# ==============================================================================
+
+# 1) Cube
+def cube_volume(side):
+    s = Decimal(str(side))
+    return s ** 3
+
+# 2) Cuboid / Rectangular prism
+def cuboid_volume(length, width, height):
+    return Decimal(str(length)) * Decimal(str(width)) * Decimal(str(height))
+
+# 3) Sphere
+def sphere_volume(radius):
+    r = Decimal(str(radius))
+    return (Decimal('4') / Decimal('3')) * PI_DEC * (r ** 3)
+
+# 4) Hemisphere
+def hemisphere_volume(radius):
+    r = Decimal(str(radius))
+    return (Decimal('2') / Decimal('3')) * PI_DEC * (r ** 3)
+
+# 5) Cylinder
+def cylinder_volume(radius, height):
+    r = Decimal(str(radius))
+    h = Decimal(str(height))
+    return PI_DEC * (r ** 2) * h
+
+# 6) Right circular cone
+def cone_volume(radius, height):
+    r = Decimal(str(radius))
+    h = Decimal(str(height))
+    return (Decimal('1') / Decimal('3')) * PI_DEC * (r ** 2) * h
+
+# 7) Frustum of a cone
+def frustum_cone_volume(r1, r2, height):
+    R1 = Decimal(str(r1))
+    R2 = Decimal(str(r2))
+    h = Decimal(str(height))
+    return (Decimal('1') / Decimal('3')) * PI_DEC * h * (R1**2 + R1*R2 + R2**2)
+
+# 8) Pyramid (general: base area * height / 3)
+def pyramid_volume(base_area, height):
+    return Decimal(str(base_area)) * Decimal(str(height)) / Decimal('3')
+
+# 9) Square pyramid
+def square_pyramid_volume(side, height):
+    base = Decimal(str(side)) ** 2
+    return base * Decimal(str(height)) / Decimal('3')
+
+# 10) Rectangular pyramid
+def rectangular_pyramid_volume(length, width, height):
+    base = Decimal(str(length)) * Decimal(str(width))
+    return base * Decimal(str(height)) / Decimal('3')
+
+# 11) Prism (general)
+def prism_volume(base_area, length):
+    return Decimal(str(base_area)) * Decimal(str(length))
+
+# 12) Triangular prism
+def triangular_prism_volume(base, height_of_triangle, length):
+    base_area = Decimal(str(base)) * Decimal(str(height_of_triangle)) / Decimal('2')
+    return base_area * Decimal(str(length))
+
+# 13) Regular tetrahedron (volume)
+def regular_tetrahedron_volume(side):
+    s = Decimal(str(side))
+    # V = s^3 / (6*sqrt(2))
+    denom = Decimal('6') * Decimal(str(math.sqrt(2)))
+    return s**3 / denom
+
+# 14) Ellipsoid
+def ellipsoid_volume(a, b, c):
+    return (Decimal('4') / Decimal('3')) * PI_DEC * Decimal(str(a)) * Decimal(str(b)) * Decimal(str(c))
+
+# 15) Torus
+def torus_volume(R, r):
+    Rf = float(R)
+    rf = float(r)
+    # V = 2 * pi^2 * R * r^2
+    vol = 2.0 * (math.pi ** 2) * Rf * (rf ** 2)
+    return Decimal(str(vol))
+
+# 16) Hollow cylinder (annular cylinder)
+def hollow_cylinder_volume(R_outer, R_inner, height):
+    Ro = Decimal(str(R_outer))
+    Ri = Decimal(str(R_inner))
+    h = Decimal(str(height))
+    if Ri >= Ro:
+        raise ValueError("Inner radius must be smaller than outer radius.")
+    return PI_DEC * h * (Ro**2 - Ri**2)
+
+# 17) Torus frustum and other compound shapes could be added similarly.
+
+# End of file
