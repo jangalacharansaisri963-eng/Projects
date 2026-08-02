@@ -68,7 +68,7 @@ from functions.basic_math import (
     digit_sum,
     digit_product,
     reverse_number,
-        add,
+    add,
     subtract,
     multiply,
     divide,
@@ -496,6 +496,8 @@ MATH_LIB = {
 
     "c": constants.SPEED_OF_LIGHT,
     "c_approx": constants.SPEED_OF_LIGHT_APPROX,
+    "h": constants.PLANKS_CONSTANT,
+    "nN": constants.AVAGADRO_NUMBER,
 
     # ======================================
     # Constant Helpers
