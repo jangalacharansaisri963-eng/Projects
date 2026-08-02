@@ -45,105 +45,8 @@ from functions.hyperbolic import (
     tanh,
 )
 
-from functions.basic_math import (
-    square,
-    cube,
-    pow,
-    reciprocal,
-    lerp,
-    is_even,
-    is_odd,
-    is_prime,
-    next_prime,
-    previous_prime,
-    prime_factors,
-    factor_count,
-    digit_sum,
-    digit_product,
-    reverse_number,
-    add,
-    subtract,
-    multiply,
-    divide,
-
-    apsum,
-    apsub,
-    apterm,
-
-    gpsum,
-    gpterm,
-
-    arithmean,
-    average,
-
-    percentage,
-    percentof,
-    increase,
-    decrease,
-
-    ratio,
-    proportion,
-
-    simple_interest,
-    amount,
-    compound_amount,
-    compound_interest,
-
-    triangular,
-    nsum,
-    squaresum,
-    cubesum,
-    oddsum,
-    evensum,
-    sumofintegers,
-
-    remainder,
-    quotient,
-
-    distance,
-    speed,
-    time,
-    work,
-    power,
-
-    kineticenergy,
-    potentialenergy,
-
-    density,
-    mass,
-    volume,
-
-    pythagoras,
-    hypotenuse,
-
-    abs_value,
-    min_value,
-    max_value,
-    clamp,
-    midpoint,
-    range_value,
-
-    percent_change,
-
-    ratio_sum,
-    ratio_difference,
-
-    direct_proportion,
-    inverse_proportion,
-
-    nth_term,
-
-    arithmetic_mean,
-    geometric_mean,
-    harmonic_mean,
-
-    factorial_ratio,
-    permutation,
-    combination,
-
-    remainder_percentage,
-)
-
+from functions import basic_math as basic_math_mod
+    
 from functions.roots import (
     sqrt,
     cbrt,
@@ -330,19 +233,6 @@ MATH_LIB = {
 
     "remainder": remainder,
     "quotient": quotient,
-
-    "distance": distance,
-    "speed": speed,
-    "time": time,
-    "work": work,
-    "power": power,
-
-    "kineticenergy": kineticenergy,
-    "potentialenergy": potentialenergy,
-
-    "density": density,
-    "mass": mass,
-    "volume": volume,
 
     "pythagoras": pythagoras,
     "hypotenuse": hypotenuse,
