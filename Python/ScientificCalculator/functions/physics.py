@@ -2,6 +2,40 @@ import math
 from math import isqrt
 from decimal import Decimal
 
+def pressure(force, area):
+    return force / area
+
+def area(force, pressure):
+    return force / pressure
+
+def volume(length):
+    return length * length * length
+
+def energy(h, frequency):
+    return 6.625e-34 * frequency 
+
+def frequency(energy, h):
+    return energy / 6.625e-34
+
+def diagonal_square(side):
+    return math.sqrt(2) * side
+
+def diagonal_rectangle(length, width):
+    return math.sqrt(length**2 + width**2)
+
+def side(area):
+    return math.sqrt(area)
+
+def weight(mass, g):
+    if g == 10:
+        return mass * 10
+
+    if g == 9.80665:
+        return mass * 9.80665
+
+    if g == 9.8:
+        return mass * 9.8
+
 # ==============================================================================
 # 1. GEOMETRIC KINEMATICS (WITH FRACTION SHORTCUTS)
 # ==============================================================================
