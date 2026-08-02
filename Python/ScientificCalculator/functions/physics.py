@@ -11,7 +11,7 @@ getcontext().prec = 28
 def pressure(force, area):
     return Decimal(str(force)) / Decimal(str(area))
 
-def impulse(force, time)
+def impulse(force, time):
     return Decimal(str(force)) / Decimal(star(time))
 
 def area(force, pressure):
