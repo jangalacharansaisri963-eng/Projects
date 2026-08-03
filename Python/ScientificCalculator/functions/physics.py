@@ -11,6 +11,25 @@ getcontext().prec = 28
 def pressure(force, area):
     return Decimal(str(force)) / Decimal(str(area))
 
+def time_from_velocity(displacement, velocity):
+    return Decimal(str(displacement)) / Decimal(str(velocity))
+
+def displacement_hypotenuse(a, b):
+    # Convert to float because math.sqrt() does not accept Decimal objects
+    sum_of_squares = Decimal(str(a))**2 + Decimal(str(b))**2
+    return math.sqrt(float(sum_of_squares))
+
+def right_angled_adjacent(opposite, hypotenuse):
+    # To find a shorter side, you must subtract: side = sqrt(hypotenuse^2 - opposite^2)
+    diff_of_squares = Decimal(str(hypotenuse))**2 - Decimal(str(opposite))**2
+    return math.sqrt(float(diff_of_squares))
+
+def direction_of_displacement(dx, dy):
+    dec_dx = Decimal(str(dx))
+    dec_dy = Decimal(str(dy))
+
+    return math.degrees(math.atan2(float(dec_dy / dec_dx)) if dec_dx != 0 else (90.0 if dec_dy > 0 else -90.0)
+
 def impulse(force, time):
     return Decimal(str(force)) / Decimal(str(time))
 
