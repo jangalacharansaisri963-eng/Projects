@@ -4,6 +4,9 @@ from decimal import Decimal, getcontext
 # Set precision for Decimal operations
 getcontext().prec = 28
 
+# Provide a named Planck constant (CODATA recommended value)
+PLANCK_CONSTANT = Decimal('6.62607015e-34')
+
 # ==============================================================================
 # 0. BASIC MECHANICS & PARTICLES (PRECISION ALIGNED)
 # ==============================================================================
@@ -11,71 +14,98 @@ getcontext().prec = 28
 def pressure(force, area):
     return Decimal(str(force)) / Decimal(str(area))
 
+
 def time_from_velocity(displacement, velocity):
     return Decimal(str(displacement)) / Decimal(str(velocity))
 
+
 def displacement_hypotenuse(a, b):
-    # Convert to float because math.sqrt() does not accept Decimal objects
+    # Use Decimal sqrt to preserve Decimal return type
     sum_of_squares = Decimal(str(a))**2 + Decimal(str(b))**2
-    return math.sqrt(float(sum_of_squares))
+    return sum_of_squares.sqrt()
+
 
 def right_angled_adjacent(opposite, hypotenuse):
-    # To find a shorter side, you must subtract: side = sqrt(hypotenuse^2 - opposite^2)
+    # To find a shorter side: side = sqrt(hypotenuse^2 - opposite^2)
     diff_of_squares = Decimal(str(hypotenuse))**2 - Decimal(str(opposite))**2
-    return math.sqrt(float(diff_of_squares))
+    if diff_of_squares < 0:
+        raise ValueError("Invalid dimensions: opposite side cannot be >= hypotenuse for a right triangle.")
+    return diff_of_squares.sqrt()
+
 
 def direction_of_displacement(dx, dy):
     dec_dx = Decimal(str(dx))
     dec_dy = Decimal(str(dy))
 
-    return math.degrees(math.atan2(float(dec_dy / dec_dx)) if dec_dx != 0 else (90.0 if dec_dy > 0 else -90.0)
+    # Use math.atan2 on floats for robust quadrant handling, then convert to Decimal degrees
+    angle_deg = math.degrees(math.atan2(float(dec_dy), float(dec_dx)))
+    return Decimal(str(angle_deg))
+
 
 def impulse(force, time):
-    return Decimal(str(force)) / Decimal(str(time))
+    # Physical impulse: J = F * Δt
+    return Decimal(str(force)) * Decimal(str(time))
+
 
 def latent_heat(heat_energy_joules, mass_kg):
     return Decimal(str(heat_energy_joules)) / Decimal(str(mass_kg))
 
+
 def calorific_value(total_heat_joules, mass_kg):
     return Decimal(str(total_heat_joules)) / Decimal(str(mass_kg))
+
 
 def heat_for_phase_change(mass_kg, latent_heat_constant):
     return Decimal(str(mass_kg)) * Decimal(str(latent_heat_constant))
 
+
 def heat_from_combustion(mass_fuel_kg, calorific_value_constant):
     return Decimal(str(mass_fuel_kg)) * Decimal(str(calorific_value_constant))
+
 
 def specific_heat_capacity(heat, mass, delta_temperature):
     mass_term = Decimal(str(mass)) * Decimal(str(delta_temperature))
     return Decimal(str(heat)) / mass_term
 
+
 def heat_for_temperature_change(mass, specific_heat_constant, delta_temperature):
     return (Decimal(str(mass)) * Decimal(str(specific_heat_constant)) * Decimal(str(delta_temperature)))
 
+
 def area(force, pressure):
     return Decimal(str(force)) / Decimal(str(pressure))
+
 
 def volume(length):
     side = Decimal(str(length))
     return side ** 3
 
+
 def energy(h, frequency):
-    # Enforces your explicit 6.625e-34 tracking value
-    return Decimal('6.625e-34') * Decimal(str(frequency))
+    """E = h * f. Uses provided h or falls back to PLANCK_CONSTANT."""
+    h_dec = Decimal(str(h)) if h is not None else PLANCK_CONSTANT
+    return h_dec * Decimal(str(frequency))
+
 
 def frequency(energy, h):
-    return Decimal(str(energy)) / Decimal('6.625e-34')
+    """f = E / h. Uses provided h or falls back to PLANCK_CONSTANT."""
+    h_dec = Decimal(str(h)) if h is not None else PLANCK_CONSTANT
+    return Decimal(str(energy)) / h_dec
+
 
 def diagonal_square(side):
     return Decimal(str(side)) * Decimal('2').sqrt()
+
 
 def diagonal_rectangle(length, width):
     l_dec = Decimal(str(length))
     w_dec = Decimal(str(width))
     return (l_dec**2 + w_dec**2).sqrt()
 
+
 def side(area):
     return Decimal(str(area)).sqrt()
+
 
 def weight(mass, g):
     """Calculates weight (W = m * g)."""
@@ -95,11 +125,15 @@ def distance_circle(revolution, radius=1):
 
 
 def displacement_circle(revolution, radius=1):
-    """Calculates straight-line displacement chord using precise Decimals."""
+    """Calculates straight-line displacement chord using precise Decimals.
+
+    chord for fractional revolution f: chord = 2 * r * |sin(pi * f)|
+    Special-cases are provided for exact quarters and halves for exact sqrt/integers.
+    """
     rev = Decimal(str(revolution))
     rad = Decimal(str(radius))
 
-    fractional_rev = rev % Decimal('1')
+    fractional_rev = (rev % Decimal('1'))
 
     if fractional_rev == Decimal('0'):
         return Decimal('0')
@@ -107,9 +141,10 @@ def displacement_circle(revolution, radius=1):
         return Decimal('2') * rad
     if fractional_rev in [Decimal('0.25'), Decimal('0.75')]:
         return Decimal('2').sqrt() * rad
-        
-    angle_half_radians = float(rev * Decimal(str(math.pi)))
-    sin_value = Decimal(str(math.sin(angle_half_radians)))
+
+    # Use fractional_rev for the trig input to keep the argument small and exact
+    angle = float(fractional_rev * Decimal(str(math.pi)))
+    sin_value = Decimal(str(math.sin(angle)))
     return Decimal('2') * rad * abs(sin_value)
 
 
@@ -143,7 +178,7 @@ def calculate_friction(mu, mass, gravity="9.80665"):
     coefficient = Decimal(str(mu))
     m = Decimal(str(mass))
     g = Decimal(str(gravity))
-    
+
     if coefficient < 0:
         raise ValueError("Friction coefficient (mu) cannot be negative.")
     if m < 0:
@@ -202,6 +237,7 @@ def convert_temperature(value, from_unit, to_unit):
     elif dst in ['k', 'kelvin']:
         result = celsius + Decimal('273.15')
         if result < Decimal('0'):
+            # Keep behavior but could be made stricter
             print("[Warning]: Result is below Absolute Zero (0K)!")
         return result
     elif dst in ['r', 'reamur', 'réaumur']:
@@ -276,7 +312,7 @@ def volume_by_density(mass, density):
         raise ZeroDivisionError("Density cannot be zero.")
     return Decimal(str(mass)) / d
 
-                                 
+                                  
 # ==============================================================================
 # 7. PERIMETERS & AREAS (20+ SHAPES)
 # ==============================================================================
@@ -359,9 +395,10 @@ def triangle_area_base_height(base, height):
 
 # 8) Right triangle
 def right_triangle_hypotenuse(a, b):
-    a_f = float(a)
-    b_f = float(b)
-    return Decimal(str(math.hypot(a_f, b_f)))
+    # Use Decimal arithmetic for consistent return type
+    a_d = Decimal(str(a))
+    b_d = Decimal(str(b))
+    return (a_d**2 + b_d**2).sqrt()
 
 def right_triangle_area(a, b):
     return Decimal(str(a)) * Decimal(str(b)) / Decimal('2')
@@ -550,11 +587,10 @@ def ellipsoid_volume(a, b, c):
 
 # 15) Torus
 def torus_volume(R, r):
-    Rf = float(R)
-    rf = float(r)
+    R_d = Decimal(str(R))
+    r_d = Decimal(str(r))
     # V = 2 * pi^2 * R * r^2
-    vol = 2.0 * (math.pi ** 2) * Rf * (rf ** 2)
-    return Decimal(str(vol))
+    return Decimal('2') * (PI_DEC ** 2) * R_d * (r_d ** 2)
 
 # 16) Hollow cylinder (annular cylinder)
 def hollow_cylinder_volume(R_outer, R_inner, height):
