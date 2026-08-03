@@ -18,11 +18,27 @@ def pressure(force, area):
 def time_from_velocity(displacement, velocity):
     return Decimal(str(displacement)) / Decimal(str(velocity))
 
+
 def time_from_work(work, force):
     return Decimal(str(work)) / Decimal(str(force))
 
+
 def time_from_power(work, power):
     return Decimal(str(work)) / Decimal(str(power))
+    
+
+def gravitational_constant(force, distance, mass):
+    a = Decimal(str(force) * Decimal(str(distance))**2
+    return float(a) / mass
+                
+
+def momentum(mass, velocity):
+    return Decimal(str(mass)) * Decimal(str(velocity))
+
+                
+def gravitational_potential(force, displacement, mass)
+    work = Decimal(str(force)) * Decimal(str(displacement))
+    return float(work) / mass
 
 
 def displacement_hypotenuse(a, b):
