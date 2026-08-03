@@ -18,6 +18,12 @@ def pressure(force, area):
 def time_from_velocity(displacement, velocity):
     return Decimal(str(displacement)) / Decimal(str(velocity))
 
+def time_from_work(work, force):
+    return Decimal(str(work)) / Decimal(str(force))
+
+def time_from_power(work, power):
+    return Decimal(str(work)) / Decimal(str(power))
+
 
 def displacement_hypotenuse(a, b):
     # Use Decimal sqrt to preserve Decimal return type
