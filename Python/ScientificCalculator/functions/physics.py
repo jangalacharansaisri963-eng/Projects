@@ -29,7 +29,6 @@ def boltzman_entropy(microstates: int) -> Decimal:
     return k_B * Ω.ln()
     
 
-
 def time_from_velocity(displacement, velocity):
     return Decimal(str(displacement)) / Decimal(str(velocity))
 
