@@ -15,6 +15,21 @@ def pressure(force, area):
     return Decimal(str(force)) / Decimal(str(area))
 
 
+def boltzman_entropy(microstates: int) -> Decimal:
+    """Calculates exact Boltzmann entropy using Decimal for precision.
+    
+    Formula: S = k_B * ln(Ω)
+    """
+    if microstates <= 0:
+        raise ValueError("Microstates must be greater than zero.")
+        
+    k_B = Decimal("1.380649e-23")  # Boltzmann constant
+    Ω = Decimal(str(microstates))    # Using Ω (Omega) to represent microstates
+    
+    return k_B * Ω.ln()
+    
+
+
 def time_from_velocity(displacement, velocity):
     return Decimal(str(displacement)) / Decimal(str(velocity))
 
