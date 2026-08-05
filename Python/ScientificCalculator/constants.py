@@ -4,7 +4,7 @@ constants.py
 Shared calculator constants.
 """
 
-from decimal import getcontext
+from decimal import Decimal, getcontext
 
 from functions.constant_generators import (
     calculate_pi,
@@ -62,7 +62,7 @@ _ensure_constants()
 
 SPEED_OF_LIGHT = 299792458
 SPEED_OF_LIGHT_APPROX = 3e8
-PLANCKS_CONSTANT = 6.625e-34
+PLANCK_CONSTANT = Decimal('6.62607015e-34')
 AVAGADRO_NUMBER = 6.022e23
 
 
