@@ -1,5 +1,6 @@
 import math
 from decimal import Decimal, getcontext
+from fractions import Fraction
 
 # Set precision for Decimal operations
 getcontext().prec = 28
@@ -111,13 +112,11 @@ def gravitational_potential(force, displacement, mass):
 
 
 def displacement_hypotenuse(a, b):
-    # Use Decimal sqrt to preserve Decimal return type
     sum_of_squares = Decimal(str(a))**2 + Decimal(str(b))**2
     return sum_of_squares.sqrt()
 
 
 def right_angled_adjacent(opposite, hypotenuse):
-    # To find a shorter side: side = sqrt(hypotenuse^2 - opposite^2)
     diff_of_squares = Decimal(str(hypotenuse))**2 - Decimal(str(opposite))**2
     if diff_of_squares < 0:
         raise ValueError("Invalid dimensions: opposite side cannot be >= hypotenuse for a right triangle.")
@@ -127,14 +126,11 @@ def right_angled_adjacent(opposite, hypotenuse):
 def direction_of_displacement(dx, dy):
     dec_dx = Decimal(str(dx))
     dec_dy = Decimal(str(dy))
-
-    # Use math.atan2 on floats for robust quadrant handling, then convert to Decimal degrees
     angle_deg = math.degrees(math.atan2(float(dec_dy), float(dec_dx)))
     return Decimal(str(angle_deg))
 
 
 def impulse(force, time):
-    # Physical impulse: J = F * Δt
     return Decimal(str(force)) * Decimal(str(time))
 
 
@@ -232,6 +228,16 @@ def displacement_circle(revolution, radius=1):
     angle = float(fractional_rev * Decimal(str(math.pi)))
     sin_value = Decimal(str(math.sin(angle)))
     return Decimal('2') * rad * abs(sin_value)
+
+
+def chord_length_from_angle(radius, theta_degrees):
+    """Calculates chord length using the formula: 2 * R * sin(theta / 2)."""
+    r = Decimal(str(radius))
+    theta = Decimal(str(theta_degrees))
+    # Convert angle to radians for math.sin: (theta / 2) * (pi / 180)
+    half_angle_rad = float(theta / Decimal('2') * Decimal(str(math.pi)) / Decimal('180'))
+    sin_val = Decimal(str(math.sin(half_angle_rad)))
+    return Decimal('2') * r * sin_val
 
 
 # ==============================================================================
@@ -636,5 +642,4 @@ def hollow_cylinder_volume(R_outer, R_inner, height):
     if Ri >= Ro:
         raise ValueError("Inner radius must be smaller than outer radius.")
     return PI_DEC * h * (Ro**2 - Ri**2)
-
-# End of file
+        
