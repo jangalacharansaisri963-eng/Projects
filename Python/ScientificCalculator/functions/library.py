@@ -22,6 +22,9 @@ from functions.trig import (
 # Import the physics module as a whole so we can register many functions dynamically
 from functions import physics as physics_mod
 
+# Import the trig module as a whole so we can register all definitions from trig.py automatically
+import functions.trig as trig_mod
+
 from functions.complex_numbers import (
     real,
     imag,
@@ -404,3 +407,27 @@ for _name in public_names:
 # Also expose the physics module under a key for convenience
 if "physics" not in MATH_LIB:
     MATH_LIB["physics"] = physics_mod
+
+# -----------------------------------------------------------------------------
+# Dynamically register public names from the trig module into MATH_LIB.
+# This mirrors the physics registration and ensures any new functions/constants
+# added to functions/trig.py are automatically available in MATH_LIB. We keep
+# the explicit trig entries above for backwards-compatibility; the registration
+# below will not override them.
+# -----------------------------------------------------------------------------
+trig_public = getattr(trig_mod, "__all__", None)
+if trig_public is None:
+    trig_public = [n for n in dir(trig_mod) if not n.startswith("_")]
+
+for _name in trig_public:
+    if _name in MATH_LIB:
+        continue
+    try:
+        _obj = getattr(trig_mod, _name)
+    except AttributeError:
+        continue
+    MATH_LIB[_name] = _obj
+
+# Also expose the trig module under a key for convenience
+if "trig" not in MATH_LIB:
+    MATH_LIB["trig"] = trig_mod
