@@ -642,4 +642,178 @@ def hollow_cylinder_volume(R_outer, R_inner, height):
     if Ri >= Ro:
         raise ValueError("Inner radius must be smaller than outer radius.")
     return PI_DEC * h * (Ro**2 - Ri**2)
+
+# ==============================================================================
+# 9. ADVANCED GEOMETRY & TRIGONOMETRIC IDENTITIES
+# ==============================================================================
+
+def chord_length(radius, angle_degrees):
+    """Calculates chord length: 2 * R * sin(theta / 2)."""
+    r = Decimal(str(radius))
+    theta = Decimal(str(angle_degrees))
+    half_angle_rad = float(theta / Decimal('2') * PI_DEC / Decimal('180'))
+    return Decimal('2') * r * Decimal(str(math.sin(half_angle_rad)))
+
+
+def sagitta(radius, chord_length):
+    """Calculates sagitta (arc height): h = R - sqrt(R^2 - (c/2)^2)."""
+    r = Decimal(str(radius))
+    c = Decimal(str(chord_length))
+    half_c = c / Decimal('2')
+    if r < half_c:
+        raise ValueError("Radius cannot be smaller than half of the chord length.")
+    return r - (r**2 - half_c**2).sqrt()
+
+
+def circular_segment_area(radius, angle_degrees):
+    """Area of a circular segment: 0.5 * R^2 * (theta_rad - sin(theta))."""
+    r = Decimal(str(radius))
+    theta_deg = Decimal(str(angle_degrees))
+    theta_rad = float(theta_deg * PI_DEC / Decimal('180'))
+    term = Decimal(str(theta_rad)) - Decimal(str(math.sin(theta_rad)))
+    return Decimal('0.5') * (r ** 2) * term
+
+
+def apothem_regular_polygon(n_sides, side_length):
+    """Apothem of a regular polygon: s / (2 * tan(pi / n))."""
+    n = int(n_sides)
+    s = float(side_length)
+    if n < 3:
+        raise ValueError("A polygon must have at least 3 sides.")
+    apothem = s / (2.0 * math.tan(math.pi / n))
+    return Decimal(str(apothem))
+
+
+def sphere_surface_area(radius):
+    """Surface area of a sphere: 4 * pi * R^2."""
+    r = Decimal(str(radius))
+    return Decimal('4') * PI_DEC * (r ** 2)
+
+
+def hemisphere_total_surface_area(radius):
+    """Total surface area of a solid hemisphere: 3 * pi * R^2."""
+    r = Decimal(str(radius))
+    return Decimal('3') * PI_DEC * (r ** 2)
+
+
+def cylinder_total_surface_area(radius, height):
+    """Total surface area of a cylinder: 2 * pi * R * (R + H)."""
+    r = Decimal(str(radius))
+    h = Decimal(str(height))
+    return Decimal('2') * PI_DEC * r * (r + h)
+
+
+def cone_slant_height(radius, height):
+    """Slant height of a cone: sqrt(R^2 + H^2)."""
+    r = Decimal(str(radius))
+    h = Decimal(str(height))
+    return (r**2 + h**2).sqrt()
+
+
+def cone_total_surface_area(radius, height):
+    """Total surface area of a cone: pi * R * (R + slant_height)."""
+    r = Decimal(str(radius))
+    l = cone_slant_height(radius, height)
+    return PI_DEC * r * (r + l)
+
+
+# ==============================================================================
+# 10. ADVANCED PHYSICS & WAVE MECHANICS
+# ==============================================================================
+
+def wave_speed(frequency_hz, wavelength_m):
+    """Wave speed: v = f * lambda."""
+    return Decimal(str(frequency_hz)) * Decimal(str(wavelength_m))
+
+
+def wave_frequency(speed_ms, wavelength_m):
+    """Frequency from wave speed: f = v / lambda."""
+    lam = Decimal(str(wavelength_m))
+    if lam == Decimal('0'):
+        raise ZeroDivisionError("Wavelength cannot be zero.")
+    return Decimal(str(speed_ms)) / lam
+
+
+def wavelength(speed_ms, frequency_hz):
+    """Wavelength from wave speed: lambda = v / f."""
+    f = Decimal(str(frequency_hz))
+    if f == Decimal('0'):
+        raise ZeroDivisionError("Frequency cannot be zero.")
+    return Decimal(str(speed_ms)) / f
+
+
+def kinetic_energy_relativistic(mass, velocity, speed_of_light="299792458"):
+    """Relativistic kinetic energy: KE = (gamma - 1) * m * c^2."""
+    m = Decimal(str(mass))
+    v = Decimal(str(velocity))
+    c = Decimal(str(speed_of_light))
+    if v >= c:
+        raise ValueError("Velocity cannot exceed or equal the speed of light.")
+    gamma = Decimal('1') / (Decimal('1') - (v / c)**2).sqrt()
+    return (gamma - Decimal('1')) * m * (c ** 2)
+
+
+def centripetal_force(mass, velocity, radius):
+    """Centripetal force: Fc = (m * v^2) / R."""
+    m = Decimal(str(mass))
+    v = Decimal(str(velocity))
+    r = Decimal(str(radius))
+    if r == Decimal('0'):
+        raise ZeroDivisionError("Radius cannot be zero.")
+    return (m * (v ** 2)) / r
+
+
+def centripetal_acceleration(velocity, radius):
+    """Centripetal acceleration: ac = v^2 / R."""
+    v = Decimal(str(velocity))
+    r = Decimal(str(radius))
+    if r == Decimal('0'):
+        raise ZeroDivisionError("Radius cannot be zero.")
+    return (v ** 2) / r
+
+
+def gravitational_force(mass1, mass2, distance, G="6.67430e-11"):
+    """Newton's Law of Gravitation: F = G * (m1 * m2) / r^2."""
+    g_dec = Decimal(str(G))
+    m1 = Decimal(str(mass1))
+    m2 = Decimal(str(mass2))
+    r = Decimal(str(distance))
+    if r == Decimal('0'):
+        raise ZeroDivisionError("Distance cannot be zero.")
+    return g_dec * (m1 * m2) / (r ** 2)
+
+
+def electric_force(q1, q2, distance, k="8.9875517923e9"):
+    """Coulomb's Law: Fe = k * (|q1 * q2|) / r^2."""
+    k_dec = Decimal(str(k))
+    charge1 = Decimal(str(q1))
+    charge2 = Decimal(str(q2))
+    r = Decimal(str(distance))
+    if r == Decimal('0'):
+        raise ZeroDivisionError("Distance cannot be zero.")
+    return k_dec * abs(charge1 * charge2) / (r ** 2)
+
+
+def ohm_law_voltage(current, resistance):
+    """Ohm's Law Voltage: V = I * R."""
+    return Decimal(str(current)) * Decimal(str(resistance))
+
+
+def ohm_law_current(voltage, resistance):
+    """Ohm's Law Current: I = V / R."""
+    r = Decimal(str(resistance))
+    if r == Decimal('0'):
+        raise ZeroDivisionError("Resistance cannot be zero.")
+    return Decimal(str(voltage)) / r
+
+
+def ohm_law_resistance(voltage, current):
+    """Ohm's Law Resistance: R = V / I."""
+    i = Decimal(str(current))
+    if i == Decimal('0'):
+        raise ZeroDivisionError("Current cannot be zero.")
+    return Decimal(str(voltage)) / i
+
+# End of file
+    
         
