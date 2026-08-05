@@ -27,7 +27,54 @@ def boltzman_entropy(microstates: int) -> Decimal:
     Ω = Decimal(str(microstates))    # Using Ω (Omega) to represent microstates
     
     return k_B * Ω.ln()
+
+
+def radians(degrees):
+    deg = int(degrees)
+    frac = Fraction(deg, 180)
     
+    num = frac.numerator
+    den = frac.denominator
+    
+    if num == 0:
+        return "0"
+        
+    num_part = "" if num == 1 else str(num)
+    den_part = "" if den == 1 else f"/{den}"
+    
+    return f"{num_part}π{den_part}"
+
+
+def degrees(rad_str):
+    s = str(rad_str).strip().replace(" ", "").replace("pi", "π")
+    
+    if "π" not in s:
+        return float(s) * (180.0 / math.pi)
+        
+    if s == "π":
+        return 180
+    if s == "-π":
+        return -180
+        
+    parts = s.split("π")
+    coefficient_part = parts[0]
+    denominator_part = parts[1] if len(parts) > 1 else ""
+    
+    if coefficient_part == "" or coefficient_part == "+":
+        num = 1
+    elif coefficient_part == "-":
+        num = -1
+    else:
+        num = int(coefficient_part)
+        
+    if denominator_part.startswith("/"):
+        den = int(denominator_part[1:])
+    else:
+        den = 1
+        
+    result = (Fraction(num, den)) * 180
+    return float(result) if result.denominator != 1 else int(result)
+
 
 def time_from_velocity(displacement, velocity):
     return Decimal(str(displacement)) / Decimal(str(velocity))
