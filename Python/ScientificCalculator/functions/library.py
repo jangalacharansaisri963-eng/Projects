@@ -367,7 +367,7 @@ MATH_LIB = {
 
     "c": constants.SPEED_OF_LIGHT,
     "c_approx": constants.SPEED_OF_LIGHT_APPROX,
-    "h": constants.PLANKS_CONSTANT,
+    "h": constants.PLANCK_CONSTANT,
     "nN": constants.AVAGADRO_NUMBER,
 
     # ======================================
