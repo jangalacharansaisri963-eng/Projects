@@ -1,7 +1,7 @@
 """
 library.py
 
-Builds the calculator function library.
+Builds the calculator function library using the custom math engine.
 """
 
 from decimal import Decimal
@@ -9,6 +9,32 @@ from fractions import Fraction
 
 import constants
 import inspect
+
+from functions.math_custom import (
+    CUSTOM_PI,
+    CUSTOM_E,
+    CUSTOM_TAU,
+    CUSTOM_INF,
+    CUSTOM_NAN,
+    custom_abs,
+    custom_ceil,
+    custom_floor,
+    custom_factorial,
+    custom_gcd,
+    custom_exp,
+    custom_ln,
+    custom_log,
+    custom_pow,
+    custom_sqrt,
+    custom_sin,
+    custom_cos,
+    custom_tan,
+    custom_sec,
+    custom_csc,
+    custom_cot,
+    custom_radians,
+    custom_degrees,
+)
 
 from functions.trig import (
     sin,
@@ -115,6 +141,38 @@ from functions.compare import (
 # can import and evaluate them without relying on a fragile alias list.
 
 MATH_LIB = {
+
+    # ======================================
+    # Custom Math Engine & Constants
+    # ======================================
+
+    "CUSTOM_PI": CUSTOM_PI,
+    "CUSTOM_E": CUSTOM_E,
+    "CUSTOM_TAU": CUSTOM_TAU,
+    "CUSTOM_INF": CUSTOM_INF,
+    "CUSTOM_NAN": CUSTOM_NAN,
+
+    "custom_abs": custom_abs,
+    "custom_ceil": custom_ceil,
+    "custom_floor": custom_floor,
+    "custom_factorial": custom_factorial,
+    "custom_gcd": custom_gcd,
+
+    "custom_exp": custom_exp,
+    "custom_ln": custom_ln,
+    "custom_log": custom_log,
+    "custom_pow": custom_pow,
+    "custom_sqrt": custom_sqrt,
+
+    "custom_sin": custom_sin,
+    "custom_cos": custom_cos,
+    "custom_tan": custom_tan,
+    "custom_sec": custom_sec,
+    "custom_csc": custom_csc,
+    "custom_cot": custom_cot,
+
+    "custom_radians": custom_radians,
+    "custom_degrees": custom_degrees,
 
     # ======================================
     # Trigonometry
@@ -431,3 +489,4 @@ for _name in trig_public:
 # Also expose the trig module under a key for convenience
 if "trig" not in MATH_LIB:
     MATH_LIB["trig"] = trig_mod
+    
