@@ -68,3 +68,19 @@ SOFTWARE.
 # Extras:
 Please report any bug issue found to the email jangalacharansaisri963@gmail.com. If you want to give suggestions, email to the email id given above.
 
+## 🏆 Credits
+
+**Created & Maintained by**  
+**[Dan Studios](https://github.com/jangalacharansaisri963-eng/Projects)**
+
+---
+
+## 💡 Acknowledgments
+
+Special recognition to the foundational programming ecosystems that continue to inspire and power modern development:
+
+* **Python** — For its intuitive syntax and robust standard libraries that inspired our custom engine design.
+* **Java** — For setting enduring benchmarks in object-oriented architecture and enterprise reliability.
+* **JavaScript** — For driving innovation across the web and powering dynamic runtime environments.
+
+Thank You
