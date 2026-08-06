@@ -26,6 +26,12 @@ Foreshadowing.
 
 Here is a tutorial of the repository:
 
+# Path: Python/ScientificCalculator/
+
+This folder has the main files for the Scientific Calculator project that started this journey.
+
+There are many functions that you can view in the library.py in functions/ folder. There is also a custom own custom_math.py file that does not use the import math and automatic import Decimal to calculate logarithms, natural logarithms, exponents etc. This took a very long time to make since it's an own like thing. Sorry if the English is not good.
+
 # Path: Python/scripts/
 
 This folder has many simple python scripts
@@ -33,6 +39,8 @@ that can be run in VS Code or any IDE. For
 scripts that use Tkinter and Kivy, I recommend using Spyder for Windows and Pydroid 3 for Mobile.
 
 We still didn't create anything with GUI or any Graphics so use VS CODE and Commands Prompt to run python3 (FILE NAME IN YOUR PATH). We will inform when we use Tkinter, Custom Tkinter or Kivy.
+
+Please fork this repository, star it and you are free to do any changes according to the MIT LICENSE:
 
 
 # MIT LICENSE
@@ -56,4 +64,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+# Extras:
+Please report any bug issue found to the email jangalacharansaisri963@gmail.com. If you want to give suggestions, email to the email id given above.
 
