@@ -1,270 +1,847 @@
 """
 math_custom.py
 
-A fully independent, pure-Python custom math engine using Decimal precision,
-featuring customizable high-precision constants, complete trigonometric suites,
-logarithms, exponents, and core utilities built completely from scratch.
+A pure Python mathematics engine built entirely from scratch.
+
+Features
+--------
+• Decimal high precision
+• Custom mathematical constants
+• Exponential functions
+• Logarithms
+• Trigonometric functions
+• Inverse trigonometric functions
+
+No function from Python's math module is used.
 """
 
-from decimal import Decimal, getcontext
+from decimal import (
+    Decimal,
+    ROUND_CEILING,
+    ROUND_FLOOR,
+    getcontext,
+    localcontext
+)
 
-# Set default high precision for Decimal operations
-getcontext().prec = 512
+# ============================================================
+# DECIMAL PRECISION
+# ============================================================
 
-# Full high-precision string representations up to 500 decimal places
-_PI_STR = "3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196"
-_E_STR = "2.71828182845904523536028747135266249775724709369995957496696762772407663035354759457138217852516642742746639193200305992181741359662904357290033429526059563073813232862794349076323382988075319525101901"
+DEFAULT_PRECISION = 512
 
+getcontext().prec = DEFAULT_PRECISION
+
+
+# ============================================================
+# HIGH PRECISION CONSTANTS
+# ============================================================
+
+_PI_STR = (
+    "3.14159265358979323846264338327950288419716939937510"
+    "58209749445923078164062862089986280348253421170679"
+    "82148086513282306647093844609550582231725359408128"
+    "48111745028410270193852110555964462294895493038196"
+)
+
+_E_STR = (
+    "2.71828182845904523536028747135266249775724709369995"
+    "95749669676277240766303535475945713821785251664274"
+    "27466391932003059921817413596629043572900334295260"
+    "59563073813232862794349076323382988075319525101901"
+)
+
+
+# ============================================================
+# CONSTANTS
+# ============================================================
+
+CUSTOM_INF = Decimal("Infinity")
+
+CUSTOM_NAN = Decimal("NaN")
+
+
+# ============================================================
+# INTERNAL HELPERS
+# ============================================================
+
+def _epsilon():
+    """
+    Internal convergence tolerance.
+    """
+
+    return Decimal(10) ** (
+        -(getcontext().prec - 5)
+    )
+
+
+# ============================================================
+# PRECISION CONTROL
+# ============================================================
+
+def set_precision(digits):
+    """
+    Changes Decimal precision.
+    """
+
+    digits = int(digits)
+
+    if digits < 10:
+        raise ValueError(
+            "Precision must be at least 10."
+        )
+
+    getcontext().prec = digits
+
+
+def get_precision():
+    """
+    Returns current precision.
+    """
+
+    return getcontext().prec
+
+
+# ============================================================
+# CONSTANT ACCESSORS
+# ============================================================
 
 def CUSTOM_PI(digits=None):
     """
-    Returns Pi as a Decimal truncated to the specified number of digits.
-    Maximum cap is 500. If no argument is given, returns full precision Decimal.
+    Returns π rounded to the requested
+    number of decimal places.
+
+    Maximum: 500 digits.
     """
+
     if digits is None:
         return Decimal(_PI_STR)
-    
+
     digits = int(digits)
+
     if digits < 1 or digits > 500:
-        raise ValueError("Digits must be between 1 and 500.")
-    
-    return Decimal(_PI_STR[:digits + 2])
+        raise ValueError(
+            "Digits must be between 1 and 500."
+        )
+
+    with localcontext() as ctx:
+
+        ctx.prec = digits + 2
+
+        value = Decimal(_PI_STR)
+
+        quantizer = Decimal(
+            "1." + ("0" * digits)
+        )
+
+        return value.quantize(quantizer)
 
 
 def CUSTOM_E(digits=None):
     """
-    Returns Euler's number (e) as a Decimal truncated to the specified number of digits.
-    Maximum cap is 500. If no argument is given, returns full precision Decimal.
+    Returns Euler's number rounded
+    to the requested precision.
     """
+
     if digits is None:
         return Decimal(_E_STR)
-    
+
     digits = int(digits)
+
     if digits < 1 or digits > 500:
-        raise ValueError("Digits must be between 1 and 500.")
-    
-    return Decimal(_E_STR[:digits + 2])
+        raise ValueError(
+            "Digits must be between 1 and 500."
+        )
+
+    with localcontext() as ctx:
+
+        ctx.prec = digits + 2
+
+        value = Decimal(_E_STR)
+
+        quantizer = Decimal(
+            "1." + ("0" * digits)
+        )
+
+        return value.quantize(quantizer)
 
 
-CUSTOM_TAU = CUSTOM_PI() * Decimal('2')
-CUSTOM_INF = Decimal('Infinity')
-CUSTOM_NAN = Decimal('NaN')
+CUSTOM_TAU = CUSTOM_PI() * Decimal(2)
 
 
-# ==============================================================================
-# PURE CUSTOM UTILITIES & BASIC FUNCTIONS
-# ==============================================================================
+# ============================================================
+# BASIC UTILITIES
+# ============================================================
 
 def custom_abs(x):
-    """Returns absolute value."""
-    d = Decimal(str(x))
-    return -d if d < 0 else d
+    """
+    Absolute value.
+    """
 
+    x = Decimal(str(x))
 
-def custom_ceil(x):
-    """Returns ceiling without math library."""
-    d = Decimal(str(x))
-    return int(d.to_integral_value(rounding='ROUND_CEILING'))
+    if x < 0:
+        return -x
+
+    return x
 
 
 def custom_floor(x):
-    """Returns floor without math library."""
-    d = Decimal(str(x))
-    return int(d.to_integral_value(rounding='ROUND_FLOOR'))
+    """
+    Floor.
+    """
 
+    return int(
+        Decimal(str(x)).to_integral_value(
+            rounding=ROUND_FLOOR
+        )
+    )
+
+
+def custom_ceil(x):
+    """
+    Ceiling.
+    """
+
+    return int(
+        Decimal(str(x)).to_integral_value(
+            rounding=ROUND_CEILING
+        )
+    )
+
+# ============================================================
+# FACTORIAL
+# ============================================================
 
 def custom_factorial(n):
-    """Computes factorial iteratively."""
-    n_int = int(n)
-    if n_int < 0:
-        raise ValueError("Factorial is not defined for negative numbers.")
+    """
+    Computes n! iteratively.
+    """
+
+    n = int(n)
+
+    if n < 0:
+        raise ValueError(
+            "Factorial is undefined for negative numbers."
+        )
+
     result = 1
-    for i in range(2, n_int + 1):
+
+    for i in range(2, n + 1):
         result *= i
+
     return result
 
 
+# ============================================================
+# GREATEST COMMON DIVISOR
+# ============================================================
+
 def custom_gcd(a, b):
-    """Computes Greatest Common Divisor via Euclidean algorithm."""
-    a, b = abs(int(a)), abs(int(b))
+    """
+    Euclidean algorithm.
+    """
+
+    a = abs(int(a))
+    b = abs(int(b))
+
     while b:
         a, b = b, a % b
+
     return a
 
 
-# ==============================================================================
-# NATIVE CUSTOM EXPONENTIAL, LOGARITHM, AND ROOTS
-# ==============================================================================
-
-def custom_exp(x):
-    """Computes e^x completely from scratch using Taylor series expansion."""
-    d = Decimal(str(x))
-    term = Decimal('1')
-    total = Decimal('1')
-    n = 1
-    
-    while True:
-        term = term * d / Decimal(n)
-        if custom_abs(term) < Decimal('1e-35'):
-            break
-        total += term
-        n += 1
-    return total
-
-
-def custom_ln(x):
-    """Computes natural logarithm (ln) completely from scratch using series expansion."""
-    d = Decimal(str(x))
-    if d <= 0:
-        raise ValueError("Math domain error for logarithm.")
-    
-    k = 0
-    while d >= Decimal('2'):
-        d = d / Decimal('2')
-        k += 1
-    while d < Decimal('1'):
-        d = d * Decimal('2')
-        k -= 1
-        
-    y = (d - Decimal('1')) / (d + Decimal('1'))
-    y_squared = y * y
-    term = y
-    total = y
-    n = 3
-    
-    while True:
-        term = term * y_squared * Decimal(n - 2) / Decimal(n)
-        add_term = term / Decimal(n)
-        if custom_abs(add_term) < Decimal('1e-35'):
-            break
-        total += add_term
-        n += 2
-        
-    ln_2 = Decimal('0.6931471805599453094172321214581765680755')
-    return (total * Decimal('2')) + (Decimal(k) * ln_2)
-
-
-def custom_log(x, base=None):
-    """Computes logarithm for any given base using custom_ln."""
-    ln_x = custom_ln(x)
-    if base is None:
-        return ln_x
-    ln_base = custom_ln(base)
-    if ln_base == 0:
-        raise ValueError("Logarithm base cannot be 1.")
-    return ln_x / ln_base
-
-
-def custom_pow(x, y):
-    """Computes x^y using custom exponential and natural logarithm."""
-    d_x = Decimal(str(x))
-    d_y = Decimal(str(y))
-    if d_x <= 0:
-        raise ValueError("Custom power domain error for negative/zero bases.")
-    return custom_exp(d_y * custom_ln(d_x))
-
+# ============================================================
+# SQUARE ROOT
+# ============================================================
 
 def custom_sqrt(x):
-    """Computes square root using the Babylonian method (Hero's method) manually."""
-    d = Decimal(str(x))
-    if d < 0:
-        raise ValueError("Cannot compute square root of a negative number.")
-    if d == 0:
-        return Decimal('0')
-    
-    guess = d / Decimal('2')
+    """
+    Computes square root using
+    Newton's method.
+    """
+
+    x = Decimal(str(x))
+
+    if x < 0:
+        raise ValueError(
+            "Cannot compute square root of a negative number."
+        )
+
+    if x == 0:
+        return Decimal(0)
+
+    guess = x / 2
+
+    eps = _epsilon()
+
     while True:
-        next_guess = (guess + d / guess) / Decimal('2')
-        if custom_abs(next_guess - guess) < Decimal('1e-35'):
-            break
+
+        next_guess = (
+            guess +
+            x / guess
+        ) / 2
+
+        if custom_abs(
+            next_guess - guess
+        ) < eps:
+            return +next_guess
+
         guess = next_guess
-    return guess
 
 
-# ==============================================================================
-# PURE CUSTOM TRIGONOMETRIC ENGINE (Taylor Series via Decimal)
-# ==============================================================================
+# ============================================================
+# EXPONENTIAL
+# ============================================================
+
+def custom_exp(x):
+    """
+    Computes e^x using
+    Taylor series.
+    """
+
+    x = Decimal(str(x))
+
+    term = Decimal(1)
+    total = Decimal(1)
+
+    n = 1
+
+    eps = _epsilon()
+
+    while True:
+
+        term *= x
+        term /= Decimal(n)
+
+        total += term
+
+        if custom_abs(term) < eps:
+            break
+
+        n += 1
+
+    return +total
+
+
+# ============================================================
+# NATURAL LOGARITHM
+# ============================================================
+
+def custom_ln(x):
+    """
+    Computes natural logarithm.
+    """
+
+    x = Decimal(str(x))
+
+    if x <= 0:
+        raise ValueError(
+            "Math domain error."
+        )
+
+    one = Decimal(1)
+    two = Decimal(2)
+
+    k = 0
+
+    while x > two:
+        x /= two
+        k += 1
+
+    while x < one / two:
+        x *= two
+        k -= 1
+
+    y = (x - one) / (x + one)
+
+    y2 = y * y
+
+    term = y
+    total = y
+
+    n = 3
+
+    eps = _epsilon()
+
+    while True:
+
+        term *= y2
+
+        add = term / Decimal(n)
+
+        total += add
+
+        if custom_abs(add) < eps:
+            break
+
+        n += 2
+
+    LN2 = Decimal(
+        "0.6931471805599453094172321214581765680755001343602552"
+    )
+
+    return +(two * total + Decimal(k) * LN2)
+
+
+# ============================================================
+# LOGARITHM
+# ============================================================
+
+def custom_log(x, base=None):
+    """
+    Computes logarithm of x.
+
+    If base is omitted,
+    natural logarithm is returned.
+    """
+
+    if base is None:
+        return custom_ln(x)
+
+    base = Decimal(str(base))
+
+    if base <= 0:
+        raise ValueError(
+            "Base must be positive."
+        )
+
+    if base == 1:
+        raise ValueError(
+            "Base cannot equal one."
+        )
+
+    return (
+        custom_ln(x)
+        /
+        custom_ln(base)
+    )
+
+
+# ============================================================
+# POWER
+# ============================================================
+
+def custom_pow(x, y):
+    """
+    Computes x^y.
+    """
+
+    x = Decimal(str(x))
+    y = Decimal(str(y))
+
+    if x == 0:
+
+        if y <= 0:
+            raise ValueError(
+                "Undefined power."
+            )
+
+        return Decimal(0)
+
+    if x < 0:
+
+        if y != int(y):
+            raise ValueError(
+                "Negative base requires an integer exponent."
+            )
+
+        exponent = int(y)
+
+        answer = custom_exp(
+            Decimal(exponent)
+            *
+            custom_ln(-x)
+        )
+
+        if exponent % 2:
+            return -answer
+
+        return answer
+
+    return custom_exp(
+        y *
+        custom_ln(x)
+    )
+
+# ============================================================
+# SINE
+# ============================================================
 
 def custom_sin(x):
-    """Computes sine using pure Taylor series expansion."""
-    d = Decimal(str(x))
-    two_pi = CUSTOM_TAU
-    d = d % two_pi
-    
-    term = d
-    total = d
-    n = 1
-    d_squared = d * d
-    
-    while True:
-        n += 2
-        term = -term * d_squared / Decimal(n * (n - 1))
-        if custom_abs(term) < Decimal('1e-35'):
-            break
-        total += term
-    return total
+    """
+    Computes sine using
+    the Taylor series.
 
+    Input must be in radians.
+    """
+
+    x = Decimal(str(x))
+
+    two_pi = CUSTOM_TAU
+
+    # Better argument reduction
+    x = x % two_pi
+
+    if x > CUSTOM_PI():
+        x -= two_pi
+
+    term = x
+    total = x
+
+    x2 = x * x
+
+    n = 1
+
+    eps = _epsilon()
+
+    while True:
+
+        term *= -x2
+        term /= Decimal(
+            (2 * n) * (2 * n + 1)
+        )
+
+        total += term
+
+        if custom_abs(term) < eps:
+            break
+
+        n += 1
+
+    return +total
+
+
+# ============================================================
+# COSINE
+# ============================================================
 
 def custom_cos(x):
-    """Computes cosine using pure Taylor series expansion."""
-    d = Decimal(str(x))
-    two_pi = CUSTOM_TAU
-    d = d % two_pi
-    
-    term = Decimal('1')
-    total = Decimal('1')
-    n = 0
-    d_squared = d * d
-    
-    while True:
-        n += 2
-        term = -term * d_squared / Decimal(n * (n - 1))
-        if custom_abs(term) < Decimal('1e-35'):
-            break
-        total += term
-    return total
+    """
+    Computes cosine using
+    the Taylor series.
 
+    Input must be in radians.
+    """
+
+    x = Decimal(str(x))
+
+    two_pi = CUSTOM_TAU
+
+    x = x % two_pi
+
+    if x > CUSTOM_PI():
+        x -= two_pi
+
+    term = Decimal(1)
+    total = Decimal(1)
+
+    x2 = x * x
+
+    n = 1
+
+    eps = _epsilon()
+
+    while True:
+
+        term *= -x2
+        term /= Decimal(
+            (2 * n - 1) *
+            (2 * n)
+        )
+
+        total += term
+
+        if custom_abs(term) < eps:
+            break
+
+        n += 1
+
+    return +total
+
+
+# ============================================================
+# TANGENT
+# ============================================================
 
 def custom_tan(x):
-    """Computes tangent as sin(x) / cos(x)."""
+    """
+    Computes tangent.
+    """
+
     c = custom_cos(x)
-    if c == 0:
-        raise ZeroDivisionError("Tangent undefined (division by zero).")
+
+    if custom_abs(c) < _epsilon():
+        raise ZeroDivisionError(
+            "Tangent undefined."
+        )
+
     return custom_sin(x) / c
 
 
-def custom_sec(x):
-    """Secant function: 1 / cos(x)"""
-    c = custom_cos(x)
-    if c == 0:
-        raise ZeroDivisionError("Secant undefined (division by zero).")
-    return Decimal('1') / c
+# ============================================================
+# SECANT
+# ============================================================
 
+def custom_sec(x):
+    """
+    Computes secant.
+    """
+
+    c = custom_cos(x)
+
+    if custom_abs(c) < _epsilon():
+        raise ZeroDivisionError(
+            "Secant undefined."
+        )
+
+    return Decimal(1) / c
+
+
+# ============================================================
+# COSECANT
+# ============================================================
 
 def custom_csc(x):
-    """Cosecant function: 1 / sin(x)"""
-    s = custom_sin(x)
-    if s == 0:
-        raise ZeroDivisionError("Cosecant undefined (division by zero).")
-    return Decimal('1') / s
+    """
+    Computes cosecant.
+    """
 
+    s = custom_sin(x)
+
+    if custom_abs(s) < _epsilon():
+        raise ZeroDivisionError(
+            "Cosecant undefined."
+        )
+
+    return Decimal(1) / s
+
+
+# ============================================================
+# COTANGENT
+# ============================================================
 
 def custom_cot(x):
-    """Cotangent function: 1 / tan(x)"""
+    """
+    Computes cotangent.
+    """
+
     s = custom_sin(x)
-    if s == 0:
-        raise ZeroDivisionError("Cotangent undefined (division by zero).")
+
+    if custom_abs(s) < _epsilon():
+        raise ZeroDivisionError(
+            "Cotangent undefined."
+        )
+
     return custom_cos(x) / s
 
 
-def custom_radians(degrees_val):
-    """Converts degrees to radians."""
-    d = Decimal(str(degrees_val))
-    return d * CUSTOM_PI() / Decimal('180')
+# ============================================================
+# ANGLE CONVERSION
+# ============================================================
+
+def custom_radians(degrees):
+    """
+    Degrees → Radians.
+    """
+
+    degrees = Decimal(str(degrees))
+
+    return (
+        degrees *
+        CUSTOM_PI()
+        /
+        Decimal(180)
+    )
 
 
-def custom_degrees(radians_val):
-    """Converts radians to degrees."""
-    r = Decimal(str(radians_val))
-    return r * Decimal('180') / CUSTOM_PI()
-  
+def custom_degrees(radians):
+    """
+    Radians → Degrees.
+    """
+
+    radians = Decimal(str(radians))
+
+    return (
+        radians *
+        Decimal(180)
+        /
+        CUSTOM_PI()
+    )
+
+# ============================================================
+# INVERSE TANGENT
+# ============================================================
+
+def custom_atan(x):
+    """
+    Computes inverse tangent.
+
+    Returns radians.
+    """
+
+    x = Decimal(str(x))
+
+    one = Decimal(1)
+
+    if x == 0:
+        return Decimal(0)
+
+    if x < 0:
+        return -custom_atan(-x)
+
+    if x > one:
+        return (
+            CUSTOM_PI() / 2
+            -
+            custom_atan(one / x)
+        )
+
+    term = x
+    total = x
+
+    x2 = x * x
+
+    n = 1
+
+    eps = _epsilon()
+
+    while True:
+
+        term *= -x2
+
+        add = term / Decimal(
+            2 * n + 1
+        )
+
+        total += add
+
+        if custom_abs(add) < eps:
+            break
+
+        n += 1
+
+    return +total
+
+
+# ============================================================
+# INVERSE TANGENT (TWO ARGUMENTS)
+# ============================================================
+
+def custom_atan2(y, x):
+    """
+    Computes atan2(y, x).
+
+    Returns radians.
+    """
+
+    y = Decimal(str(y))
+    x = Decimal(str(x))
+
+    if x > 0:
+        return custom_atan(y / x)
+
+    if x < 0 and y >= 0:
+        return (
+            custom_atan(y / x)
+            +
+            CUSTOM_PI()
+        )
+
+    if x < 0 and y < 0:
+        return (
+            custom_atan(y / x)
+            -
+            CUSTOM_PI()
+        )
+
+    if x == 0 and y > 0:
+        return CUSTOM_PI() / 2
+
+    if x == 0 and y < 0:
+        return -CUSTOM_PI() / 2
+
+    raise ValueError(
+        "atan2(0, 0) is undefined."
+    )
+
+
+# ============================================================
+# INVERSE SINE
+# ============================================================
+
+def custom_asin(x):
+    """
+    Computes inverse sine.
+
+    Returns radians.
+    """
+
+    x = Decimal(str(x))
+
+    if x < -1 or x > 1:
+        raise ValueError(
+            "Math domain error."
+        )
+
+    if x == 1:
+        return CUSTOM_PI() / 2
+
+    if x == -1:
+        return -CUSTOM_PI() / 2
+
+    return custom_atan(
+        x
+        /
+        custom_sqrt(
+            Decimal(1)
+            -
+            x * x
+        )
+    )
+
+
+# ============================================================
+# INVERSE COSINE
+# ============================================================
+
+def custom_acos(x):
+    """
+    Computes inverse cosine.
+
+    Returns radians.
+    """
+
+    x = Decimal(str(x))
+
+    if x < -1 or x > 1:
+        raise ValueError(
+            "Math domain error."
+        )
+
+    return (
+        CUSTOM_PI() / 2
+        -
+        custom_asin(x)
+    )
+
+def custom_log10(x):
+    """
+    Base-10 logarithm.
+    """
+    return custom_log(x, Decimal(10))
+
+
+def custom_log2(x):
+    """
+    Base-2 logarithm.
+    """
+    return custom_log(x, Decimal(2))
+
+
+# ============================================================
+# ALIASES
+# ============================================================
+
+custom_arcsin = custom_asin
+custom_arccos = custom_acos
+custom_arctan = custom_atan
