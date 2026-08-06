@@ -1,7 +1,7 @@
 """
 library.py
 
-Builds the calculator function library using the custom math engine.
+Builds the calculator function library using the updated custom math engine.
 """
 
 from decimal import Decimal
@@ -16,6 +16,8 @@ from functions.math_custom import (
     CUSTOM_TAU,
     CUSTOM_INF,
     CUSTOM_NAN,
+    set_precision,
+    get_precision,
     custom_abs,
     custom_ceil,
     custom_floor,
@@ -24,6 +26,8 @@ from functions.math_custom import (
     custom_exp,
     custom_ln,
     custom_log,
+    custom_log10,
+    custom_log2,
     custom_pow,
     custom_sqrt,
     custom_sin,
@@ -32,6 +36,13 @@ from functions.math_custom import (
     custom_sec,
     custom_csc,
     custom_cot,
+    custom_asin,
+    custom_acos,
+    custom_atan,
+    custom_atan2,
+    custom_arcsin,
+    custom_arccos,
+    custom_arctan,
     custom_radians,
     custom_degrees,
 )
@@ -152,6 +163,9 @@ MATH_LIB = {
     "CUSTOM_INF": CUSTOM_INF,
     "CUSTOM_NAN": CUSTOM_NAN,
 
+    "set_precision": set_precision,
+    "get_precision": get_precision,
+
     "custom_abs": custom_abs,
     "custom_ceil": custom_ceil,
     "custom_floor": custom_floor,
@@ -161,6 +175,8 @@ MATH_LIB = {
     "custom_exp": custom_exp,
     "custom_ln": custom_ln,
     "custom_log": custom_log,
+    "custom_log10": custom_log10,
+    "custom_log2": custom_log2,
     "custom_pow": custom_pow,
     "custom_sqrt": custom_sqrt,
 
@@ -170,6 +186,14 @@ MATH_LIB = {
     "custom_sec": custom_sec,
     "custom_csc": custom_csc,
     "custom_cot": custom_cot,
+
+    "custom_asin": custom_asin,
+    "custom_acos": custom_acos,
+    "custom_atan": custom_atan,
+    "custom_atan2": custom_atan2,
+    "custom_arcsin": custom_arcsin,
+    "custom_arccos": custom_arccos,
+    "custom_arctan": custom_arctan,
 
     "custom_radians": custom_radians,
     "custom_degrees": custom_degrees,
