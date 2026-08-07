@@ -25,6 +25,7 @@ from functions.math_custom import (
     custom_gcd,
     custom_exp,
     custom_ln,
+    custom_ln2,
     custom_log,
     custom_log10,
     custom_log2,
@@ -174,6 +175,7 @@ MATH_LIB = {
 
     "custom_exp": custom_exp,
     "custom_ln": custom_ln,
+    "custom_ln2": custom_ln2,
     "custom_log": custom_log,
     "custom_log10": custom_log10,
     "custom_log2": custom_log2,
