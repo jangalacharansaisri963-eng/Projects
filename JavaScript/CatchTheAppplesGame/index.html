@@ -52,12 +52,77 @@
             gap: 5px;
         }
 
+        .canvas-wrapper {
+            position: relative;
+        }
+
         canvas {
             background: linear-gradient(to bottom, #e4f9f5, #a3d2ca);
             border-left: 2px solid rgba(255, 255, 255, 0.2);
             border-right: 2px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             display: block;
+        }
+
+        /* Overlay Start Screen */
+        .start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(22, 36, 71, 0.85);
+            backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            transition: opacity 0.3s ease;
+        }
+
+        .start-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .start-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffbc00;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        .start-subtitle {
+            font-size: 14px;
+            color: #cbd5e1;
+            margin-bottom: 25px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .start-btn {
+            background: #ff4b5c;
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 75, 92, 0.4);
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .start-btn:hover {
+            background: #ff2a40;
+            transform: scale(1.05);
+        }
+
+        .start-btn:active {
+            transform: scale(0.96);
         }
 
         /* Mobile On-Screen Controls */
@@ -121,8 +186,16 @@
             <span id="livesDisplay">❤️❤️❤️</span>
         </div>
 
-        <!-- Canvas -->
-        <canvas id="gameCanvas" width="400" height="480"></canvas>
+        <!-- Canvas Wrapper with Start Screen Overlay -->
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="400" height="480"></canvas>
+            
+            <div id="startScreen" class="start-screen">
+                <div class="start-title">🍎 Fruit Catcher Deluxe</div>
+                <div class="start-subtitle">Catch fruits, grab golden bonuses, and avoid the dark bombs!</div>
+                <button id="startBtn" class="start-btn">PLAY</button>
+            </div>
+        </div>
 
         <!-- Mobile Touch Buttons -->
         <div class="touch-controls">
@@ -143,13 +216,14 @@
         const scoreDisplay = document.getElementById("scoreDisplay");
         const highScoreDisplay = document.getElementById("highScoreDisplay");
         const livesDisplay = document.getElementById("livesDisplay");
+        const startScreen = document.getElementById("startScreen");
+        const startBtn = document.getElementById("startBtn");
 
         // Game State Variables
         let score = 0;
         let highScore = localStorage.getItem("fruitCatcherHighScore") || 0;
         let lives = 3;
-        let gameActive = true;
-        let level = 1;
+        let gameActive = false; // Changed to false initially waiting for start button
         let combo = 0;
         let particles = [];
         let floatingTexts = [];
@@ -179,7 +253,6 @@
         let currentItem = {};
 
         function spawnItem() {
-            // Pick item type based on probabilities
             const rand = Math.random();
             let cumulative = 0;
             let chosen = itemTypes[0];
@@ -230,6 +303,12 @@
             });
         }
 
+        // Start Button Event Listener
+        startBtn.addEventListener("click", () => {
+            startScreen.classList.add("hidden");
+            resetGame();
+        });
+
         // Keyboard Event Listeners
         document.addEventListener("keydown", (e) => {
             if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") basket.moveLeft = true;
@@ -257,59 +336,80 @@
 
         // Main Game Loop Update
         function updateGame() {
-            if (!gameActive) return;
-
             // Clear Screen
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Move Basket
-            if (basket.moveLeft && basket.x > 0) basket.x -= basket.speed;
-            if (basket.moveRight && basket.x < canvas.width - basket.width) basket.x += basket.speed;
+            if (gameActive) {
+                // Move Basket
+                if (basket.moveLeft && basket.x > 0) basket.x -= basket.speed;
+                if (basket.moveRight && basket.x < canvas.width - basket.width) basket.x += basket.speed;
 
-            // Update Item Position
-            currentItem.y += currentItem.speed;
+                // Update Item Position
+                currentItem.y += currentItem.speed;
 
-            // Collision Detection (Circle vs Rect)
-            const closestX = Math.max(basket.x, Math.min(currentItem.x, basket.x + basket.width));
-            const closestY = Math.max(basket.y, Math.min(currentItem.y, basket.y + basket.height));
-            const distanceX = currentItem.x - closestX;
-            const distanceY = currentItem.y - closestY;
-            const distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+                // Collision Detection (Circle vs Rect)
+                const closestX = Math.max(basket.x, Math.min(currentItem.x, basket.x + basket.width));
+                const closestY = Math.max(basket.y, Math.min(currentItem.y, basket.y + basket.height));
+                const distanceX = currentItem.x - closestX;
+                const distanceY = currentItem.y - closestY;
+                const distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
 
-            if (distanceSquared < (currentItem.radius * currentItem.radius)) {
-                // Caught!
-                if (currentItem.type === 'bomb') {
-                    lives--;
-                    combo = 0;
-                    createParticles(currentItem.x, currentItem.y, '#333');
-                    createFloatingText("-1 Life", currentItem.x, currentItem.y, "#ff4b5c");
-                    if (lives <= 0) {
-                        endGame();
+                if (distanceSquared < (currentItem.radius * currentItem.radius)) {
+                    if (currentItem.type === 'bomb') {
+                        lives--;
+                        combo = 0;
+                        createParticles(currentItem.x, currentItem.y, '#333');
+                        createFloatingText("-1 Life", currentItem.x, currentItem.y, "#ff4b5c");
+                        if (lives <= 0) {
+                            endGame();
+                        }
+                    } else {
+                        score += currentItem.points;
+                        combo++;
+                        createParticles(currentItem.x, currentItem.y, currentItem.color);
+                        createFloatingText(`+${currentItem.points}`, currentItem.x, currentItem.y, "#056676");
                     }
-                } else {
-                    score += currentItem.points;
-                    combo++;
-                    createParticles(currentItem.x, currentItem.y, currentItem.color);
-                    createFloatingText(`+${currentItem.points}`, currentItem.x, currentItem.y, "#056676");
-                }
-                
-                // Update UI Labels
-                scoreDisplay.innerText = `🍎 Score: ${score}`;
-                livesDisplay.innerText = "❤️".repeat(Math.max(0, lives));
-                spawnItem();
-            }
-
-            // Missed Item (Hit Ground)
-            if (currentItem.y > canvas.height + 20) {
-                if (currentItem.type !== 'bomb') {
-                    lives--;
-                    combo = 0;
+                    
+                    scoreDisplay.innerText = `🍎 Score: ${score}`;
                     livesDisplay.innerText = "❤️".repeat(Math.max(0, lives));
-                    if (lives <= 0) {
-                        endGame();
-                    }
+                    spawnItem();
                 }
-                spawnItem();
+
+                // Missed Item (Hit Ground)
+                if (currentItem.y > canvas.height + 20) {
+                    if (currentItem.type !== 'bomb') {
+                        lives--;
+                        combo = 0;
+                        livesDisplay.innerText = "❤️".repeat(Math.max(0, lives));
+                        if (lives <= 0) {
+                            endGame();
+                        }
+                    }
+                    spawnItem();
+                }
+
+                // Draw Falling Item
+                ctx.fillStyle = currentItem.color;
+                ctx.beginPath();
+                ctx.arc(currentItem.x, currentItem.y, currentItem.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                if (currentItem.type === 'bomb') {
+                    ctx.fillStyle = "#ff4b5c";
+                    ctx.fillRect(currentItem.x - 2, currentItem.y - currentItem.radius - 6, 4, 6);
+                } else {
+                    ctx.fillStyle = "rgba(255,255,255,0.4)";
+                    ctx.beginPath();
+                    ctx.arc(currentItem.x - 3, currentItem.y - 3, currentItem.radius / 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Draw Combo Multiplier Badge if active
+                if (combo > 2) {
+                    ctx.fillStyle = "#ffbc00";
+                    ctx.font = "bold 15px Arial";
+                    ctx.fillText(`🔥 Combo x${combo}`, 15, 30);
+                }
             }
 
             // Draw Basket (Modern Style with handle)
@@ -318,26 +418,8 @@
             ctx.roundRect(basket.x, basket.y, basket.width, basket.height, [4, 4, 10, 10]);
             ctx.fill();
 
-            // Basket rim detail
             ctx.fillStyle = "#022f36";
             ctx.fillRect(basket.x - 3, basket.y, basket.width + 6, 6);
-
-            // Draw Falling Item
-            ctx.fillStyle = currentItem.color;
-            ctx.beginPath();
-            ctx.arc(currentItem.x, currentItem.y, currentItem.radius, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Item inner glow/detail
-            if (currentItem.type === 'bomb') {
-                ctx.fillStyle = "#ff4b5c";
-                ctx.fillRect(currentItem.x - 2, currentItem.y - currentItem.radius - 6, 4, 6);
-            } else {
-                ctx.fillStyle = "rgba(255,255,255,0.4)";
-                ctx.beginPath();
-                ctx.arc(currentItem.x - 3, currentItem.y - 3, currentItem.radius / 3, 0, Math.PI * 2);
-                ctx.fill();
-            }
 
             // Update & Draw Particles
             for (let i = particles.length - 1; i >= 0; i--) {
@@ -375,13 +457,6 @@
                 ctx.restore();
             }
 
-            // Draw Combo Multiplier Badge if active
-            if (combo > 2) {
-                ctx.fillStyle = "#ffbc00";
-                ctx.font = "bold 15px Arial";
-                ctx.fillText(`🔥 Combo x${combo}`, 15, 30);
-            }
-
             requestAnimationFrame(updateGame);
         }
 
@@ -394,8 +469,8 @@
             }
             
             setTimeout(() => {
-                alert(`Game Over! Final Score: ${score}\nTap OK to play again.`);
-                resetGame();
+                startScreen.classList.remove("hidden");
+                startBtn.innerText = "PLAY AGAIN";
             }, 100);
         }
 
@@ -407,10 +482,9 @@
             scoreDisplay.innerText = `🍎 Score: ${score}`;
             livesDisplay.innerText = "❤️❤️❤️";
             spawnItem();
-            updateGame();
         }
 
-        // Initialize loop
+        // Initialize background animation loop
         updateGame();
     </script>
 </body>
