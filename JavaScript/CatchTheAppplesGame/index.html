@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple JS Catching Game</title>
+    <style>
+        /* Center the game board on the screen */
+        body {
+            margin: 0;
+            background: #222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        /* Game Canvas styling */
+        canvas {
+            background: #a3d2ca;
+            border: 4px solid #fff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- The HTML5 Canvas element where the game draws -->
+    <canvas id="gameCanvas" width="400" height="500"></canvas>
+
+    <script>
+        // 1. SETUP GAME CANVAS
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // 2. GAME VARIABLES
+        let score = 0;
+        
+        // Player properties
+        const basket = {
+            x: 175,
+            y: 460,
+            width: 50,
+            height: 20,
+            speed: 7,
+            moveLeft: false,
+            moveRight: false
+        };
+
+        // Falling item properties
+        const item = {
+            x: Math.random() * (canvas.width - 20),
+            y: 0,
+            size: 15,
+            speed: 3
+        };
+
+        // 3. LISTEN FOR KEYBOARD INPUTS
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowLeft" || e.key === "a") basket.moveLeft = true;
+            if (e.key === "ArrowRight" || e.key === "d") basket.moveRight = true;
+        });
+
+        document.addEventListener("keyup", (e) => {
+            if (e.key === "ArrowLeft" || e.key === "a") basket.moveLeft = false;
+            if (e.key === "ArrowRight" || e.key === "d") basket.moveRight = false;
+        });
+
+        // 4. RESET ITEM POSITION
+        function resetItem() {
+            item.x = Math.random() * (canvas.width - item.size);
+            item.y = 0;
+            // Slightly increase speed as score goes up to make it harder
+            item.speed = 3 + Math.floor(score / 5); 
+        }
+
+        // 5. CORE GAME LOOP
+        function updateGame() {
+            // Clear previous frame
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Move Basket and stay within boundaries
+            if (basket.moveLeft && basket.x > 0) basket.x -= basket.speed;
+            if (basket.moveRight && basket.x < canvas.width - basket.width) basket.x += basket.speed;
+
+            // Move falling item
+            item.y += item.speed;
+
+            // Collision Detection: Did the basket catch the item?
+            if (
+                item.y + item.size >= basket.y &&
+                item.x + item.size >= basket.x &&
+                item.x <= basket.x + basket.width
+            ) {
+                score++;
+                resetItem();
+            }
+
+            // Game Over: Did the item hit the floor?
+            if (item.y > canvas.height) {
+                alert(`Game Over! Your Final Score: ${score}`);
+                score = 0;
+                resetItem();
+            }
+
+            // DRAW ELEMENTS
+            // Draw Basket (Blue)
+            ctx.fillStyle = "#056676";
+            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+            // Draw Falling Apple (Red Circle)
+            ctx.fillStyle = "#ff4b5c";
+            ctx.beginPath();
+            ctx.arc(item.x + item.size/2, item.y + item.size/2, item.size/2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw Score Board
+            ctx.fillStyle = "#2b2e4a";
+            ctx.font = "20px Arial";
+            ctx.fillText(`Score: ${score}`, 15, 30);
+
+            // Run the loop continuously
+            requestAnimationFrame(updateGame);
+        }
+
+        // Start the game loop
+        updateGame();
+    </script>
+</body>
+</html>
