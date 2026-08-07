@@ -296,7 +296,7 @@
         <div class="title">❌ Tic Tac Toe ⭕</div>
         <div id="status" class="status">Click Start Game to play</div>
 
-        <!-- Settings Screen Overlay -->
+        <!-- Settings Screen Overlay (Starts hidden now) -->
         <div id="startScreen" class="start-screen hidden">
             <!-- X Close Button -->
             <button type="button" class="close-modal-btn" onclick="closeSettings()">&times;</button>
@@ -604,12 +604,10 @@
                 }
             } else {
                 let bestScore = 10000;
-                for (let i = 0; i < moves.hlength; i++) {
+                for (let i = 0; i < moves.length; i++) {
                     if (moves[i].score < bestScore) {
                         bestScore = moves[i].score;
                         bestMove = i;
                     }
                 }
-            }
-
-          
+      
