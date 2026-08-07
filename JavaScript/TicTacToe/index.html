@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tic Tac Toe Ultimate Deluxe - Dan Studios</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #1f4068, #162447);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 25px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            width: 380px;
+        }
+
+        /* Top HUD Stats Panel */
+        .hud-panel {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hud-panel span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffbc00;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        /* Overlay Start Screen */
+        .start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(22, 36, 71, 0.94);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: 16px;
+            padding: 20px;
+            transition: opacity 0.3s ease;
+        }
+
+        .start-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .menu-label {
+            font-size: 13px;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+            font-weight: bold;
+            align-self: flex-start;
+            margin-left: 10px;
+        }
+
+        .menu-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .menu-btn {
+            flex: 1;
+            padding: 10px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-btn.active {
+            background: #056676;
+            border-color: #087e8b;
+            box-shadow: 0 0 10px rgba(5, 102, 118, 0.5);
+        }
+
+        .play-btn {
+            background: #ff4b5c;
+            color: white;
+            border: none;
+            padding: 12px 0;
+            width: 100%;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 75, 92, 0.4);
+            margin-top: 10px;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .play-btn:hover {
+            background: #ff2a40;
+            transform: scale(1.02);
+        }
+
+        .play-btn:active {
+            transform: scale(0.96);
+        }
+
+        .status {
+            font-size: 15px;
+            margin-bottom: 15px;
+            color: #cbd5e1;
+            font-weight: 500;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .cell {
+            width: 95px;
+            height: 95px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 44px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s, border-color 0.2s;
+        }
+
+        .cell:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .cell:active {
+            transform: scale(0.95);
+        }
+
+        .cell.x {
+            color: #ff4b5c;
+            text-shadow: 0 0 15px rgba(255, 75, 92, 0.5);
+        }
+
+        .cell.o {
+            color: #38bdf8;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+
+        .cell.win {
+            background: rgba(255, 188, 0, 0.25);
+            border-color: #ffbc00;
+            animation: pulseWin 0.6s infinite alternate;
+        }
+
+        @keyframes pulseWin {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.04); }
+        }
+
+        .control-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .action-btn {
+            flex: 1;
+            background: #056676;
+            color: white;
+            border: none;
+            padding: 11px 0;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .action-btn:hover {
+            background: #087e8b;
+        }
+
+        .action-btn:active {
+            transform: scale(0.96);
+        }
+
+        @media (max-width: 400px) {
+            .cell {
+                width: 82px;
+                height: 82px;
+                font-size: 38px;
+            }
+            .game-container {
+                width: 100vw;
+                padding: 15px;
+                border-radius: 0;
+                border: none;
+                background: transparent;
+                box-shadow: none;
+            }
+            .start-screen {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <!-- Persistent Statistics & Streak HUD -->
+        <div class="hud-panel">
+            <span id="statWins">🏆 Wins: 0</span>
+            <span id="statLosses">❌ Losses: 0</span>
+            <span id="statStreak">🔥 Streak: 0</span>
+        </div>
+
+        <div class="title">❌ Tic Tac Toe ⭕</div>
+        <div id="status" class="status">Select mode to play</div>
+
+        <!-- Start Screen Overlay with Customization -->
+        <div id="startScreen" class="start-screen">
+            <div class="title" style="margin-bottom: 16px;">Game Settings</div>
+            
+            <div class="menu-label">Game Mode</div>
+            <div class="menu-group">
+                <button class="menu-btn active" id="modePvp" onclick="setMode('pvp')">2 Players</button>
+                <button class="menu-btn" id="modeBot" onclick="setMode('bot')">vs Robot</button>
+            </div>
+
+            <div class="menu-label" id="diffLabel">Robot Difficulty</div>
+            <div class="menu-group" id="diffGroup">
+                <button class="menu-btn active" id="diffEasy" onclick="setDifficulty('easy')">Easy</button>
+                <button class="menu-btn" id="diffHard" onclick="setDifficulty('hard')">Unbeatable</button>
+            </div>
+
+            <div class="menu-label">First Turn</div>
+            <div class="menu-group">
+                <button class="menu-btn active" id="turnX" onclick="setFirstPlayer('X')">Player X</button>
+                <button class="menu-btn" id="turnO" onclick="setFirstPlayer('O')">Player O</button>
+            </div>
+
+            <button class="play-btn" onclick="startGame()">START GAME</button>
+        </div>
+
+        <!-- Game Board Grid -->
+        <div class="board" id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+
+        <div class="control-row">
+            <button class="action-btn" onclick="openMenu()">Menu</button>
+            <button class="action-btn" onclick="resetGame()">Restart</button>
+        </div>
+    </div>
+
+    <script>
+        const cells = document.querySelectorAll(".cell");
+        const statusText = document.getElementById("status");
+        const startScreen = document.getElementById("startScreen");
+        const diffLabel = document.getElementById("diffLabel");
+        const diffGroup = document.getElementById("diffGroup");
+
+        // Stat HUD Elements
+        const statWins = document.getElementById("statWins");
+        const statLosses = document.getElementById("statLosses");
+        const statStreak = document.getElementById("statStreak");
+
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+        let startingPlayer = "X";
+        let gameActive = false;
+        
+        // Configuration State
+        let gameMode = "pvp"; // 'pvp' or 'bot'
+        let difficulty = "easy"; // 'easy' or 'hard'
+
+        // Persistent Statistics (Local Storage)
+        let stats = JSON.parse(localStorage.getItem("tttStats")) || { wins: 0, losses: 0, streak: 0 };
+        updateStatsUI();
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]            // Diagonals
+        ];
+
+        function setMode(mode) {
+            gameMode = mode;
+            document.getElementById("modePvp").classList.toggle("active", mode === "pvp");
+            document.getElementById("modeBot").classList.toggle("active", mode === "bot");
+            
+            if (mode === "bot") {
+                diffLabel.style.display = "block";
+                diffGroup.style.display = "flex";
+            } else {
+                diffLabel.style.display = "none";
+                diffGroup.style.display = "none";
+            }
+        }
+
+        function setDifficulty(diff) {
+            difficulty = diff;
+            document.getElementById("diffEasy").classList.toggle("active", diff === "easy");
+            document.getElementById("diffHard").classList.toggle("active", diff === "hard");
+        }
+
+        function setFirstPlayer(player) {
+            startingPlayer = player;
+            document.getElementById("turnX").classList.toggle("active", player === "X");
+            document.getElementById("turnO").classList.toggle("active", player === "O");
+        }
+
+        function updateStatsUI() {
+            statWins.innerText = `🏆 Wins: ${stats.wins}`;
+            statLosses.innerText = `❌ Losses: ${stats.losses}`;
+            statStreak.innerText = `🔥 Streak: ${stats.streak}`;
+            localStorage.setItem("tttStats", JSON.stringify(stats));
+        }
+
+        function openMenu() {
+            gameActive = false;
+            startScreen.classList.remove("hidden");
+        }
+
+        function startGame() {
+            startScreen.classList.add("hidden");
+            restartGame();
+        }
+
+        function handleCellClick(e) {
+            const index = e.target.getAttribute("data-index");
+
+            if (board[index] !== "" || !gameActive) return;
+
+            makeMove(index, currentPlayer);
+
+            // Trigger Robot Turn if game is still running and it's bot's turn
+            if (gameActive && gameMode === "bot" && currentPlayer === "O") {
+                setTimeout(robotMove, 450);
+            }
+        }
+
+        function makeMove(index, player) {
+            board[index] = player;
+            const cell = document.querySelector(`[data-index="${index}"]`);
+            cell.innerText = player;
+            cell.classList.add(player.toLowerCase());
+
+            checkResult();
+        }
+
+        function checkResult() {
+            let roundWon = false;
+            let winningCombo = [];
+
+            for (let condition of winningConditions) {
+                let a = board[condition[0]];
+                let b = board[condition[1]];
+                let c = board[condition[2]];
+
+                if (a === "" || b === "" || c === "") continue;
+
+                if (a === b && b === c) {
+                    roundWon = true;
+                    winningCombo = condition;
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                gameActive = false;
+                
+                // Highlight winning combination cells
+                winningCombo.forEach(idx => {
+                    document.querySelector(`[data-index="${idx}"]`).classList.add("win");
+                });
+
+                if (gameMode === "bot") {
+                    if (currentPlayer === "X") {
+                        statusText.innerText = "You Win! 🎉";
+                        stats.wins++;
+                        stats.streak++;
+                    } else {
+                        statusText.innerText = "Robot Wins! 🤖";
+                        stats.losses++;
+                        stats.streak = 0;
+                    }
+                } else {
+                    statusText.innerText = `Player ${currentPlayer} Wins! 🎉`;
+                    stats.wins++;
+                    stats.streak++;
+                }
+
+                updateStatsUI();
+                return;
+            }
+
+            if (!board.includes("")) {
+                statusText.innerText = "It's a Draw! 🤝";
+                gameActive = false;
+                stats.streak = 0;
+                updateStatsUI();
+                return;
+            }
+
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            statusText.innerText = gameMode === "bot" && currentPlayer === "O" ? "Robot's Turn..." : `Player ${currentPlayer}'s Turn`;
+        }
+
+        // Robot AI Logic
+        function robotMove() {
+            if (!gameActive) return;
+
+            let moveIndex;
+
+            if (difficulty === "easy") {
+                let emptyCells = [];
+                board.forEach((val, idx) => {
+                    if (val === "") emptyCells.push(idx);
+                });
+                moveIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            } else {
+                moveIndex = minimax(board, "O").index;
+            }
+
+            if (moveIndex !== undefined) {
+                makeMove(moveIndex, "O");
+            }
+        }
+
+        function minimax(newBoard, player) {
+            let availSpots = [];
+            newBoard.forEach((val, idx) => {
+                if (val === "") availSpots.push(idx);
+            });
+
+            if (checkWinState(newBoard, "X")) return { score: -10 };
+            if (checkWinState(newBoard, "O")) return { score: 10 };
+            if (availSpots.length === 0) return { score: 0 };
+
+            let moves = [];
+
+            for (let i = 0; i < availSpots.length; i++) {
+                let move = {};
+                move.index = availSpots[i];
+                newBoard[availSpots[i]] = player;
+
+                if (player === "O") {
+                    let result = minimax(newBoard, "X");
+                    move.score = result.score;
+                } else {
+                    let result = minimax(newBoard, "O");
+                    move.score = result.score;
+                }
+
+                newBoard[availSpots[i]] = "";
+                moves.push(move);
+            }
+
+            let bestMove;
+            if (player === "O") {
+                let bestScore = -10000;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score > bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = i;
+                    }
+                }
+            } else {
+                let bestScore = 10000;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score < bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = i;
+                    }
+                }
+            }
+
+            return moves[bestMove];
+        }
+
+        function checkWinState(b, player) {
+            return winningConditions.some(condition => {
+                return condition.every(index => b[index] === player);
+            });
+        }
+
+        function restartGame() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            currentPlayer = startingPlayer;
+            gameActive = true;
+            statusText.innerText = gameMode === "bot" && currentPlayer === "O" ? "Robot's Turn..." : `Player ${currentPlayer}'s Turn`;
+
+            cells.forEach(cell => {
+                cell.innerText = "";
+                cell.classList.remove("x", "o", "win");
+            });
+
+            // If robot goes first
+            if (gameMode === "bot" && currentPlayer === "O") {
+                setTimeout(robotMove, 450);
+            }
+        }
+
+        // Initialize click handlers
+        cells.forEach(cell => cell.addEventListener("click", handleCellClick));
+        
+        // Hide difficulty selector initially (defaults to PvP)
+        diffLabel.style.display = "none";
+        diffGroup.style.display = "none";
+    </script>
+</body>
+</html>
