@@ -68,8 +68,33 @@
             text-align: center;
         }
 
-        /* Settings Overlay Modal */
-        .start-screen {
+        /* Settings Modal Overlay */
+        .settings-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #162447;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            border-radius: 16px;
+            padding: 20px;
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 0.3s ease;
+        }
+
+        .settings-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Gameplay Screen Overlay */
+        .gameplay-screen {
             position: absolute;
             top: 0;
             left: 0;
@@ -83,12 +108,14 @@
             z-index: 10;
             border-radius: 16px;
             padding: 20px;
+            opacity: 0;
+            pointer-events: none;
             transition: opacity 0.3s ease;
         }
 
-        .start-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
+        .gameplay-screen.active {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         /* Close 'X' Button Style */
@@ -277,7 +304,7 @@
                 background: transparent;
                 box-shadow: none;
             }
-            .start-screen {
+            .settings-screen, .gameplay-screen {
                 border-radius: 0;
             }
         }
@@ -294,11 +321,28 @@
         </div>
 
         <div class="title">❌ Tic Tac Toe ⭕</div>
-        <div id="status" class="status">Click Start Game to play</div>
+        <div class="status">Main Menu</div>
 
-        <!-- Settings Screen Overlay (Starts hidden now) -->
-        <div id="startScreen" class="start-screen hidden">
-            <!-- X Close Button -->
+        <!-- Small Tic Tac Toe Preview/Highlight Grid in Main Menu -->
+        <div class="board">
+            <div class="cell" style="font-size: 20px; color: #ff4b5c;">X</div>
+            <div class="cell" style="font-size: 20px; color: #38bdf8;">O</div>
+            <div class="cell"></div>
+            <div class="cell" style="font-size: 20px; color: #38bdf8;">O</div>
+            <div class="cell" style="font-size: 20px; color: #ff4b5c;">X</div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell" style="font-size: 20px; color: #ff4b5c;">X</div>
+        </div>
+
+        <div class="control-row">
+            <button type="button" class="action-btn" onclick="openSettings()">Game Settings</button>
+            <button type="button" class="action-btn" onclick="openGameplay()">Start Game</button>
+        </div>
+
+        <!-- Game Settings Overlay Menu (Hidden by default, opens via Game Settings button) -->
+        <div id="settingsScreen" class="settings-screen hidden">
             <button type="button" class="close-modal-btn" onclick="closeSettings()">&times;</button>
 
             <div class="title" style="margin-bottom: 14px;">Game Settings</div>
@@ -326,29 +370,36 @@
             <button type="button" class="play-btn" onclick="closeSettings()">APPLY & CLOSE</button>
         </div>
 
-        <!-- Game Board Grid -->
-        <div class="board" id="board">
-            <div class="cell" data-index="0"></div>
-            <div class="cell" data-index="1"></div>
-            <div class="cell" data-index="2"></div>
-            <div class="cell" data-index="3"></div>
-            <div class="cell" data-index="4"></div>
-            <div class="cell" data-index="5"></div>
-            <div class="cell" data-index="6"></div>
-            <div class="cell" data-index="7"></div>
-            <div class="cell" data-index="8"></div>
-        </div>
+        <!-- Actual Interactive Game Screen Overlay (Opens via Start Game button) -->
+        <div id="gameplayScreen" class="gameplay-screen">
+            <button type="button" class="close-modal-btn" onclick="returnToMainMenu()">&times;</button>
 
-        <div class="control-row">
-            <button type="button" class="action-btn" onclick="openSettings()">Game Settings</button>
-            <button type="button" class="action-btn" onclick="startGame()">Start Game</button>
+            <div class="title" style="font-size: 18px; margin-bottom: 6px;">Match in Progress</div>
+            <div id="status" class="status">Player X's Turn</div>
+
+            <!-- Active Play Grid -->
+            <div class="board" id="board" style="display: grid;">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+
+            <button type="button" class="action-btn" style="width: 100%; margin-top: 5px;" onclick="returnToMainMenu()">Main Menu</button>
         </div>
     </div>
 
     <script>
-        const cells = document.querySelectorAll(".cell");
+        const cells = document.querySelectorAll(".cell[data-index]");
         const statusText = document.getElementById("status");
-        const startScreen = document.getElementById("startScreen");
+        const settingsScreen = document.getElementById("settingsScreen");
+        const gameplayScreen = document.getElementById("gameplayScreen");
+        
         const diffLabel = document.getElementById("diffLabel");
         const diffGroup = document.getElementById("diffGroup");
 
@@ -410,11 +461,23 @@
         }
 
         function openSettings() {
-            startScreen.classList.remove("hidden");
+            settingsScreen.classList.remove("hidden");
         }
 
         function closeSettings() {
-            startScreen.classList.add("hidden");
+            settingsScreen.classList.add("hidden");
+        }
+
+        function openGameplay() {
+            gameplayScreen.classList.add("active");
+            startGame();
+        }
+
+        function returnToMainMenu() {
+            clearTimeout(robotTimeout);
+            gameplayScreen.classList.remove("active");
+            settingsScreen.classList.add("hidden");
+            gameActive = false;
         }
 
         function startGame() {
@@ -449,7 +512,7 @@
 
         function makeMove(index, player) {
             board[index] = player;
-            const cell = document.querySelector(`[data-index="${index}"]`);
+            const cell = document.querySelector(`.cell[data-index="${index}"]`);
             cell.innerText = player;
             cell.classList.add(player.toLowerCase());
 
@@ -479,7 +542,7 @@
                 clearTimeout(robotTimeout);
                 
                 winningCombo.forEach(idx => {
-                    document.querySelector(`[data-index="${idx}"]`).classList.add("win");
+                    document.querySelector(`.cell[data-index="${idx}"]`).classList.add("win");
                 });
 
                 if (gameMode === "bot") {
@@ -539,75 +602,4 @@
         }
 
         function getRandomMove() {
-            let emptyCells = [];
-            board.forEach((val, idx) => {
-                if (val === "") emptyCells.push(idx);
-            });
-            return emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        }
-
-        function getSmartMove(chance) {
-            if (Math.random() > chance) {
-                return getRandomMove();
-            }
-
-            for (let player of ["O", "X"]) {
-                for (let condition of winningConditions) {
-                    let [a, b, c] = condition;
-                    let values = [board[a], board[b], board[c]];
-                    if (values.filter(v => v === player).length === 2 && values.includes("")) {
-                        return condition[values.indexOf("")];
-                    }
-                }
-            }
-
-            return minimax(board, "O").index;
-        }
-
-        function minimax(newBoard, player) {
-            let availSpots = [];
-            newBoard.forEach((val, idx) => {
-                if (val === "") availSpots.push(idx);
-            });
-
-            if (checkWinState(newBoard, "X")) return { score: -10 };
-            if (checkWinState(newBoard, "O")) return { score: 10 };
-            if (availSpots.length === 0) return { score: 0 };
-
-            let moves = [];
-
-            for (let i = 0; i < availSpots.length; i++) {
-                let move = {};
-                move.index = availSpots[i];
-                newBoard[availSpots[i]] = player;
-
-                if (player === "O") {
-                    let result = minimax(newBoard, "X");
-                    move.score = result.score;
-                } else {
-                    let result = minimax(newBoard, "O");
-                    move.score = result.score;
-                }
-
-                newBoard[availSpots[i]] = "";
-                moves.push(move);
-            }
-
-            let bestMove;
-            if (player === "O") {
-                let bestScore = -10000;
-                for (let i = 0; i < moves.length; i++) {
-                    if (moves[i].score > bestScore) {
-                        bestScore = moves[i].score;
-                        bestMove = i;
-                    }
-                }
-            } else {
-                let bestScore = 10000;
-                for (let i = 0; i < moves.length; i++) {
-                    if (moves[i].score < bestScore) {
-                        bestScore = moves[i].score;
-                        bestMove = i;
-                    }
-                }
-      
+        
