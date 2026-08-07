@@ -231,6 +231,133 @@ def custom_factorial(n):
 
     return result
 
+# ==============================================================================
+# GAMMA FUNCTION & GENERALIZED FACTORIAL
+# ==============================================================================
+
+def custom_gamma(x):
+    """
+    Computes the Gamma function Γ(x) using the Lanczos approximation.
+
+    Properties:
+        Γ(n) = (n - 1)!       for positive integers n
+        Γ(x + 1) = xΓ(x)
+        Γ(1) = 1
+        Γ(1/2) = √π
+
+    Supports positive and negative non-integer values through
+    the reflection formula.
+
+    No math/scipy imports are used.
+    """
+
+    z = Decimal(str(x))
+
+    # Gamma has poles at 0, -1, -2, -3, ...
+    if z == 0:
+        raise ValueError("Gamma function undefined at 0.")
+
+    # Check negative integers.
+    if z < 0:
+        if z == z.to_integral_value():
+            raise ValueError(
+                "Gamma function undefined at non-positive integers."
+            )
+
+        # Reflection formula:
+        # Γ(z)Γ(1-z) = π / sin(πz)
+        sin_term = custom_sin(CUSTOM_PI() * z)
+
+        if sin_term == 0:
+            raise ValueError("Gamma function undefined at this value.")
+
+        return CUSTOM_PI() / (sin_term * custom_gamma(Decimal(1) - z))
+
+    # Lanczos approximation coefficients.
+    coefficients = (
+        Decimal("0.99999999999980993"),
+        Decimal("676.5203681218851"),
+        Decimal("-1259.1392167224028"),
+        Decimal("771.32342877765313"),
+        Decimal("-176.61502916214059"),
+        Decimal("12.507343278686905"),
+        Decimal("-0.13857109526572012"),
+        Decimal("0.0000099843695780195716"),
+        Decimal("0.00000015056327351493116"),
+    )
+
+    # Lanczos approximation works with z >= 1/2 after shifting.
+    if z < Decimal("0.5"):
+        sin_term = custom_sin(CUSTOM_PI() * z)
+
+        if sin_term == 0:
+            raise ValueError("Gamma function undefined at this value.")
+
+        return CUSTOM_PI() / (
+            sin_term * custom_gamma(Decimal(1) - z)
+        )
+
+    z_minus_one = z - Decimal(1)
+
+    total = coefficients[0]
+
+    for i in range(1, len(coefficients)):
+        total += coefficients[i] / (
+            z_minus_one + Decimal(i)
+        )
+
+    g = Decimal(7)
+
+    t = z_minus_one + g + Decimal("0.5")
+
+    sqrt_two_pi = custom_sqrt(
+        Decimal(2) * CUSTOM_PI()
+    )
+
+    result = (
+        sqrt_two_pi
+        * custom_pow(t, z_minus_one + Decimal("0.5"))
+        * custom_exp(-t)
+        * total
+    )
+
+    return +result
+
+
+def custom_gamma_factorial(n):
+    """
+    Computes the generalized factorial using the Gamma function.
+
+    Mathematical definition:
+        n! = Γ(n + 1)
+
+    Therefore:
+
+        custom_gamma_factorial(0) = 1
+        custom_gamma_factorial(1) = 1
+        custom_gamma_factorial(2) = 2
+        custom_gamma_factorial(3) = 6
+        custom_gamma_factorial(5) = 120
+
+    It also works for non-integer values:
+
+        custom_gamma_factorial(0.5) = Γ(1.5)
+        custom_gamma_factorial(2.5) = Γ(3.5)
+
+    No math/scipy imports are used.
+    """
+
+    d = Decimal(str(n))
+
+    # Generalized factorial Γ(n + 1) has poles at
+    # n = -1, -2, -3, ...
+    if d < 0 and d == d.to_integral_value():
+        raise ValueError(
+            "Factorial is undefined for negative integers."
+        )
+
+    return custom_gamma(d + Decimal(1))
+
 
 # ============================================================
 # GREATEST COMMON DIVISOR
