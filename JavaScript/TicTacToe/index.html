@@ -321,20 +321,7 @@
         </div>
 
         <div class="title">❌ Tic Tac Toe ⭕</div>
-        <div class="status">Main Menu</div>
-
-        <!-- Small Tic Tac Toe Preview/Highlight Grid in Main Menu -->
-        <div class="board">
-            <div class="cell" style="font-size: 20px; color: #ff4b5c;">X</div>
-            <div class="cell" style="font-size: 20px; color: #38bdf8;">O</div>
-            <div class="cell"></div>
-            <div class="cell" style="font-size: 20px; color: #38bdf8;">O</div>
-            <div class="cell" style="font-size: 20px; color: #ff4b5c;">X</div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell" style="font-size: 20px; color: #ff4b5c;">X</div>
-        </div>
+        <div id="mainStatus" class="status">Main Menu</div>
 
         <div class="control-row">
             <button type="button" class="action-btn" onclick="openSettings()">Game Settings</button>
@@ -367,7 +354,7 @@
                 <button type="button" class="menu-btn" id="turnO" onclick="setFirstPlayer('O')">Player O</button>
             </div>
 
-            <button type="button" class="play-btn" onclick="closeSettings()">APPLY & CLOSE</button>
+            <button type="button" class="play-btn" onclick="saveSettings()">SAVE & CLOSE</button>
         </div>
 
         <!-- Actual Interactive Game Screen Overlay (Opens via Start Game button) -->
@@ -395,11 +382,12 @@
     </div>
 
     <script>
+        // Elements
         const cells = document.querySelectorAll(".cell[data-index]");
-        const statusText = document.getElementById("status");
+        const gameStatus = document.getElementById("status"); // gameplay status
+        const mainStatus = document.getElementById("mainStatus"); // main menu status
         const settingsScreen = document.getElementById("settingsScreen");
         const gameplayScreen = document.getElementById("gameplayScreen");
-        
         const diffLabel = document.getElementById("diffLabel");
         const diffGroup = document.getElementById("diffGroup");
 
@@ -407,12 +395,12 @@
         const statLosses = document.getElementById("statLosses");
         const statStreak = document.getElementById("statStreak");
 
+        // Game state
         let board = ["", "", "", "", "", "", "", "", ""];
         let currentPlayer = "X";
         let startingPlayer = "X";
         let gameActive = false;
         let robotTimeout = null; 
-        
         let gameMode = "pvp"; 
         let difficulty = "easy"; 
 
@@ -425,11 +413,28 @@
             [0, 4, 8], [2, 4, 6]            
         ];
 
+        // Initialize UI according to defaults
+        function initUI() {
+            setMode(gameMode);
+            setDifficulty(difficulty);
+            setFirstPlayer(startingPlayer);
+
+            // Attach listeners to cells
+            cells.forEach(cell => cell.addEventListener("click", handleCellClick));
+
+            // Hide difficulty controls when pvp
+            if (gameMode === "pvp") {
+                diffLabel.style.display = "none";
+                diffGroup.style.display = "none";
+            }
+
+            updateMainStatus();
+        }
+
         function setMode(mode) {
             gameMode = mode;
             document.getElementById("modePvp").classList.toggle("active", mode === "pvp");
             document.getElementById("modeBot").classList.toggle("active", mode === "bot");
-            
             if (mode === "bot") {
                 diffLabel.style.display = "block";
                 diffGroup.style.display = "flex";
@@ -451,6 +456,18 @@
             startingPlayer = player;
             document.getElementById("turnX").classList.toggle("active", player === "X");
             document.getElementById("turnO").classList.toggle("active", player === "O");
+        }
+
+        function saveSettings() {
+            // Persist nothing special beyond variables (they already hold the values).
+            // Close settings and update main menu
+            closeSettings();
+            updateMainStatus();
+        }
+
+        function updateMainStatus() {
+            let modeText = gameMode === "bot" ? `vs Robot (${difficulty})` : `2 Players`;
+            mainStatus.innerText = `Main Menu • ${modeText} • First: ${startingPlayer}`;
         }
 
         function updateStatsUI() {
@@ -478,6 +495,7 @@
             gameplayScreen.classList.remove("active");
             settingsScreen.classList.add("hidden");
             gameActive = false;
+            updateMainStatus();
         }
 
         function startGame() {
@@ -485,26 +503,37 @@
             board = ["", "", "", "", "", "", "", "", ""];
             currentPlayer = startingPlayer;
             gameActive = true;
-            statusText.innerText = gameMode === "bot" && currentPlayer === "O" ? "Robot's Turn..." : `Player ${currentPlayer}'s Turn`;
+            renderBoard();
+            gameStatus.innerText = (gameMode === "bot" && currentPlayer !== startingPlayer) ? "Robot's Turn..." : `Player ${currentPlayer}'s Turn`;
 
-            cells.forEach(cell => {
-                cell.innerText = "";
-                cell.classList.remove("x", "o", "win");
-            });
-
-            if (gameMode === "bot" && currentPlayer === "O") {
+            // If robot starts and mode is bot, schedule robot move
+            if (gameMode === "bot" && currentPlayer !== startingPlayer) {
                 robotTimeout = setTimeout(robotMove, 450);
             }
         }
 
+        function renderBoard() {
+            cells.forEach(cell => {
+                const idx = parseInt(cell.getAttribute("data-index"), 10);
+                cell.innerText = board[idx];
+                cell.classList.remove("x", "o", "win");
+                if (board[idx] === "X") cell.classList.add("x");
+                if (board[idx] === "O") cell.classList.add("o");
+            });
+        }
+
         function handleCellClick(e) {
-            const index = e.target.getAttribute("data-index");
+            const index = parseInt(e.currentTarget.getAttribute("data-index"), 10);
 
             if (board[index] !== "" || !gameActive) return;
 
+            // If playing vs robot, prevent clicking when it's robot's turn
+            if (gameMode === "bot" && currentPlayer !== startingPlayer) return;
+
             makeMove(index, currentPlayer);
 
-            if (gameActive && gameMode === "bot" && currentPlayer === "O") {
+            // If after player's move game continues and robot's turn, schedule robot
+            if (gameActive && gameMode === "bot" && currentPlayer !== startingPlayer) {
                 clearTimeout(robotTimeout);
                 robotTimeout = setTimeout(robotMove, 450);
             }
@@ -540,25 +569,24 @@
             if (roundWon) {
                 gameActive = false;
                 clearTimeout(robotTimeout);
-                
                 winningCombo.forEach(idx => {
                     document.querySelector(`.cell[data-index="${idx}"]`).classList.add("win");
                 });
 
+                // Determine messaging and stats only when vs Robot
                 if (gameMode === "bot") {
-                    if (currentPlayer === "X") {
-                        statusText.innerText = "You Win! 🎉";
+                    // If winner equals startingPlayer, user won, else robot won
+                    if (currentPlayer === startingPlayer) {
+                        gameStatus.innerText = "You Win! 🎉";
                         stats.wins++;
                         stats.streak++;
                     } else {
-                        statusText.innerText = "Robot Wins! 🤖";
+                        gameStatus.innerText = "Robot Wins! 🤖";
                         stats.losses++;
                         stats.streak = 0;
                     }
                 } else {
-                    statusText.innerText = `Player ${currentPlayer} Wins! 🎉`;
-                    stats.wins++;
-                    stats.streak++;
+                    gameStatus.innerText = `Player ${currentPlayer} Wins! 🎉`;
                 }
 
                 updateStatsUI();
@@ -566,7 +594,7 @@
             }
 
             if (!board.includes("")) {
-                statusText.innerText = "It's a Draw! 🤝";
+                gameStatus.innerText = "It's a Draw! 🤝";
                 gameActive = false;
                 clearTimeout(robotTimeout);
                 stats.streak = 0;
@@ -574,8 +602,9 @@
                 return;
             }
 
+            // toggle player
             currentPlayer = currentPlayer === "X" ? "O" : "X";
-            statusText.innerText = gameMode === "bot" && currentPlayer === "O" ? "Robot's Turn..." : `Player ${currentPlayer}'s Turn`;
+            gameStatus.innerText = (gameMode === "bot" && currentPlayer !== startingPlayer) ? "Robot's Turn..." : `Player ${currentPlayer}'s Turn`;
         }
 
         function robotMove() {
@@ -593,13 +622,104 @@
                 moveIndex = getSmartMove(0.85);
             } 
             else if (difficulty === "unbeatable") {
-                moveIndex = minimax(board, "O").index;
+                moveIndex = minimax(board.slice(), getRobotSymbol()).index;
+            }
+
+            if (moveIndex === undefined || board[moveIndex] !== "") {
+                // fallback
+                moveIndex = getRandomMove();
             }
 
             if (moveIndex !== undefined && board[moveIndex] === "") {
-                makeMove(moveIndex, "O");
+                makeMove(moveIndex, getRobotSymbol());
             }
         }
 
+        function getRobotSymbol() {
+            // robot plays the opposite of startingPlayer
+            return startingPlayer === "X" ? "O" : "X";
+        }
+
         function getRandomMove() {
-        
+            const avail = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+            if (avail.length === 0) return undefined;
+            return avail[Math.floor(Math.random() * avail.length)];
+        }
+
+        function getSmartMove(chanceToBeSmart) {
+            // chanceToBeSmart: probability to pick a strategic move (minimax) vs random
+            if (Math.random() < chanceToBeSmart) {
+                // Use minimax for best move for robot
+                const best = minimax(board.slice(), getRobotSymbol());
+                return best.index;
+            }
+            // otherwise random
+            return getRandomMove();
+        }
+
+        // Minimax implementation: returns { index, score }
+        function minimax(newBoard, player) {
+            // Available spots
+            const availSpots = newBoard.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+
+            // Check terminal states
+            for (let condition of winningConditions) {
+                const [a, b, c] = condition;
+                if (newBoard[a] && newBoard[a] === newBoard[b] && newBoard[b] === newBoard[c]) {
+                    if (newBoard[a] === getRobotSymbol()) return { score: 10 };
+                    else return { score: -10 };
+                }
+            }
+
+            if (availSpots.length === 0) return { score: 0 };
+
+            const moves = [];
+
+            for (let i = 0; i < availSpots.length; i++) {
+                const index = availSpots[i];
+                const move = {};
+                move.index = index;
+                newBoard[index] = player;
+
+                if (player === getRobotSymbol()) {
+                    const result = minimax(newBoard, player === "X" ? "O" : "X");
+                    move.score = result.score;
+                } else {
+                    const result = minimax(newBoard, player === "X" ? "O" : "X");
+                    move.score = result.score;
+                }
+
+                // reset spot
+                newBoard[index] = "";
+
+                moves.push(move);
+            }
+
+            // Choose best move
+            let bestMove;
+            if (player === getRobotSymbol()) {
+                let bestScore = -Infinity;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score > bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = moves[i];
+                    }
+                }
+            } else {
+                let bestScore = Infinity;
+                for (let i = 0; i < moves.length; i++) {
+                    if (moves[i].score < bestScore) {
+                        bestScore = moves[i].score;
+                        bestMove = moves[i];
+                    }
+                }
+            }
+
+            return bestMove;
+        }
+
+        // Initialize UI on load
+        initUI();
+    </script>
+</body>
+</html>
