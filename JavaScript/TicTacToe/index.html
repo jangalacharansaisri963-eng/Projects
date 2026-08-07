@@ -118,6 +118,7 @@
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
+            touch-action: manipulation;
             transition: all 0.2s;
         }
 
@@ -137,6 +138,7 @@
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
+            touch-action: manipulation;
             box-shadow: 0 4px 15px rgba(255, 75, 92, 0.4);
             margin-top: 10px;
             transition: transform 0.1s, background 0.2s;
@@ -181,6 +183,7 @@
             font-size: 44px;
             font-weight: bold;
             cursor: pointer;
+            touch-action: manipulation;
             transition: background 0.15s, transform 0.1s, border-color 0.2s;
         }
 
@@ -229,6 +232,7 @@
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
+            touch-action: manipulation;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             transition: background 0.2s, transform 0.1s;
         }
@@ -280,25 +284,25 @@
             
             <div class="menu-label">Game Mode</div>
             <div class="menu-group">
-                <button class="menu-btn active" id="modePvp" onclick="setMode('pvp')">2 Players</button>
-                <button class="menu-btn" id="modeBot" onclick="setMode('bot')">vs Robot</button>
+                <button type="button" class="menu-btn active" id="modePvp" onclick="setMode('pvp')">2 Players</button>
+                <button type="button" class="menu-btn" id="modeBot" onclick="setMode('bot')">vs Robot</button>
             </div>
 
             <div class="menu-label" id="diffLabel">Robot Difficulty</div>
             <div class="menu-group" id="diffGroup">
-                <button class="menu-btn active" id="diffEasy" onclick="setDifficulty('easy')">Easy</button>
-                <button class="menu-btn" id="diffMedium" onclick="setDifficulty('medium')">Medium</button>
-                <button class="menu-btn" id="diffHard" onclick="setDifficulty('hard')">Hard</button>
-                <button class="menu-btn" id="diffUnbeatable" onclick="setDifficulty('unbeatable')">Unbeatable</button>
+                <button type="button" class="menu-btn active" id="diffEasy" onclick="setDifficulty('easy')">Easy</button>
+                <button type="button" class="menu-btn" id="diffMedium" onclick="setDifficulty('medium')">Medium</button>
+                <button type="button" class="menu-btn" id="diffHard" onclick="setDifficulty('hard')">Hard</button>
+                <button type="button" class="menu-btn" id="diffUnbeatable" onclick="setDifficulty('unbeatable')">Unbeatable</button>
             </div>
 
             <div class="menu-label">First Turn</div>
             <div class="menu-group">
-                <button class="menu-btn active" id="turnX" onclick="setFirstPlayer('X')">Player X</button>
-                <button class="menu-btn" id="turnO" onclick="setFirstPlayer('O')">Player O</button>
+                <button type="button" class="menu-btn active" id="turnX" onclick="setFirstPlayer('X')">Player X</button>
+                <button type="button" class="menu-btn" id="turnO" onclick="setFirstPlayer('O')">Player O</button>
             </div>
 
-            <button class="play-btn" onclick="startGame()">START GAME</button>
+            <button type="button" class="play-btn" onclick="startGame()">START GAME</button>
         </div>
 
         <!-- Game Board Grid -->
@@ -315,8 +319,8 @@
         </div>
 
         <div class="control-row">
-            <button class="action-btn" onclick="openMenu()">Menu</button>
-            <button class="action-btn" onclick="restartGame()">Restart</button>
+            <button type="button" class="action-btn" onclick="openMenu()">Menu</button>
+            <button type="button" class="action-btn" onclick="restartGame()">Restart</button>
         </div>
     </div>
 
@@ -336,20 +340,18 @@
         let currentPlayer = "X";
         let startingPlayer = "X";
         let gameActive = false;
-        let robotTimeout = null; // Track robot turn timeout to cancel if restarted mid-game
+        let robotTimeout = null; 
         
-        // Configuration State
-        let gameMode = "pvp"; // 'pvp' or 'bot'
-        let difficulty = "easy"; // 'easy', 'medium', 'hard', 'unbeatable'
+        let gameMode = "pvp"; 
+        let difficulty = "easy"; 
 
-        // Persistent Statistics (Local Storage)
         let stats = JSON.parse(localStorage.getItem("tttStats")) || { wins: 0, losses: 0, streak: 0 };
         updateStatsUI();
 
         const winningConditions = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-            [0, 4, 8], [2, 4, 6]            // Diagonals
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+            [0, 4, 8], [2, 4, 6]            
         ];
 
         function setMode(mode) {
@@ -357,6 +359,7 @@
             document.getElementById("modePvp").classList.toggle("active", mode === "pvp");
             document.getElementById("modeBot").classList.toggle("active", mode === "bot");
             
+            // Only show difficulty options when "vs Robot" is selected
             if (mode === "bot") {
                 diffLabel.style.display = "block";
                 diffGroup.style.display = "flex";
@@ -479,26 +482,21 @@
             statusText.innerText = gameMode === "bot" && currentPlayer === "O" ? "Robot's Turn..." : `Player ${currentPlayer}'s Turn`;
         }
 
-        // Robot AI Logic for 4 Difficulties
         function robotMove() {
             if (!gameActive) return;
 
             let moveIndex;
 
             if (difficulty === "easy") {
-                // 100% Random moves
                 moveIndex = getRandomMove();
             } 
             else if (difficulty === "medium") {
-                // 50% smart move (win/block), 50% random
                 moveIndex = getSmartMove(0.5);
             } 
             else if (difficulty === "hard") {
-                // 85% smart move, 15% random
                 moveIndex = getSmartMove(0.85);
             } 
             else if (difficulty === "unbeatable") {
-                // 100% Minimax
                 moveIndex = minimax(board, "O").index;
             }
 
@@ -520,7 +518,6 @@
                 return getRandomMove();
             }
 
-            // Check if robot can win in 1 move, or block player from winning
             for (let player of ["O", "X"]) {
                 for (let condition of winningConditions) {
                     let [a, b, c] = condition;
@@ -531,7 +528,6 @@
                 }
             }
 
-            // Otherwise fall back to unbeatable minimax
             return minimax(board, "O").index;
         }
 
@@ -593,7 +589,7 @@
         }
 
         function restartGame() {
-            clearTimeout(robotTimeout); // Instantly cancel pending robot moves mid-game
+            clearTimeout(robotTimeout); 
             board = ["", "", "", "", "", "", "", "", ""];
             currentPlayer = startingPlayer;
             gameActive = true;
@@ -604,5 +600,11 @@
                 cell.classList.remove("x", "o", "win");
             });
 
-            // If robot goes first
-            if (gameMode ===
+            if (gameMode === "bot" && currentPlayer === "O") {
+                robotTimeout = setTimeout(robotMove, 450);
+            }
+        }
+
+        cells.forEach(cell => cell.addEventListener("click", handleCellClick));
+        
+        // Hide difficulty selector initially (defaults to 2 Players
