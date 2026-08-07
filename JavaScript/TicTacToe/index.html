@@ -68,14 +68,14 @@
             text-align: center;
         }
 
-        /* Overlay Start Screen */
+        /* Settings Overlay Modal */
         .start-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #162447; /* Solid background to completely hide elements underneath */
+            background: #162447;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -294,12 +294,12 @@
         </div>
 
         <div class="title">❌ Tic Tac Toe ⭕</div>
-        <div id="status" class="status">Select mode to play</div>
+        <div id="status" class="status">Click Start Game to play</div>
 
-        <!-- Start Screen Overlay with Customization -->
-        <div id="startScreen" class="start-screen">
+        <!-- Settings Screen Overlay -->
+        <div id="startScreen" class="start-screen hidden">
             <!-- X Close Button -->
-            <button type="button" class="close-modal-btn" onclick="closeMenu()">&times;</button>
+            <button type="button" class="close-modal-btn" onclick="closeSettings()">&times;</button>
 
             <div class="title" style="margin-bottom: 14px;">Game Settings</div>
             
@@ -323,7 +323,7 @@
                 <button type="button" class="menu-btn" id="turnO" onclick="setFirstPlayer('O')">Player O</button>
             </div>
 
-            <button type="button" class="play-btn" onclick="startGame()">START GAME</button>
+            <button type="button" class="play-btn" onclick="closeSettings()">APPLY & CLOSE</button>
         </div>
 
         <!-- Game Board Grid -->
@@ -340,8 +340,8 @@
         </div>
 
         <div class="control-row">
-            <button type="button" class="action-btn" onclick="openMenu()">Menu</button>
-            <button type="button" class="action-btn" onclick="restartGame()">Restart</button>
+            <button type="button" class="action-btn" onclick="openSettings()">Game Settings</button>
+            <button type="button" class="action-btn" onclick="startGame()">Start Game</button>
         </div>
     </div>
 
@@ -409,23 +409,29 @@
             localStorage.setItem("tttStats", JSON.stringify(stats));
         }
 
-        function openMenu() {
-            gameActive = false;
-            clearTimeout(robotTimeout);
+        function openSettings() {
             startScreen.classList.remove("hidden");
         }
 
-        function closeMenu() {
-            // Only allow closing via X if a game has already been started or is active
+        function closeSettings() {
             startScreen.classList.add("hidden");
-            if (!gameActive && board.every(cell => cell === "")) {
-                restartGame();
-            }
         }
 
         function startGame() {
-            startScreen.classList.add("hidden");
-            restartGame();
+            clearTimeout(robotTimeout); 
+            board = ["", "", "", "", "", "", "", "", ""];
+            currentPlayer = startingPlayer;
+            gameActive = true;
+            statusText.innerText = gameMode === "bot" && currentPlayer === "O" ? "Robot's Turn..." : `Player ${currentPlayer}'s Turn`;
+
+            cells.forEach(cell => {
+                cell.innerText = "";
+                cell.classList.remove("x", "o", "win");
+            });
+
+            if (gameMode === "bot" && currentPlayer === "O") {
+                robotTimeout = setTimeout(robotMove, 450);
+            }
         }
 
         function handleCellClick(e) {
@@ -598,7 +604,7 @@
                 }
             } else {
                 let bestScore = 10000;
-                for (let i = 0; i < moves.length; i++) {
+                for (let i = 0; i < moves.hlength; i++) {
                     if (moves[i].score < bestScore) {
                         bestScore = moves[i].score;
                         bestMove = i;
@@ -606,10 +612,4 @@
                 }
             }
 
-            return moves[bestMove];
-        }
-
-        function checkWinState(b, player) {
-            return winningConditions.some(condition => {
-                return condition.every(index => b[index] === player);
-      
+          
