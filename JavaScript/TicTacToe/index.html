@@ -2,692 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width,
-                 initial-scale=1.0,
-                 maximum-scale=1.0,
-                 user-scalable=no,
-                 viewport-fit=cover"
-    >
-
-    <meta name="theme-color" content="#162447">
-
-    <title>Tic Tac Toe Ultimate Deluxe - Dan Studios</title>
+    <title>Tic Tac Toe</title>
 
     <style>
-        /* =========================================================
-           GLOBAL
-        ========================================================= */
-
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
 
-        html,
         body {
-            width: 100%;
-            height: 100%;
             margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background:
-                linear-gradient(
-                    135deg,
-                    #1f4068,
-                    #162447
-                );
+            min-height: 100vh;
 
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
 
-            min-height: 100dvh;
+            background: #162447;
+            color: white;
 
-            font-family:
-                "Segoe UI",
-                Tahoma,
-                Geneva,
-                Verdana,
-                sans-serif;
-
-            color: #ffffff;
-
-            overflow: hidden;
-
-            overscroll-behavior: none;
+            font-family: Arial, sans-serif;
             touch-action: manipulation;
+        }
 
-            -webkit-user-select: none;
-            user-select: none;
+        h1 {
+            margin: 0 0 10px;
+        }
+
+        #status {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .settings {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         button {
-            font: inherit;
-            -webkit-user-select: none;
-            user-select: none;
+            font-family: inherit;
             touch-action: manipulation;
         }
 
-        /* =========================================================
-           MAIN CONTAINER
-        ========================================================= */
+        .option {
+            padding: 9px 13px;
 
-        .game-container {
-            width: min(390px, 94vw);
+            border: none;
+            border-radius: 7px;
 
-            min-height: 420px;
+            background: #1f4068;
+            color: white;
 
-            position: relative;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-
-            padding: 20px 25px;
-
-            background: rgba(255, 255, 255, 0.05);
-
-            border:
-                2px solid
-                rgba(255, 255, 255, 0.1);
-
-            border-radius: 16px;
-
-            box-shadow:
-                0 15px 35px
-                rgba(0, 0, 0, 0.5);
-
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-
-            isolation: isolate;
-        }
-
-        /* =========================================================
-           HUD
-        ========================================================= */
-
-        .hud-panel {
-            width: 100%;
-
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-
-            padding: 8px 12px;
-
-            background:
-                rgba(255, 255, 255, 0.08);
-
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.1);
-
-            border-radius: 8px;
-
-            margin-bottom: 12px;
-
-            font-size: 13px;
             font-weight: bold;
-
-            color: #cbd5e1;
-
-            gap: 6px;
+            cursor: pointer;
         }
 
-        .hud-panel span {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            gap: 4px;
-
-            white-space: nowrap;
-        }
-
-        /* =========================================================
-           TITLE / STATUS
-        ========================================================= */
-
-        .title {
-            font-size: 22px;
-            font-weight: bold;
-
-            color: #ffbc00;
-
-            margin-bottom: 8px;
-
-            text-align: center;
-
-            text-shadow:
-                0 2px 8px
-                rgba(0, 0, 0, 0.4);
-        }
-
-        .status {
-            width: 100%;
-
-            min-height: 24px;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            margin-bottom: 15px;
-
-            color: #cbd5e1;
-
-            font-size: 15px;
-            font-weight: 500;
-
-            text-align: center;
-        }
-
-        /* =========================================================
-           MAIN MENU
-        ========================================================= */
-
-        .main-menu {
-            width: 100%;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .control-row {
-            width: 100%;
-
-            display: flex;
-
-            gap: 10px;
-        }
-
-        /* =========================================================
-           BUTTONS
-        ========================================================= */
-
-        .action-btn {
-            flex: 1;
-
-            min-height: 44px;
-
+        .option.active {
             background: #056676;
-
-            color: #ffffff;
-
-            border: none;
-
-            padding: 10px 12px;
-
-            font-size: 13px;
-            font-weight: bold;
-
-            border-radius: 8px;
-
-            cursor: pointer;
-
-            box-shadow:
-                0 4px 15px
-                rgba(0, 0, 0, 0.3);
-
-            transition:
-                background 0.2s,
-                transform 0.1s;
-
-            touch-action: manipulation;
         }
 
-        .action-btn:hover {
-            background: #087e8b;
+        #difficultyBox {
+            display: none;
         }
 
-        .action-btn:active {
-            transform: scale(0.96);
-        }
-
-        .action-btn:focus-visible {
-            outline:
-                3px solid
-                rgba(255, 188, 0, 0.8);
-
-            outline-offset: 2px;
-        }
-
-        .play-btn {
-            width: 100%;
-
-            min-height: 48px;
-
-            margin-top: 10px;
-
-            padding: 12px;
-
-            background: #ff4b5c;
-
-            color: #ffffff;
-
-            border: none;
-
-            border-radius: 8px;
-
-            font-size: 18px;
-            font-weight: bold;
-
-            cursor: pointer;
-
-            box-shadow:
-                0 4px 15px
-                rgba(255, 75, 92, 0.4);
-
-            transition:
-                transform 0.1s,
-                background 0.2s;
-
-            touch-action: manipulation;
-        }
-
-        .play-btn:hover {
-            background: #ff2a40;
-            transform: scale(1.02);
-        }
-
-        .play-btn:active {
-            transform: scale(0.96);
-        }
-
-        /* =========================================================
-           MODAL SCREENS
-           
-           IMPORTANT:
-           visibility + opacity + pointer-events prevents
-           hidden boards/grids from appearing or receiving touches.
-        ========================================================= */
-
-        .overlay-screen {
-            position: absolute;
-
-            inset: 0;
-
-            width: 100%;
-            height: 100%;
-
-            padding: 20px;
-
-            display: flex;
-            flex-direction: column;
-
-            justify-content: center;
-            align-items: center;
-
-            border-radius: 16px;
-
-            background: #162447;
-
-            z-index: 100;
-
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-
-            transition:
-                opacity 0.25s ease,
-                visibility 0.25s ease;
-
-            overflow: hidden;
-        }
-
-        .overlay-screen.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-
-        /* =========================================================
-           SETTINGS
-        ========================================================= */
-
-        .settings-screen {
-            z-index: 200;
-        }
-
-        .menu-label {
-            width: 100%;
-
-            font-size: 12px;
-            font-weight: bold;
-
-            color: #cbd5e1;
-
-            margin:
-                4px 0
-                4px 5px;
-        }
-
-        .menu-group {
-            width: 100%;
-
-            display: flex;
-
-            gap: 6px;
-
-            margin-bottom: 10px;
-        }
-
-        .menu-btn {
-            flex: 1;
-
-            min-height: 40px;
-
-            padding: 8px 5px;
-
-            background:
-                rgba(255, 255, 255, 0.1);
-
-            border:
-                2px solid
-                rgba(255, 255, 255, 0.2);
-
-            color: #ffffff;
-
-            font-size: 12px;
-            font-weight: bold;
-
-            border-radius: 6px;
-
-            cursor: pointer;
-
-            touch-action: manipulation;
-
-            transition:
-                background 0.2s,
-                border-color 0.2s,
-                transform 0.1s;
-        }
-
-        .menu-btn:hover {
-            background:
-                rgba(255, 255, 255, 0.17);
-        }
-
-        .menu-btn:active {
-            transform: scale(0.96);
-        }
-
-        .menu-btn.active {
-            background: #056676;
-
-            border-color: #087e8b;
-
-            box-shadow:
-                0 0 10px
-                rgba(5, 102, 118, 0.5);
-        }
-
-        /* =========================================================
-           CLOSE BUTTON
-        ========================================================= */
-
-        .close-modal-btn {
-            position: absolute;
-
-            top: 12px;
-            right: 12px;
-
-            width: 42px;
-            height: 42px;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            background: transparent;
-
-            border: none;
-
-            color: #cbd5e1;
-
-            font-size: 28px;
-            font-weight: bold;
-
-            border-radius: 8px;
-
-            cursor: pointer;
-
-            touch-action: manipulation;
-
-            transition:
-                background 0.2s,
-                color 0.2s;
-        }
-
-        .close-modal-btn:hover {
-            background:
-                rgba(255, 255, 255, 0.08);
-
-            color: #ff4b5c;
-        }
-
-        .close-modal-btn:active {
-            transform: scale(0.9);
-        }
-
-        /* =========================================================
-           GAME BOARD
-        ========================================================= */
-
-        .board {
-            width: min(300px, 82vw);
-
+        #board {
             display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
-            gap: 10px;
-
-            margin-bottom: 15px;
+            grid-template-columns: repeat(3, 90px);
+            gap: 8px;
         }
 
         .cell {
-            width: 100%;
-            aspect-ratio: 1 / 1;
+            width: 90px;
+            height: 90px;
 
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            border: none;
+            border-radius: 10px;
 
-            background:
-                rgba(255, 255, 255, 0.1);
+            background: #1f4068;
+            color: white;
 
-            border:
-                2px solid
-                rgba(255, 255, 255, 0.2);
-
-            border-radius: 12px;
-
-            color: #ffffff;
-
-            font-size: clamp(36px, 11vw, 48px);
+            font-size: 42px;
             font-weight: bold;
 
             cursor: pointer;
-
             touch-action: manipulation;
 
-            transition:
-                background 0.15s,
-                transform 0.1s,
-                border-color 0.2s;
-
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .cell:hover {
-            background:
-                rgba(255, 255, 255, 0.2);
+            transition: transform 0.1s, background 0.1s;
         }
 
         .cell:active {
             transform: scale(0.94);
         }
 
-        .cell:focus-visible {
-            outline:
-                3px solid
-                rgba(255, 188, 0, 0.8);
-
-            outline-offset: 2px;
-        }
-
         .cell.x {
             color: #ff4b5c;
-
-            text-shadow:
-                0 0 15px
-                rgba(255, 75, 92, 0.5);
         }
 
         .cell.o {
             color: #38bdf8;
-
-            text-shadow:
-                0 0 15px
-                rgba(56, 189, 248, 0.5);
         }
 
-        .cell.win {
-            background:
-                rgba(255, 188, 0, 0.25);
+        #restart {
+            margin-top: 20px;
 
-            border-color: #ffbc00;
+            padding: 12px 25px;
 
-            animation:
-                pulseWin
-                0.6s
-                infinite
-                alternate;
+            border: none;
+            border-radius: 8px;
+
+            background: #ff4b5c;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+            touch-action: manipulation;
         }
 
-        @keyframes pulseWin {
-            from {
-                transform: scale(1);
-            }
-
-            to {
-                transform: scale(1.04);
-            }
+        #restart:active {
+            transform: scale(0.95);
         }
 
-        /* =========================================================
-           GAMEPLAY SCREEN
-        ========================================================= */
-
-        .gameplay-screen .action-btn {
-            width: 100%;
-            flex: none;
-        }
-
-        /* =========================================================
-           ROBOT THINKING
-        ========================================================= */
-
-        .thinking {
-            opacity: 0.8;
-            pointer-events: none;
-        }
-
-        /* =========================================================
-           SMALL PHONES
-        ========================================================= */
-
-        @media (max-width: 400px) {
-            .game-container {
-                width: 100vw;
-                height: 100dvh;
-
-                min-height: 100dvh;
-
-                padding:
-                    max(12px, env(safe-area-inset-top))
-                    14px
-                    max(12px, env(safe-area-inset-bottom))
-                    14px;
-
-                border: none;
-                border-radius: 0;
-
-                background: transparent;
-
-                box-shadow: none;
-            }
-
-            .overlay-screen {
-                border-radius: 0;
-
-                padding:
-                    max(18px, env(safe-area-inset-top))
-                    15px
-                    max(18px, env(safe-area-inset-bottom))
-                    15px;
-            }
-
-            .hud-panel {
-                font-size: 12px;
-            }
-
-            .title {
-                font-size: 21px;
-            }
-
-            .board {
-                width: min(300px, 86vw);
-                gap: 8px;
+        @media (max-width: 350px) {
+            #board {
+                grid-template-columns: repeat(3, 75px);
             }
 
             .cell {
-                border-radius: 10px;
-            }
-        }
-
-        /* =========================================================
-           VERY SMALL HEIGHTS
-        ========================================================= */
-
-        @media (max-height: 600px) {
-            .game-container {
-                padding-top: 10px;
-                padding-bottom: 10px;
-            }
-
-            .hud-panel {
-                margin-bottom: 6px;
-            }
-
-            .title {
-                margin-bottom: 4px;
-            }
-
-            .status {
-                margin-bottom: 7px;
-            }
-
-            .board {
-                margin-bottom: 8px;
-            }
-
-            .overlay-screen {
-                padding-top: 12px;
-                padding-bottom: 12px;
-            }
-
-            .menu-group {
-                margin-bottom: 5px;
+                width: 75px;
+                height: 75px;
+                font-size: 34px;
             }
         }
     </style>
@@ -695,832 +146,542 @@
 
 <body>
 
-<div class="game-container">
+    <h1>❌ Tic Tac Toe ⭕</h1>
 
-    <!-- =========================================================
-         MAIN MENU
-    ========================================================== -->
+    <div id="status">Player X's Turn</div>
 
-    <div class="main-menu">
-
-        <div class="hud-panel">
-            <span id="statWins">🏆 Wins: 0</span>
-            <span id="statLosses">❌ Losses: 0</span>
-            <span id="statStreak">🔥 Streak: 0</span>
-        </div>
-
-        <div class="title">
-            ❌ Tic Tac Toe ⭕
-        </div>
-
-        <div id="mainStatus" class="status">
-            Main Menu
-        </div>
-
-        <div class="control-row">
-
-            <button
-                type="button"
-                class="action-btn"
-                id="settingsButton"
-            >
-                Game Settings
-            </button>
-
-            <button
-                type="button"
-                class="action-btn"
-                id="startButton"
-            >
-                Start Game
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================================================
-         SETTINGS SCREEN
-    ========================================================== -->
-
-    <div
-        id="settingsScreen"
-        class="overlay-screen settings-screen"
-        aria-hidden="true"
-    >
-
-        <button
-            type="button"
-            class="close-modal-btn"
-            id="closeSettingsButton"
-            aria-label="Close settings"
-        >
-            &times;
+    <div class="settings">
+        <button class="option active" id="twoPlayers">
+            2 Players
         </button>
 
-        <div
-            class="title"
-            style="margin-bottom: 14px;"
-        >
-            Game Settings
-        </div>
+        <button class="option" id="robotMode">
+            🤖 Robot
+        </button>
+    </div>
 
-
-        <div class="menu-label">
-            Game Mode
-        </div>
-
-        <div class="menu-group">
-
-            <button
-                type="button"
-                class="menu-btn active"
-                id="modePvp"
-            >
-                2 Players
-            </button>
-
-            <button
-                type="button"
-                class="menu-btn"
-                id="modeBot"
-            >
-                vs Robot
-            </button>
-
-        </div>
-
-
-        <div
-            class="menu-label"
-            id="diffLabel"
-            hidden
-        >
-            Robot Difficulty
-        </div>
-
-        <div
-            class="menu-group"
-            id="diffGroup"
-            hidden
-        >
-
-            <button
-                type="button"
-                class="menu-btn active"
-                id="diffEasy"
-            >
-                Easy
-            </button>
-
-            <button
-                type="button"
-                class="menu-btn"
-                id="diffMedium"
-            >
-                Medium
-            </button>
-
-            <button
-                type="button"
-                class="menu-btn"
-                id="diffHard"
-            >
-                Hard
-            </button>
-
-            <button
-                type="button"
-                class="menu-btn"
-                id="diffUnbeatable"
-            >
-                Unbeatable
-            </button>
-
-        </div>
-
-
-        <div class="menu-label">
-            First Turn
-        </div>
-
-        <div class="menu-group">
-
-            <button
-                type="button"
-                class="menu-btn active"
-                id="turnX"
-            >
-                Player X
-            </button>
-
-            <button
-                type="button"
-                class="menu-btn"
-                id="turnO"
-            >
-                Player O
-            </button>
-
-        </div>
-
-
-        <button
-            type="button"
-            class="play-btn"
-            id="saveSettingsButton"
-        >
-            SAVE & CLOSE
+    <div class="settings" id="difficultyBox">
+        <button class="option active" data-difficulty="easy">
+            Easy
         </button>
 
+        <button class="option" data-difficulty="medium">
+            Medium
+        </button>
+
+        <button class="option" data-difficulty="hard">
+            Hard
+        </button>
+
+        <button class="option" data-difficulty="unbeatable">
+            Unbeatable
+        </button>
     </div>
 
+    <div class="settings" id="symbolBox">
+        <button class="option active" id="chooseX">
+            Play X
+        </button>
 
-            <!-- Actual Interactive Game Screen Overlay -->
-        <div id="gameplayScreen" class="gameplay-screen">
-            <button
-                type="button"
-                class="close-modal-btn"
-                onclick="returnToMainMenu()"
-                aria-label="Close game"
-            >&times;</button>
-
-            <div class="title gameplay-title">Match in Progress</div>
-
-            <div id="status" class="status">
-                Player X's Turn
-            </div>
-
-            <div class="board" id="board">
-                <button type="button" class="cell" data-index="0" aria-label="Cell 1"></button>
-                <button type="button" class="cell" data-index="1" aria-label="Cell 2"></button>
-                <button type="button" class="cell" data-index="2" aria-label="Cell 3"></button>
-
-                <button type="button" class="cell" data-index="3" aria-label="Cell 4"></button>
-                <button type="button" class="cell" data-index="4" aria-label="Cell 5"></button>
-                <button type="button" class="cell" data-index="5" aria-label="Cell 6"></button>
-
-                <button type="button" class="cell" data-index="6" aria-label="Cell 7"></button>
-                <button type="button" class="cell" data-index="7" aria-label="Cell 8"></button>
-                <button type="button" class="cell" data-index="8" aria-label="Cell 9"></button>
-            </div>
-
-            <button
-                type="button"
-                class="action-btn main-menu-btn"
-                onclick="returnToMainMenu()"
-            >
-                Main Menu
-            </button>
-        </div>
+        <button class="option" id="chooseO">
+            Play O
+        </button>
     </div>
+
+    <div id="board">
+        <button class="cell"></button>
+        <button class="cell"></button>
+        <button class="cell"></button>
+
+        <button class="cell"></button>
+        <button class="cell"></button>
+        <button class="cell"></button>
+
+        <button class="cell"></button>
+        <button class="cell"></button>
+        <button class="cell"></button>
+    </div>
+
+    <button id="restart">Restart</button>
 
     <script>
-        const cells = document.querySelectorAll(".cell[data-index]");
-        const gameStatus = document.getElementById("status");
-        const mainStatus = document.getElementById("mainStatus");
+        const cells = document.querySelectorAll(".cell");
 
-        const settingsScreen = document.getElementById("settingsScreen");
-        const gameplayScreen = document.getElementById("gameplayScreen");
+        const status = document.getElementById("status");
 
-        const diffLabel = document.getElementById("diffLabel");
-        const diffGroup = document.getElementById("diffGroup");
+        const twoPlayers = document.getElementById("twoPlayers");
+        const robotMode = document.getElementById("robotMode");
 
-        const statWins = document.getElementById("statWins");
-        const statLosses = document.getElementById("statLosses");
-        const statStreak = document.getElementById("statStreak");
+        const difficultyBox =
+            document.getElementById("difficultyBox");
 
-        let board = ["", "", "", "", "", "", "", "", ""];
+        const symbolBox =
+            document.getElementById("symbolBox");
+
+        const chooseX =
+            document.getElementById("chooseX");
+
+        const chooseO =
+            document.getElementById("chooseO");
+
+        const restart =
+            document.getElementById("restart");
+
         let currentPlayer = "X";
-        let startingPlayer = "X";
-
-        let gameActive = false;
-        let robotTimeout = null;
+        let gameActive = true;
 
         let gameMode = "pvp";
         let difficulty = "easy";
 
-        let stats;
+        let playerSymbol = "X";
+        let robotSymbol = "O";
 
-        try {
-            stats = JSON.parse(localStorage.getItem("tttStats"));
+        let robotThinking = false;
 
-            if (
-                !stats ||
-                typeof stats !== "object" ||
-                typeof stats.wins !== "number" ||
-                typeof stats.losses !== "number" ||
-                typeof stats.streak !== "number"
-            ) {
-                throw new Error("Invalid statistics");
-            }
-        } catch {
-            stats = {
-                wins: 0,
-                losses: 0,
-                streak: 0
-            };
-        }
-
-        const winningConditions = [
+        const winningPatterns = [
             [0, 1, 2],
             [3, 4, 5],
             [6, 7, 8],
+
             [0, 3, 6],
             [1, 4, 7],
             [2, 5, 8],
+
             [0, 4, 8],
             [2, 4, 6]
         ];
 
-        function initUI() {
-            setMode(gameMode);
-            setDifficulty(difficulty);
-            setFirstPlayer(startingPlayer);
+        cells.forEach((cell, index) => {
+            cell.addEventListener("click", () => {
+                playerMove(index);
+            });
+        });
 
-            cells.forEach(cell => {
-                cell.addEventListener("click", handleCellClick);
+        twoPlayers.addEventListener("click", () => {
+            gameMode = "pvp";
+
+            twoPlayers.classList.add("active");
+            robotMode.classList.remove("active");
+
+            difficultyBox.style.display = "none";
+            symbolBox.style.display = "flex";
+
+            restartGame();
+        });
+
+        robotMode.addEventListener("click", () => {
+            gameMode = "robot";
+
+            robotMode.classList.add("active");
+            twoPlayers.classList.remove("active");
+
+            difficultyBox.style.display = "flex";
+            symbolBox.style.display = "flex";
+
+            restartGame();
+        });
+
+        document
+            .querySelectorAll("[data-difficulty]")
+            .forEach(button => {
+
+                button.addEventListener("click", () => {
+
+                    difficulty =
+                        button.dataset.difficulty;
+
+                    document
+                        .querySelectorAll("[data-difficulty]")
+                        .forEach(b =>
+                            b.classList.remove("active")
+                        );
+
+                    button.classList.add("active");
+
+                    restartGame();
+                });
             });
 
-            updateStatsUI();
-            updateMainStatus();
-            renderBoard();
-        }
+        chooseX.addEventListener("click", () => {
+            playerSymbol = "X";
+            robotSymbol = "O";
 
-        function setMode(mode) {
-            if (mode !== "pvp" && mode !== "bot") {
-                mode = "pvp";
-            }
+            chooseX.classList.add("active");
+            chooseO.classList.remove("active");
 
-            gameMode = mode;
+            restartGame();
+        });
 
-            document
-                .getElementById("modePvp")
-                .classList.toggle("active", mode === "pvp");
+        chooseO.addEventListener("click", () => {
+            playerSymbol = "O";
+            robotSymbol = "X";
 
-            document
-                .getElementById("modeBot")
-                .classList.toggle("active", mode === "bot");
+            chooseO.classList.add("active");
+            chooseX.classList.remove("active");
 
-            const botEnabled = mode === "bot";
+            restartGame();
+        });
 
-            diffLabel.style.display = botEnabled ? "block" : "none";
-            diffGroup.style.display = botEnabled ? "flex" : "none";
-        }
+        function playerMove(index) {
 
-        function setDifficulty(diff) {
-            const validDifficulties = [
-                "easy",
-                "medium",
-                "hard",
-                "unbeatable"
-            ];
-
-            if (!validDifficulties.includes(diff)) {
-                diff = "easy";
-            }
-
-            difficulty = diff;
-
-            document
-                .getElementById("diffEasy")
-                .classList.toggle("active", diff === "easy");
-
-            document
-                .getElementById("diffMedium")
-                .classList.toggle("active", diff === "medium");
-
-            document
-                .getElementById("diffHard")
-                .classList.toggle("active", diff === "hard");
-
-            document
-                .getElementById("diffUnbeatable")
-                .classList.toggle("active", diff === "unbeatable");
-        }
-
-        function setFirstPlayer(player) {
-            if (player !== "X" && player !== "O") {
-                player = "X";
-            }
-
-            startingPlayer = player;
-
-            document
-                .getElementById("turnX")
-                .classList.toggle("active", player === "X");
-
-            document
-                .getElementById("turnO")
-                .classList.toggle("active", player === "O");
-        }
-
-        function saveSettings() {
-            closeSettings();
-            updateMainStatus();
-        }
-
-        function updateMainStatus() {
-            const modeText =
-                gameMode === "bot"
-                    ? `vs Robot (${difficulty})`
-                    : "2 Players";
-
-            mainStatus.textContent =
-                `Main Menu • ${modeText} • First: ${startingPlayer}`;
-        }
-
-        function updateStatsUI() {
-            statWins.textContent = `🏆 Wins: ${stats.wins}`;
-            statLosses.textContent = `❌ Losses: ${stats.losses}`;
-            statStreak.textContent = `🔥 Streak: ${stats.streak}`;
-
-            localStorage.setItem(
-                "tttStats",
-                JSON.stringify(stats)
-            );
-        }
-
-        function openSettings() {
-            if (gameplayScreen.classList.contains("active")) {
-                return;
-            }
-
-            settingsScreen.classList.remove("hidden");
-        }
-
-        function closeSettings() {
-            settingsScreen.classList.add("hidden");
-        }
-
-        function openGameplay() {
-            closeSettings();
-
-            gameplayScreen.classList.add("active");
-
-            startGame();
-        }
-
-        function returnToMainMenu() {
-            clearTimeout(robotTimeout);
-            robotTimeout = null;
-
-            gameActive = false;
-
-            gameplayScreen.classList.remove("active");
-            settingsScreen.classList.add("hidden");
-
-            updateMainStatus();
-        }
-
-        function startGame() {
-            clearTimeout(robotTimeout);
-            robotTimeout = null;
-
-            board = [
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
-            ];
-
-            currentPlayer = startingPlayer;
-            gameActive = true;
-
-            renderBoard();
-
-            updateGameStatus();
-
-            if (
-                gameMode === "bot" &&
-                currentPlayer !== startingPlayer
-            ) {
-                scheduleRobotMove();
-            }
-        }
-
-        function renderBoard() {
-            cells.forEach(cell => {
-                const index = Number(cell.dataset.index);
-                const value = board[index];
-
-                cell.textContent = value;
-
-                cell.classList.remove(
-                    "x",
-                    "o",
-                    "win"
-                );
-
-                if (value === "X") {
-                    cell.classList.add("x");
-                }
-
-                if (value === "O") {
-                    cell.classList.add("o");
-                }
-            });
-        }
-
-        function updateGameStatus() {
             if (!gameActive) {
                 return;
             }
 
-            if (
-                gameMode === "bot" &&
-                currentPlayer !== startingPlayer
-            ) {
-                gameStatus.textContent = "Robot's Turn...";
-            } else {
-                gameStatus.textContent =
-                    `Player ${currentPlayer}'s Turn`;
-            }
-        }
-
-        function handleCellClick(event) {
-            if (!gameActive) {
+            if (cells[index].textContent !== "") {
                 return;
             }
 
-            const index = Number(event.currentTarget.dataset.index);
+            if (gameMode === "robot") {
 
-            if (!Number.isInteger(index)) {
-                return;
-            }
+                if (currentPlayer !== playerSymbol) {
+                    return;
+                }
 
-            if (board[index] !== "") {
-                return;
-            }
-
-            if (
-                gameMode === "bot" &&
-                currentPlayer !== startingPlayer
-            ) {
-                return;
+                if (robotThinking) {
+                    return;
+                }
             }
 
             makeMove(index, currentPlayer);
 
             if (
                 gameActive &&
-                gameMode === "bot" &&
-                currentPlayer !== startingPlayer
+                gameMode === "robot" &&
+                currentPlayer === robotSymbol
             ) {
-                scheduleRobotMove();
+                robotThinking = true;
+
+                status.textContent = "Robot is thinking... 🤖";
+
+                setTimeout(() => {
+                    robotMove();
+                }, 400);
             }
         }
 
         function makeMove(index, player) {
-            if (!gameActive) {
-                return;
-            }
 
-            if (board[index] !== "") {
-                return;
-            }
+            cells[index].textContent = player;
 
-            board[index] = player;
+            cells[index]
+                .classList.add(player.toLowerCase());
 
-            renderBoard();
-
-            checkResult();
+            checkWinner();
         }
 
-        function checkResult() {
-            let winningCombo = null;
+        function checkWinner() {
 
-            for (const condition of winningConditions) {
-                const [a, b, c] = condition;
+            for (const pattern of winningPatterns) {
 
-                if (
-                    board[a] !== "" &&
-                    board[a] === board[b] &&
-                    board[b] === board[c]
-                ) {
-                    winningCombo = condition;
-                    break;
-                }
-            }
+                const a =
+                    cells[pattern[0]].textContent;
 
-            if (winningCombo) {
-                gameActive = false;
+                const b =
+                    cells[pattern[1]].textContent;
 
-                clearTimeout(robotTimeout);
-                robotTimeout = null;
+                const c =
+                    cells[pattern[2]].textContent;
 
-                winningCombo.forEach(index => {
-                    cells[index].classList.add("win");
-                });
+                if (a && a === b && b === c) {
 
-                if (gameMode === "bot") {
-                    if (currentPlayer === startingPlayer) {
-                        gameStatus.textContent = "You Win! 🎉";
+                    gameActive = false;
+                    robotThinking = false;
 
-                        stats.wins++;
-                        stats.streak++;
+                    if (gameMode === "robot") {
+
+                        if (currentPlayer === playerSymbol) {
+                            status.textContent =
+                                "You Win! 🎉";
+                        } else {
+                            status.textContent =
+                                "Robot Wins! 🤖";
+                        }
+
                     } else {
-                        gameStatus.textContent = "Robot Wins! 🤖";
 
-                        stats.losses++;
-                        stats.streak = 0;
+                        status.textContent =
+                            `Player ${currentPlayer} Wins! 🎉`;
                     }
 
-                    updateStatsUI();
-                } else {
-                    gameStatus.textContent =
-                        `Player ${currentPlayer} Wins! 🎉`;
+                    return;
                 }
-
-                return;
             }
 
-            if (!board.includes("")) {
-                gameActive = false;
+            let draw = true;
 
-                clearTimeout(robotTimeout);
-                robotTimeout = null;
-
-                gameStatus.textContent =
-                    "It's a Draw! 🤝";
-
-                if (gameMode === "bot") {
-                    stats.streak = 0;
-                    updateStatsUI();
+            cells.forEach(cell => {
+                if (cell.textContent === "") {
+                    draw = false;
                 }
+            });
+
+            if (draw) {
+
+                gameActive = false;
+                robotThinking = false;
+
+                status.textContent =
+                    "It's a Draw! 🤝";
 
                 return;
             }
 
             currentPlayer =
-                currentPlayer === "X"
-                    ? "O"
-                    : "X";
+                currentPlayer === "X" ? "O" : "X";
 
-            updateGameStatus();
-        }
+            if (gameMode === "robot") {
 
-        function scheduleRobotMove() {
-            clearTimeout(robotTimeout);
+                if (currentPlayer === playerSymbol) {
+                    status.textContent =
+                        `Your Turn (${playerSymbol})`;
+                }
 
-            robotTimeout = setTimeout(() => {
-                robotTimeout = null;
-                robotMove();
-            }, 450);
+            } else {
+
+                status.textContent =
+                    `Player ${currentPlayer}'s Turn`;
+            }
         }
 
         function robotMove() {
+
             if (!gameActive) {
+                robotThinking = false;
                 return;
             }
 
-            if (
-                gameMode !== "bot" ||
-                currentPlayer === startingPlayer
-            ) {
-                return;
-            }
-
-            const robotSymbol = getRobotSymbol();
-
-            let moveIndex;
+            let move;
 
             if (difficulty === "easy") {
-                moveIndex = getRandomMove();
+
+                move = getRandomMove();
+
             } else if (difficulty === "medium") {
-                moveIndex = getSmartMove(0.5);
+
+                if (Math.random() < 0.5) {
+                    move = getBestMove();
+                } else {
+                    move = getRandomMove();
+                }
+
             } else if (difficulty === "hard") {
-                moveIndex = getSmartMove(0.85);
-            } else {
-                moveIndex =
-                    minimax(
-                        board.slice(),
-                        robotSymbol
-                    ).index;
+
+                if (Math.random() < 0.85) {
+                    move = getBestMove();
+                } else {
+                    move = getRandomMove();
+                }
+
+            } else if (difficulty === "unbeatable") {
+
+                move = getBestMove();
             }
 
-            if (
-                moveIndex === undefined ||
-                board[moveIndex] !== ""
-            ) {
-                moveIndex = getRandomMove();
+            if (move !== undefined) {
+
+                makeMove(move, robotSymbol);
             }
 
-            if (
-                moveIndex !== undefined &&
-                board[moveIndex] === ""
-            ) {
-                makeMove(
-                    moveIndex,
-                    robotSymbol
-                );
-            }
-        }
-
-        function getRobotSymbol() {
-            return startingPlayer === "X"
-                ? "O"
-                : "X";
+            robotThinking = false;
         }
 
         function getRandomMove() {
+
             const available = [];
 
-            for (let i = 0; i < board.length; i++) {
-                if (board[i] === "") {
-                    available.push(i);
+            cells.forEach((cell, index) => {
+
+                if (cell.textContent === "") {
+                    available.push(index);
                 }
-            }
+            });
 
             if (available.length === 0) {
                 return undefined;
             }
 
-            const randomIndex =
+            return available[
                 Math.floor(
                     Math.random() * available.length
-                );
-
-            return available[randomIndex];
+                )
+            ];
         }
 
-        function getSmartMove(chanceToBeSmart) {
-            if (Math.random() < chanceToBeSmart) {
-                const bestMove =
-                    minimax(
-                        board.slice(),
-                        getRobotSymbol()
-                    );
+        function getBestMove() {
 
-                if (bestMove.index !== undefined) {
-                    return bestMove.index;
-                }
-            }
+            const board = getBoard();
 
-            return getRandomMove();
-        }
-
-        function minimax(newBoard, player) {
-            const robotSymbol = getRobotSymbol();
-            const humanSymbol =
-                robotSymbol === "X"
-                    ? "O"
-                    : "X";
-
-            const terminalResult =
-                getTerminalScore(
-                    newBoard,
-                    robotSymbol,
-                    humanSymbol
-                );
-
-            if (terminalResult !== null) {
-                return {
-                    score: terminalResult
-                };
-            }
-
-            const availableSpots = [];
-
-            for (let i = 0; i < newBoard.length; i++) {
-                if (newBoard[i] === "") {
-                    availableSpots.push(i);
-                }
-            }
-
-            const moves = [];
-
-            for (const index of availableSpots) {
-                newBoard[index] = player;
-
-                const nextPlayer =
-                    player === "X"
-                        ? "O"
-                        : "X";
-
-                const result =
-                    minimax(
-                        newBoard,
-                        nextPlayer
-                    );
-
-                moves.push({
-                    index: index,
-                    score: result.score
-                });
-
-                newBoard[index] = "";
-            }
-
+            let bestScore = -Infinity;
             let bestMove;
 
-            if (player === robotSymbol) {
-                let bestScore = -Infinity;
+            for (let i = 0; i < 9; i++) {
 
-                for (const move of moves) {
-                    if (move.score > bestScore) {
-                        bestScore = move.score;
-                        bestMove = move;
-                    }
+                if (board[i] !== "") {
+                    continue;
                 }
-            } else {
-                let bestScore = Infinity;
 
-                for (const move of moves) {
-                    if (move.score < bestScore) {
-                        bestScore = move.score;
-                        bestMove = move;
-                    }
+                board[i] = robotSymbol;
+
+                const score =
+                    minimax(board, false);
+
+                board[i] = "";
+
+                if (score > bestScore) {
+
+                    bestScore = score;
+                    bestMove = i;
                 }
             }
 
-            return bestMove || {
-                score: 0
-            };
+            return bestMove;
         }
 
-        function getTerminalScore(
-            currentBoard,
-            robotSymbol,
-            humanSymbol
-        ) {
-            for (const condition of winningConditions) {
-                const [a, b, c] = condition;
+        function minimax(board, maximizing) {
+
+            const winner = getBoardWinner(board);
+
+            if (winner === robotSymbol) {
+                return 10;
+            }
+
+            if (winner === playerSymbol) {
+                return -10;
+            }
+
+            if (!board.includes("")) {
+                return 0;
+            }
+
+            if (maximizing) {
+
+                let bestScore = -Infinity;
+
+                for (let i = 0; i < 9; i++) {
+
+                    if (board[i] !== "") {
+                        continue;
+                    }
+
+                    board[i] = robotSymbol;
+
+                    const score =
+                        minimax(board, false);
+
+                    board[i] = "";
+
+                    bestScore =
+                        Math.max(bestScore, score);
+                }
+
+                return bestScore;
+
+            } else {
+
+                let bestScore = Infinity;
+
+                for (let i = 0; i < 9; i++) {
+
+                    if (board[i] !== "") {
+                        continue;
+                    }
+
+                    board[i] = playerSymbol;
+
+                    const score =
+                        minimax(board, true);
+
+                    board[i] = "";
+
+                    bestScore =
+                        Math.min(bestScore, score);
+                }
+
+                return bestScore;
+            }
+        }
+
+        function getBoard() {
+
+            return Array.from(
+                cells,
+                cell => cell.textContent
+            );
+        }
+
+        function getBoardWinner(board) {
+
+            for (const pattern of winningPatterns) {
+
+                const a = board[pattern[0]];
+                const b = board[pattern[1]];
+                const c = board[pattern[2]];
 
                 if (
-                    currentBoard[a] !== "" &&
-                    currentBoard[a] === currentBoard[b] &&
-                    currentBoard[b] === currentBoard[c]
+                    a &&
+                    a === b &&
+                    b === c
                 ) {
-                    return currentBoard[a] === robotSymbol
-                        ? 10
-                        : -10;
+                    return a;
                 }
-            }
-
-            let full = true;
-
-            for (const value of currentBoard) {
-                if (value === "") {
-                    full = false;
-                    break;
-                }
-            }
-
-            if (full) {
-                return 0;
             }
 
             return null;
         }
 
-                initUI();
+        function restartGame() {
+
+            cells.forEach(cell => {
+
+                cell.textContent = "";
+
+                cell.classList.remove(
+                    "x",
+                    "o"
+                );
+            });
+
+            gameActive = true;
+            robotThinking = false;
+
+            if (gameMode === "robot") {
+
+                currentPlayer = "X";
+
+                if (playerSymbol === "O") {
+
+                    currentPlayer = "X";
+
+                    status.textContent =
+                        "Robot's Turn... 🤖";
+
+                    robotThinking = true;
+
+                    setTimeout(() => {
+                        robotMove();
+                    }, 400);
+
+                } else {
+
+                    status.textContent =
+                        "Your Turn (X)";
+                }
+
+            } else {
+
+                currentPlayer = "X";
+
+                status.textContent =
+                    "Player X's Turn";
+            }
+        }
+
+        restart.addEventListener(
+            "click",
+            restartGame
+        );
     </script>
+
 </body>
 </html>
