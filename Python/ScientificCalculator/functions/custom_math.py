@@ -383,6 +383,57 @@ def custom_ln(x):
     return +(two * total + Decimal(k) * LN2)
 
 
+def custom_ln2():
+    """
+    Computes ln(2) dynamically to the current Decimal precision.
+
+    Uses the rapidly converging identity:
+        ln(2) = 2 * arctanh(1/3)
+
+    which expands to:
+        ln(2) = 2 * (1/3 + 1/(3^3*3) + 1/(3^5*5) + ...)
+    """
+
+    current_prec = getcontext().prec
+
+    cache_key = ("ln2", current_prec)
+    if cache_key in _CONSTANT_CACHE:
+        return _CONSTANT_CACHE[cache_key]
+
+    with localcontext() as ctx:
+        # Extra guard digits for intermediate calculations
+        ctx.prec = current_prec + 5
+
+        one = Decimal(1)
+        two = Decimal(2)
+        three = Decimal(3)
+
+        y = one / three
+        y2 = y * y
+
+        term = y
+        total = Decimal(0)
+        n = 1
+
+        # Convergence threshold
+        eps = one.scaleb(-ctx.prec)
+
+        while True:
+            add = term / n
+            total += add
+
+            if custom_abs(add) < eps:
+                break
+
+            term *= y2
+            n += 2
+
+        ln2 = +(two * total)
+
+    _CONSTANT_CACHE[cache_key] = ln2
+    return ln2
+
+
 # ============================================================
 # LOGARITHM
 # ============================================================
