@@ -22,6 +22,8 @@ from functions.math_custom import (
     custom_ceil,
     custom_floor,
     custom_factorial,
+    custom_gamma,
+    custom_gamma_factorial,
     custom_gcd,
     custom_exp,
     custom_ln,
@@ -171,6 +173,8 @@ MATH_LIB = {
     "custom_ceil": custom_ceil,
     "custom_floor": custom_floor,
     "custom_factorial": custom_factorial,
+    "custom_gamma": custom_gamma,
+    "custom_gamma_factorial": custom_gamma_factorial,
     "custom_gcd": custom_gcd,
 
     "custom_exp": custom_exp,
