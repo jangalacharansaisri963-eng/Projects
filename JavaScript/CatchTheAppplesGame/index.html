@@ -2,128 +2,415 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple JS Catching Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fruit Catcher Deluxe - Dan Studios</title>
     <style>
-        /* Center the game board on the screen */
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
         body {
             margin: 0;
-            background: #222;
+            background: linear-gradient(135deg, #1f4068, #162447);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            overflow: hidden;
         }
-        /* Game Canvas styling */
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .ui-panel {
+            width: 400px;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-bottom: none;
+        }
+
+        .ui-panel span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         canvas {
-            background: #a3d2ca;
-            border: 4px solid #fff;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(to bottom, #e4f9f5, #a3d2ca);
+            border-left: 2px solid rgba(255, 255, 255, 0.2);
+            border-right: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            display: block;
+        }
+
+        /* Mobile On-Screen Controls */
+        .touch-controls {
+            width: 400px;
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top: none;
+        }
+
+        .control-btn {
+            flex: 1;
+            margin: 0 10px;
+            padding: 15px 0;
+            background: #056676;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: background 0.1s, transform 0.1s;
+        }
+
+        .control-btn:active {
+            background: #022f36;
+            transform: scale(0.96);
+        }
+
+        .instructions {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #a0aec0;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        @media (max-width: 420px) {
+            .ui-panel, canvas, .touch-controls {
+                width: 100vw;
+                border-radius: 0;
+                border: none;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- The HTML5 Canvas element where the game draws -->
-    <canvas id="gameCanvas" width="400" height="500"></canvas>
+    <div class="game-container">
+        <!-- Top HUD Panel -->
+        <div class="ui-panel">
+            <span id="scoreDisplay">🍎 Score: 0</span>
+            <span id="highScoreDisplay">🏆 High: 0</span>
+            <span id="livesDisplay">❤️❤️❤️</span>
+        </div>
+
+        <!-- Canvas -->
+        <canvas id="gameCanvas" width="400" height="480"></canvas>
+
+        <!-- Mobile Touch Buttons -->
+        <div class="touch-controls">
+            <button class="control-btn" id="leftBtn">◀</button>
+            <button class="control-btn" id="rightBtn">▶</button>
+        </div>
+    </div>
+
+    <div class="instructions">
+        Controls: Use <b>A / D</b>, <b>Arrow Keys</b>, or <b>On-Screen Buttons</b>. Catch fruits (+1), avoid bombs (lose life)! Grab golden apples for bonus points!
+    </div>
 
     <script>
-        // 1. SETUP GAME CANVAS
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
-        // 2. GAME VARIABLES
+        // UI Elements
+        const scoreDisplay = document.getElementById("scoreDisplay");
+        const highScoreDisplay = document.getElementById("highScoreDisplay");
+        const livesDisplay = document.getElementById("livesDisplay");
+
+        // Game State Variables
         let score = 0;
-        
-        // Player properties
+        let highScore = localStorage.getItem("fruitCatcherHighScore") || 0;
+        let lives = 3;
+        let gameActive = true;
+        let level = 1;
+        let combo = 0;
+        let particles = [];
+        let floatingTexts = [];
+
+        highScoreDisplay.innerText = `🏆 High: ${highScore}`;
+
+        // Player / Basket
         const basket = {
             x: 175,
-            y: 460,
-            width: 50,
-            height: 20,
-            speed: 7,
+            y: 430,
+            width: 70,
+            height: 22,
+            speed: 8,
             moveLeft: false,
             moveRight: false
         };
 
-        // Falling item properties
-        const item = {
-            x: Math.random() * (canvas.width - 20),
-            y: 0,
-            size: 15,
-            speed: 3
-        };
+        // Item Types definition
+        const itemTypes = [
+            { type: 'apple', color: '#ff4b5c', radius: 14, points: 1, prob: 0.60 },
+            { type: 'banana', color: '#ffeb3b', radius: 15, points: 2, prob: 0.20 },
+            { type: 'gold', color: '#ffbc00', radius: 12, points: 5, prob: 0.08 },
+            { type: 'bomb', color: '#2b2e4a', radius: 16, points: -1, prob: 0.12 }
+        ];
 
-        // 3. LISTEN FOR KEYBOARD INPUTS
+        // Falling Item
+        let currentItem = {};
+
+        function spawnItem() {
+            // Pick item type based on probabilities
+            const rand = Math.random();
+            let cumulative = 0;
+            let chosen = itemTypes[0];
+            for (let t of itemTypes) {
+                cumulative += t.prob;
+                if (rand <= cumulative) {
+                    chosen = t;
+                    break;
+                }
+            }
+
+            currentItem = {
+                x: Math.random() * (canvas.width - chosen.radius * 2) + chosen.radius,
+                y: -30,
+                radius: chosen.radius,
+                color: chosen.color,
+                type: chosen.type,
+                points: chosen.points,
+                speed: (2.5 + Math.random() * 1.5) + (score * 0.08)
+            };
+        }
+
+        spawnItem();
+
+        // Particle Effects System
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 12; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    radius: Math.random() * 3 + 1,
+                    color: color,
+                    alpha: 1,
+                    decay: Math.random() * 0.03 + 0.02
+                });
+            }
+        }
+
+        function createFloatingText(text, x, y, color) {
+            floatingTexts.push({
+                text: text,
+                x: x,
+                y: y,
+                alpha: 1,
+                color: color
+            });
+        }
+
+        // Keyboard Event Listeners
         document.addEventListener("keydown", (e) => {
-            if (e.key === "ArrowLeft" || e.key === "a") basket.moveLeft = true;
-            if (e.key === "ArrowRight" || e.key === "d") basket.moveRight = true;
+            if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") basket.moveLeft = true;
+            if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") basket.moveRight = true;
         });
 
         document.addEventListener("keyup", (e) => {
-            if (e.key === "ArrowLeft" || e.key === "a") basket.moveLeft = false;
-            if (e.key === "ArrowRight" || e.key === "d") basket.moveRight = false;
+            if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") basket.moveLeft = false;
+            if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") basket.moveRight = false;
         });
 
-        // 4. RESET ITEM POSITION
-        function resetItem() {
-            item.x = Math.random() * (canvas.width - item.size);
-            item.y = 0;
-            // Slightly increase speed as score goes up to make it harder
-            item.speed = 3 + Math.floor(score / 5); 
-        }
+        // Touch & Mouse Button Event Listeners for Mobile Controls
+        const leftBtn = document.getElementById("leftBtn");
+        const rightBtn = document.getElementById("rightBtn");
 
-        // 5. CORE GAME LOOP
+        leftBtn.addEventListener("touchstart", (e) => { e.preventDefault(); basket.moveLeft = true; });
+        leftBtn.addEventListener("touchend", (e) => { e.preventDefault(); basket.moveLeft = false; });
+        leftBtn.addEventListener("mousedown", () => { basket.moveLeft = true; });
+        leftBtn.addEventListener("mouseup", () => { basket.moveLeft = false; });
+
+        rightBtn.addEventListener("touchstart", (e) => { e.preventDefault(); basket.moveRight = true; });
+        rightBtn.addEventListener("touchend", (e) => { e.preventDefault(); basket.moveRight = false; });
+        rightBtn.addEventListener("mousedown", () => { basket.moveRight = true; });
+        rightBtn.addEventListener("mouseup", () => { basket.moveRight = false; });
+
+        // Main Game Loop Update
         function updateGame() {
-            // Clear previous frame
+            if (!gameActive) return;
+
+            // Clear Screen
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Move Basket and stay within boundaries
+            // Move Basket
             if (basket.moveLeft && basket.x > 0) basket.x -= basket.speed;
             if (basket.moveRight && basket.x < canvas.width - basket.width) basket.x += basket.speed;
 
-            // Move falling item
-            item.y += item.speed;
+            // Update Item Position
+            currentItem.y += currentItem.speed;
 
-            // Collision Detection: Did the basket catch the item?
-            if (
-                item.y + item.size >= basket.y &&
-                item.x + item.size >= basket.x &&
-                item.x <= basket.x + basket.width
-            ) {
-                score++;
-                resetItem();
+            // Collision Detection (Circle vs Rect)
+            const closestX = Math.max(basket.x, Math.min(currentItem.x, basket.x + basket.width));
+            const closestY = Math.max(basket.y, Math.min(currentItem.y, basket.y + basket.height));
+            const distanceX = currentItem.x - closestX;
+            const distanceY = currentItem.y - closestY;
+            const distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+            if (distanceSquared < (currentItem.radius * currentItem.radius)) {
+                // Caught!
+                if (currentItem.type === 'bomb') {
+                    lives--;
+                    combo = 0;
+                    createParticles(currentItem.x, currentItem.y, '#333');
+                    createFloatingText("-1 Life", currentItem.x, currentItem.y, "#ff4b5c");
+                    if (lives <= 0) {
+                        endGame();
+                    }
+                } else {
+                    score += currentItem.points;
+                    combo++;
+                    createParticles(currentItem.x, currentItem.y, currentItem.color);
+                    createFloatingText(`+${currentItem.points}`, currentItem.x, currentItem.y, "#056676");
+                }
+                
+                // Update UI Labels
+                scoreDisplay.innerText = `🍎 Score: ${score}`;
+                livesDisplay.innerText = "❤️".repeat(Math.max(0, lives));
+                spawnItem();
             }
 
-            // Game Over: Did the item hit the floor?
-            if (item.y > canvas.height) {
-                alert(`Game Over! Your Final Score: ${score}`);
-                score = 0;
-                resetItem();
+            // Missed Item (Hit Ground)
+            if (currentItem.y > canvas.height + 20) {
+                if (currentItem.type !== 'bomb') {
+                    lives--;
+                    combo = 0;
+                    livesDisplay.innerText = "❤️".repeat(Math.max(0, lives));
+                    if (lives <= 0) {
+                        endGame();
+                    }
+                }
+                spawnItem();
             }
 
-            // DRAW ELEMENTS
-            // Draw Basket (Blue)
+            // Draw Basket (Modern Style with handle)
             ctx.fillStyle = "#056676";
-            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
-
-            // Draw Falling Apple (Red Circle)
-            ctx.fillStyle = "#ff4b5c";
             ctx.beginPath();
-            ctx.arc(item.x + item.size/2, item.y + item.size/2, item.size/2, 0, Math.PI * 2);
+            ctx.roundRect(basket.x, basket.y, basket.width, basket.height, [4, 4, 10, 10]);
             ctx.fill();
 
-            // Draw Score Board
-            ctx.fillStyle = "#2b2e4a";
-            ctx.font = "20px Arial";
-            ctx.fillText(`Score: ${score}`, 15, 30);
+            // Basket rim detail
+            ctx.fillStyle = "#022f36";
+            ctx.fillRect(basket.x - 3, basket.y, basket.width + 6, 6);
 
-            // Run the loop continuously
+            // Draw Falling Item
+            ctx.fillStyle = currentItem.color;
+            ctx.beginPath();
+            ctx.arc(currentItem.x, currentItem.y, currentItem.radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Item inner glow/detail
+            if (currentItem.type === 'bomb') {
+                ctx.fillStyle = "#ff4b5c";
+                ctx.fillRect(currentItem.x - 2, currentItem.y - currentItem.radius - 6, 4, 6);
+            } else {
+                ctx.fillStyle = "rgba(255,255,255,0.4)";
+                ctx.beginPath();
+                ctx.arc(currentItem.x - 3, currentItem.y - 3, currentItem.radius / 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Update & Draw Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= p.decay;
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Update & Draw Floating Texts
+            for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                let ft = floatingTexts[i];
+                ft.y -= 1.2;
+                ft.alpha -= 0.03;
+                if (ft.alpha <= 0) {
+                    floatingTexts.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.globalAlpha = ft.alpha;
+                ctx.fillStyle = ft.color;
+                ctx.font = "bold 16px Arial";
+                ctx.fillText(ft.text, ft.x - 12, ft.y);
+                ctx.restore();
+            }
+
+            // Draw Combo Multiplier Badge if active
+            if (combo > 2) {
+                ctx.fillStyle = "#ffbc00";
+                ctx.font = "bold 15px Arial";
+                ctx.fillText(`🔥 Combo x${combo}`, 15, 30);
+            }
+
             requestAnimationFrame(updateGame);
         }
 
-        // Start the game loop
+        function endGame() {
+            gameActive = false;
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem("fruitCatcherHighScore", highScore);
+                highScoreDisplay.innerText = `🏆 High: ${highScore}`;
+            }
+            
+            setTimeout(() => {
+                alert(`Game Over! Final Score: ${score}\nTap OK to play again.`);
+                resetGame();
+            }, 100);
+        }
+
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            combo = 0;
+            gameActive = true;
+            scoreDisplay.innerText = `🍎 Score: ${score}`;
+            livesDisplay.innerText = "❤️❤️❤️";
+            spawnItem();
+            updateGame();
+        }
+
+        // Initialize loop
         updateGame();
     </script>
 </body>
