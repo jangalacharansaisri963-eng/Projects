@@ -331,7 +331,6 @@
         const diffLabel = document.getElementById("diffLabel");
         const diffGroup = document.getElementById("diffGroup");
 
-        // Stat HUD Elements
         const statWins = document.getElementById("statWins");
         const statLosses = document.getElementById("statLosses");
         const statStreak = document.getElementById("statStreak");
@@ -359,7 +358,6 @@
             document.getElementById("modePvp").classList.toggle("active", mode === "pvp");
             document.getElementById("modeBot").classList.toggle("active", mode === "bot");
             
-            // Only show difficulty options when "vs Robot" is selected
             if (mode === "bot") {
                 diffLabel.style.display = "block";
                 diffGroup.style.display = "flex";
@@ -607,4 +605,8 @@
 
         cells.forEach(cell => cell.addEventListener("click", handleCellClick));
         
-        // Hide difficulty selector initially (defaults to 2 Players
+        // Initialize default view to PvP mode (hiding difficulties initially)
+        setMode("pvp");
+    </script>
+</body>
+</html>
