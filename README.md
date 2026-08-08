@@ -75,10 +75,14 @@ Please report any bug issue found to the email jangalacharansaisri963@gmail.com.
 
 ## 💡 Acknowledgments
 
-Special recognition to the foundational programming ecosystems that continue to inspire and power modern development:
+Special recognition to the foundational programming ecosystems and infrastructure platforms that continue to inspire and power modern development:
 
 * **Python** — For its intuitive syntax and robust standard libraries that inspired our custom engine design.
 * **Java** — For setting enduring benchmarks in object-oriented architecture and enterprise reliability.
 * **JavaScript** — For driving innovation across the web and powering dynamic runtime environments.
+* **GitHub** — For providing a seamless platform for version control, collaboration, and developer community building.
+* **GitHub Pages** — For enabling fast, reliable, and effortless hosting of documentation and web outputs. Also used for running my games and testing them.
+* **GitHub Actions** — For empowering automated workflows, testing, and continuous integration and deployment pipelines.
 
 Thank You
+
