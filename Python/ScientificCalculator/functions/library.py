@@ -123,6 +123,9 @@ MATH_LIB = {
     "sqrt": sqrt,
     "cbrt": cbrt,
     "root": root,
+    "sinh": sinh,
+    "cosh": cosh,
+    "tanh": tanh,
 
     "sqrtrem": sqrtrem,
     "cbrtrem": cbrtrem,
