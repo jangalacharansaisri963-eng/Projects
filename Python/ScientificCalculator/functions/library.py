@@ -117,54 +117,6 @@ from functions.compare import (
 MATH_LIB = {
 
     # ======================================
-    # Custom Math Engine & Constants
-    # ======================================
-
-    "CUSTOM_PI": math_custom_mod.CUSTOM_PI,
-    "CUSTOM_E": math_custom_mod.CUSTOM_E,
-    "CUSTOM_TAU": math_custom_mod.CUSTOM_TAU,
-    "CUSTOM_INF": math_custom_mod.CUSTOM_INF,
-    "CUSTOM_NAN": math_custom_mod.CUSTOM_NAN,
-
-    "set_precision": math_custom_mod.set_precision,
-    "get_precision": math_custom_mod.get_precision,
-
-    "custom_abs": math_custom_mod.custom_abs,
-    "custom_ceil": math_custom_mod.custom_ceil,
-    "custom_floor": math_custom_mod.custom_floor,
-    "custom_factorial": math_custom_mod.custom_factorial,
-    "custom_gamma": math_custom_mod.custom_gamma,
-    "custom_gamma_factorial": math_custom_mod.custom_gamma_factorial,
-    "custom_gcd": math_custom_mod.custom_gcd,
-
-    "custom_exp": math_custom_mod.custom_exp,
-    "custom_ln": math_custom_mod.custom_ln,
-    "custom_ln2": math_custom_mod.custom_ln2,
-    "custom_log": math_custom_mod.custom_log,
-    "custom_log10": math_custom_mod.custom_log10,
-    "custom_log2": math_custom_mod.custom_log2,
-    "custom_pow": math_custom_mod.custom_pow,
-    "custom_sqrt": math_custom_mod.custom_sqrt,
-
-    "custom_sin": math_custom_mod.custom_sin,
-    "custom_cos": math_custom_mod.custom_cos,
-    "custom_tan": math_custom_mod.custom_tan,
-    "custom_sec": math_custom_mod.custom_sec,
-    "custom_csc": math_custom_mod.custom_csc,
-    "custom_cot": math_custom_mod.custom_cot,
-
-    "custom_asin": math_custom_mod.custom_asin,
-    "custom_acos": math_custom_mod.custom_acos,
-    "custom_atan": math_custom_mod.custom_atan,
-    "custom_atan2": math_custom_mod.custom_atan2,
-    "custom_arcsin": math_custom_mod.custom_arcsin,
-    "custom_arccos": math_custom_mod.custom_arccos,
-    "custom_arctan": math_custom_mod.custom_arctan,
-
-    "custom_radians": math_custom_mod.custom_radians,
-    "custom_degrees": math_custom_mod.custom_degrees,
-
-    # ======================================
     # Trigonometry
     # ======================================
 
