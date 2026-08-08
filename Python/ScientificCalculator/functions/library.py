@@ -65,6 +65,9 @@ from functions import physics as physics_mod
 # Import the trig module as a whole so we can register all definitions from trig.py automatically
 import functions.trig as trig_mod
 
+# Import the derivative module so we can register its functions dynamically
+from functions import derivative as derivative_mod
+
 from functions.complex_numbers import (
     real,
     imag,
@@ -520,3 +523,24 @@ for _name in trig_public:
 if "trig" not in MATH_LIB:
     MATH_LIB["trig"] = trig_mod
     
+# -----------------------------------------------------------------------------
+# Dynamically register public names from the derivative module into MATH_LIB.
+# This mirrors the physics/trig registration and ensures functions like
+# derivative(), DualNumber, etc. are available to the calculator environment.
+# -----------------------------------------------------------------------------
+deriv_public = getattr(derivative_mod, "__all__", None)
+if deriv_public is None:
+    deriv_public = [n for n in dir(derivative_mod) if not n.startswith("_")]
+
+for _name in deriv_public:
+    if _name in MATH_LIB:
+        continue
+    try:
+        _obj = getattr(derivative_mod, _name)
+    except AttributeError:
+        continue
+    MATH_LIB[_name] = _obj
+
+# Also expose the derivative module under a key for convenience
+if "derivative" not in MATH_LIB:
+    MATH_LIB["derivative"] = derivative_mod
