@@ -106,13 +106,3 @@ def format_divisibility_report(n: int, divisors: List[int] = None) -> str:
     return "\n".join(lines)
 
 
-if __name__ == "__main__":
-    # Quick interactive demo when running the module directly
-    try:
-        raw = input("Enter an integer to test divisibility: ").strip()
-        n = int(raw)
-    except Exception:
-        print("Please enter a valid integer.")
-    else:
-        print("Using divisors:", ALL_DIVISORS)
-        print(format_divisibility_report(n))
