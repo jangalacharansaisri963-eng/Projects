@@ -1,0 +1,6 @@
+{
+  "name": "Tic Tac Toe",
+  "description": "An interactive, polished Tic Tac Toe game featuring single player AI (Easy, Medium, Unbeatable Minimax), 2-player mode, customizable themes, move history replay, sound effects, and stats.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
