@@ -10,63 +10,20 @@ from fractions import Fraction
 import constants
 import inspect
 
-from functions.math_custom import (
-    CUSTOM_PI,
-    CUSTOM_E,
-    CUSTOM_TAU,
-    CUSTOM_INF,
-    CUSTOM_NAN,
-    set_precision,
-    get_precision,
-    custom_abs,
-    custom_ceil,
-    custom_floor,
-    custom_factorial,
-    custom_gamma,
-    custom_gamma_factorial,
-    custom_gcd,
-    custom_exp,
-    custom_ln,
-    custom_ln2,
-    custom_log,
-    custom_log10,
-    custom_log2,
-    custom_pow,
-    custom_sqrt,
-    custom_sin,
-    custom_cos,
-    custom_tan,
-    custom_sec,
-    custom_csc,
-    custom_cot,
-    custom_asin,
-    custom_acos,
-    custom_atan,
-    custom_atan2,
-    custom_arcsin,
-    custom_arccos,
-    custom_arctan,
-    custom_radians,
-    custom_degrees,
-)
-
-from functions.trig import (
-    sin,
-    cos,
-    tan,
-    asin,
-    acos,
-    atan,
-)
-
-# Import the physics module as a whole so we can register many functions dynamically
-from functions import physics as physics_mod
+# Import the custom math module as a whole so we can register its public names
+from functions import math_custom as math_custom_mod
 
 # Import the trig module as a whole so we can register all definitions from trig.py automatically
 from functions import trig as trig_mod
 
+# Import the physics module as a whole so we can register many functions dynamically
+from functions import physics as physics_mod
+
 # Import the derivative module so we can register its functions dynamically
 from functions import derivative as derivative_mod
+
+# Import divisibility so we can register its public names dynamically
+from functions import divisibility as divisibility_mod
 
 from functions.complex_numbers import (
     real,
@@ -163,61 +120,61 @@ MATH_LIB = {
     # Custom Math Engine & Constants
     # ======================================
 
-    "CUSTOM_PI": CUSTOM_PI,
-    "CUSTOM_E": CUSTOM_E,
-    "CUSTOM_TAU": CUSTOM_TAU,
-    "CUSTOM_INF": CUSTOM_INF,
-    "CUSTOM_NAN": CUSTOM_NAN,
+    "CUSTOM_PI": math_custom_mod.CUSTOM_PI,
+    "CUSTOM_E": math_custom_mod.CUSTOM_E,
+    "CUSTOM_TAU": math_custom_mod.CUSTOM_TAU,
+    "CUSTOM_INF": math_custom_mod.CUSTOM_INF,
+    "CUSTOM_NAN": math_custom_mod.CUSTOM_NAN,
 
-    "set_precision": set_precision,
-    "get_precision": get_precision,
+    "set_precision": math_custom_mod.set_precision,
+    "get_precision": math_custom_mod.get_precision,
 
-    "custom_abs": custom_abs,
-    "custom_ceil": custom_ceil,
-    "custom_floor": custom_floor,
-    "custom_factorial": custom_factorial,
-    "custom_gamma": custom_gamma,
-    "custom_gamma_factorial": custom_gamma_factorial,
-    "custom_gcd": custom_gcd,
+    "custom_abs": math_custom_mod.custom_abs,
+    "custom_ceil": math_custom_mod.custom_ceil,
+    "custom_floor": math_custom_mod.custom_floor,
+    "custom_factorial": math_custom_mod.custom_factorial,
+    "custom_gamma": math_custom_mod.custom_gamma,
+    "custom_gamma_factorial": math_custom_mod.custom_gamma_factorial,
+    "custom_gcd": math_custom_mod.custom_gcd,
 
-    "custom_exp": custom_exp,
-    "custom_ln": custom_ln,
-    "custom_ln2": custom_ln2,
-    "custom_log": custom_log,
-    "custom_log10": custom_log10,
-    "custom_log2": custom_log2,
-    "custom_pow": custom_pow,
-    "custom_sqrt": custom_sqrt,
+    "custom_exp": math_custom_mod.custom_exp,
+    "custom_ln": math_custom_mod.custom_ln,
+    "custom_ln2": math_custom_mod.custom_ln2,
+    "custom_log": math_custom_mod.custom_log,
+    "custom_log10": math_custom_mod.custom_log10,
+    "custom_log2": math_custom_mod.custom_log2,
+    "custom_pow": math_custom_mod.custom_pow,
+    "custom_sqrt": math_custom_mod.custom_sqrt,
 
-    "custom_sin": custom_sin,
-    "custom_cos": custom_cos,
-    "custom_tan": custom_tan,
-    "custom_sec": custom_sec,
-    "custom_csc": custom_csc,
-    "custom_cot": custom_cot,
+    "custom_sin": math_custom_mod.custom_sin,
+    "custom_cos": math_custom_mod.custom_cos,
+    "custom_tan": math_custom_mod.custom_tan,
+    "custom_sec": math_custom_mod.custom_sec,
+    "custom_csc": math_custom_mod.custom_csc,
+    "custom_cot": math_custom_mod.custom_cot,
 
-    "custom_asin": custom_asin,
-    "custom_acos": custom_acos,
-    "custom_atan": custom_atan,
-    "custom_atan2": custom_atan2,
-    "custom_arcsin": custom_arcsin,
-    "custom_arccos": custom_arccos,
-    "custom_arctan": custom_arctan,
+    "custom_asin": math_custom_mod.custom_asin,
+    "custom_acos": math_custom_mod.custom_acos,
+    "custom_atan": math_custom_mod.custom_atan,
+    "custom_atan2": math_custom_mod.custom_atan2,
+    "custom_arcsin": math_custom_mod.custom_arcsin,
+    "custom_arccos": math_custom_mod.custom_arccos,
+    "custom_arctan": math_custom_mod.custom_arctan,
 
-    "custom_radians": custom_radians,
-    "custom_degrees": custom_degrees,
+    "custom_radians": math_custom_mod.custom_radians,
+    "custom_degrees": math_custom_mod.custom_degrees,
 
     # ======================================
     # Trigonometry
     # ======================================
 
-    "sin": sin,
-    "cos": cos,
-    "tan": tan,
+    "sin": trig_mod.sin,
+    "cos": trig_mod.cos,
+    "tan": trig_mod.tan,
 
-    "asin": asin,
-    "acos": acos,
-    "atan": atan,
+    "asin": trig_mod.asin,
+    "acos": trig_mod.acos,
+    "atan": trig_mod.atan,
 
     "sinh": sinh,
     "cosh": cosh,
@@ -544,3 +501,48 @@ for _name in deriv_public:
 # Also expose the derivative module under a key for convenience
 if "derivative" not in MATH_LIB:
     MATH_LIB["derivative"] = derivative_mod
+
+# -----------------------------------------------------------------------------
+# Dynamically register public names from the custom_math module into MATH_LIB.
+# This makes helper functions/constants defined in functions/custom_math.py
+# available in the calculator environment without needing explicit aliases.
+# -----------------------------------------------------------------------------
+custom_math_public = getattr(math_custom_mod, "__all__", None)
+if custom_math_public is None:
+    custom_math_public = [n for n in dir(math_custom_mod) if not n.startswith("_")]
+
+for _name in custom_math_public:
+    if _name in MATH_LIB:
+        continue
+    try:
+        _obj = getattr(math_custom_mod, _name)
+    except AttributeError:
+        continue
+    MATH_LIB[_name] = _obj
+
+# Also expose the custom_math module under a key for convenience
+if "custom_math" not in MATH_LIB:
+    MATH_LIB["custom_math"] = math_custom_mod
+
+# -----------------------------------------------------------------------------
+# Dynamically register public names from the divisibility module into MATH_LIB.
+# This registers functions/constants from functions/divisibility.py so they are
+# available to the calculator environment.
+# -----------------------------------------------------------------------------
+div_public = getattr(divisibility_mod, "__all__", None)
+if div_public is None:
+    div_public = [n for n in dir(divisibility_mod) if not n.startswith("_")]
+
+for _name in div_public:
+    if _name in MATH_LIB:
+        continue
+    try:
+        _obj = getattr(divisibility_mod, _name)
+    except AttributeError:
+        continue
+    MATH_LIB[_name] = _obj
+
+# Also expose the divisibility module under a key for convenience
+if "divisibility" not in MATH_LIB:
+    MATH_LIB["divisibility"] = divisibility_mod
+
