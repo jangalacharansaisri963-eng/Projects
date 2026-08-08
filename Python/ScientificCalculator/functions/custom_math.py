@@ -450,6 +450,150 @@ def custom_exp(x):
     return +total
 
 
+def W(x, branch=0):
+    """
+    Computes the Lambert W function without using the math module.
+
+    Lambert W is defined by:
+
+        W(x) * exp(W(x)) = x
+
+    Parameters
+    ----------
+    x : number
+        Input value.
+    branch : int
+        Lambert W branch.
+
+        0  -> principal branch W_0
+        -1 -> lower real branch W_{-1}
+
+    Returns
+    -------
+    Decimal
+
+    Real-valued domain:
+        W_0  : x >= -1/e
+        W_-1 : -1/e <= x < 0
+
+    Examples
+    --------
+    W(0)       -> 0
+    W(1)       -> approximately 0.5671432904
+    W(2)       -> approximately 0.8526055020
+    W(-1/e)   -> -1
+    """
+
+    x = Decimal(str(x))
+
+    if branch not in (0, -1):
+        raise ValueError(
+            "Only real Lambert W branches 0 and -1 are supported."
+        )
+
+    # e^-1 = 1/e
+    negative_limit = -Decimal(1) / CUSTOM_E()
+
+    # ------------------------------------------------------------------
+    # Domain checking
+    # ------------------------------------------------------------------
+
+    if branch == 0:
+
+        if x < negative_limit:
+            raise ValueError(
+                "W(x) is not real for x < -1/e on the principal branch."
+            )
+
+    else:
+
+        if x < negative_limit or x >= 0:
+            raise ValueError(
+                "The real W_-1 branch requires -1/e <= x < 0."
+            )
+
+    # ------------------------------------------------------------------
+    # Special cases
+    # ------------------------------------------------------------------
+
+    if x == 0:
+        if branch == 0:
+            return Decimal(0)
+
+    if x == negative_limit:
+        return Decimal(-1)
+
+    # ------------------------------------------------------------------
+    # Initial approximation
+    # ------------------------------------------------------------------
+
+    if branch == 0:
+
+        if x < Decimal("1"):
+            w = x
+        else:
+            # log-based starting approximation
+            lx = custom_ln(x)
+            llx = custom_ln(lx)
+
+            w = lx - llx
+
+    else:
+
+        # W_-1 is <= -1
+        lx = custom_ln(-x)
+
+        if x > Decimal("-0.1"):
+            w = lx - custom_ln(-lx)
+        else:
+            w = lx - custom_ln(-lx)
+
+    # ------------------------------------------------------------------
+    # Halley iteration
+    #
+    # W_{n+1} =
+    #
+    # w - (w*e^w - x) /
+    #     (e^w*(w+1) - ((w+2)*(w*e^w-x))/(2*w+2))
+    #
+    # ------------------------------------------------------------------
+
+    precision = getcontext().prec
+
+    tolerance = Decimal(10) ** (-(precision - 8))
+
+    max_iterations = 100
+
+    for _ in range(max_iterations):
+
+        ew = custom_exp(w)
+
+        f = w * ew - x
+
+        wp1 = w + Decimal(1)
+
+        denominator = (
+            ew * wp1
+            - (
+                (w + Decimal(2))
+                * f
+                / (Decimal(2) * wp1)
+            )
+        )
+
+        if denominator == 0:
+            break
+
+        next_w = w - f / denominator
+
+        if custom_abs(next_w - w) < tolerance:
+            return +next_w
+
+        w = next_w
+
+    return +w
+
+
 # ============================================================
 # NATURAL LOGARITHM
 # ============================================================
