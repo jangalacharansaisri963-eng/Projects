@@ -63,7 +63,7 @@ from functions.trig import (
 from functions import physics as physics_mod
 
 # Import the trig module as a whole so we can register all definitions from trig.py automatically
-import functions.trig as trig_mod
+from functions import trig as trig_mod
 
 # Import the derivative module so we can register its functions dynamically
 from functions import derivative as derivative_mod
