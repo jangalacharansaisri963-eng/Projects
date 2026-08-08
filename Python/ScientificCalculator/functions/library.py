@@ -117,22 +117,6 @@ from functions.compare import (
 MATH_LIB = {
 
     # ======================================
-    # Trigonometry
-    # ======================================
-
-    "sin": trig_mod.sin,
-    "cos": trig_mod.cos,
-    "tan": trig_mod.tan,
-
-    "asin": trig_mod.asin,
-    "acos": trig_mod.acos,
-    "atan": trig_mod.atan,
-
-    "sinh": sinh,
-    "cosh": cosh,
-    "tanh": tanh,
-
-    # ======================================
     # Roots
     # ======================================
 
