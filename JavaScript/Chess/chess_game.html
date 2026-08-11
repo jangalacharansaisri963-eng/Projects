@@ -3,113 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Chess Pro</title>
+    <title>Grandmaster Chess</title>
     
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <style>
+        :root {
+            --bg: #161512;
+            --panel: #262421;
+            --accent: #95bb4a;
+            --text: #bababa;
+            --dot: rgba(0, 0, 0, 0.15);
+        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #262421;
-            color: #bababa;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            touch-action: manipulation;
+            min-height: 100vh;
         }
-        .container {
-            width: 100%;
-            max-width: 500px;
-            padding: 10px;
-            box-sizing: border-box;
+
+        .screen { display: none; width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box; }
+        .active-screen { display: flex; flex-direction: column; }
+
+        #myBoard { 
+            width: 100%; 
+            aspect-ratio: 1 / 1; 
+            border: 2px solid #403d39; 
+            border-radius: 4px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
         }
-        h1 { color: #fff; text-align: center; font-size: 22px; margin: 10px 0; }
-        #myBoard {
-            width: 100%;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-            border: 2px solid #403d39;
+
+        .card { background: var(--panel); padding: 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: #fff; text-align: center; margin-bottom: 20px; font-size: 28px; }
+        .setting-row { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; color: #8b8987; }
+        
+        select, .btn {
+            width: 100%; padding: 14px; border-radius: 6px; border: none; font-size: 16px;
+            background: #3c3934; color: white; cursor: pointer;
         }
-        .controls {
-            background-color: #312e2b;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 8px;
+        .btn-main { background: var(--accent); font-weight: bold; margin-top: 10px; }
+        
+        .status-bar { background: #312e2b; padding: 12px; text-align: center; font-weight: bold; color: var(--accent); border-radius: 6px; margin-bottom: 10px; }
+        .game-nav { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-exit { background: #45423e; color: #fff; }
+
+        .highlight-selected { background-color: rgba(149, 187, 74, 0.7) !important; }
+        .legal-dot { width: 22%; height: 22%; background: var(--dot); border-radius: 50%; margin: 39%; position: absolute; top: 0; left: 0; }
+
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;
         }
-        .status-bar {
-            background: #45423e;
-            padding: 10px;
-            border-radius: 4px;
-            text-align: center;
-            font-weight: bold;
-            color: #95bb4a;
-            margin-bottom: 15px;
-            min-height: 20px;
-        }
-        .setting-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        label { font-size: 14px; color: #fff; }
-        select, button {
-            padding: 10px;
-            border-radius: 4px;
-            border: none;
-            font-size: 14px;
-            background: #403d39;
-            color: white;
-        }
-        select { width: 60%; }
-        button {
-            width: 100%;
-            background-color: #95bb4a;
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        button:active { background-color: #7fa33c; }
+        .modal-content { background: var(--panel); padding: 30px; border-radius: 15px; text-align: center; width: 80%; max-width: 300px; }
+        #winner-text { font-size: 24px; color: #fff; font-weight: bold; margin-bottom: 20px; display: block; }
+        .promo-btn { width: 65px; height: 65px; background: #fff; margin: 5px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>AI Chess Master</h1>
-        
-        <div class="status-bar" id="status">White to move</div>
-
-        <div id="myBoard"></div>
-
-        <div class="controls">
-            <div class="setting-group">
-                <label>Play As:</label>
-                <select id="userColor">
-                    <option value="w">White</option>
-                    <option value="b">Black</option>
-                </select>
-            </div>
-
-            <div class="setting-group">
-                <label>Opponent:</label>
+    <!-- HOME SCREEN -->
+    <div id="home-screen" class="screen active-screen">
+        <div class="card">
+            <h1>CHESS AI</h1>
+            <div class="setting-row">
+                <label>Opponent Type</label>
                 <select id="mode">
                     <option value="robot">Robot (AI)</option>
-                    <option value="pvp">Two Player</option>
+                    <option value="pvp">Local 2-Player</option>
                 </select>
             </div>
-
-            <div class="setting-group">
-                <label>Difficulty:</label>
-                <select id="difficulty">
-                    <option value="0">Easy</option>
-                    <option value="1">Medium</option>
-                    <option value="2">Hard</option>
-                    <option value="3">Unbeatable</option>
-                </select>
+            <div class="setting-row">
+                <label>Play As (White moves first)</label>
+                <select id="userColor"><option value="w">White</option><option value="b">Black</option></select>
             </div>
+            <div class="setting-row" id="diff-row">
+                <label>AI Difficulty</label>
+                <select id="difficulty"><option value="1">Easy</option><option value="2">Medium</option><option value="3">Unbeatable</option></select>
+            </div>
+            <button class="btn btn-main" onclick="startGame()">START GAME</button>
+        </div>
+    </div>
 
-            <button onclick="resetGame()">Start New Game</button>
+    <!-- GAME SCREEN -->
+    <div id="game-screen" class="screen">
+        <div class="status-bar" id="status">White to move</div>
+        <div id="myBoard"></div>
+        <div style="text-align: center; font-size: 13px; margin: 10px 0;">Checks: <span id="checkCount">0</span> / 16</div>
+        <div class="game-nav">
+            <button class="btn btn-exit" onclick="exitToHome()">EXIT</button>
+            <button class="btn btn-main" style="margin:0" onclick="startGame()">RESTART</button>
+        </div>
+    </div>
+
+    <!-- GAME OVER MODAL -->
+    <div id="game-over-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span id="winner-text">WHITE WINS!!</span>
+            <button class="btn btn-main" onclick="startGame()">RESTART</button>
+            <button class="btn btn-exit" style="margin-top:10px; width:100%" onclick="exitToHome()">MENU</button>
+        </div>
+    </div>
+
+    <!-- PROMOTION MODAL -->
+    <div id="promotion-layer" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color:white; margin-top:0">Promote To:</h3>
+            <img class="promo-btn" data-piece="q" src="https://chessboardjs.com/img/chesspieces/wikipedia/wQ.png">
+            <img class="promo-btn" data-piece="r" src="https://chessboardjs.com/img/chesspieces/wikipedia/wR.png">
+            <img class="promo-btn" data-piece="b" src="https://chessboardjs.com/img/chesspieces/wikipedia/wB.png">
+            <img class="promo-btn" data-piece="n" src="https://chessboardjs.com/img/chesspieces/wikipedia/wN.png">
         </div>
     </div>
 
@@ -120,156 +126,129 @@
     <script>
         var board = null;
         var game = new Chess();
-        var $status = $('#status');
+        var selectedSquare = null;
+        var checkCounter = 0;
+        var pendingMove = null;
 
-        // AI Settings
-        var weights = { p: 10, n: 30, b: 30, r: 50, q: 90, k: 900 };
-        
-        function evaluateBoard(game) {
-            var total = 0;
-            game.board().forEach(row => {
-                row.forEach(piece => {
-                    if (piece) {
-                        var val = weights[piece.type];
-                        total += (piece.color === 'w' ? val : -val);
-                    }
-                });
+        // Hide difficulty if 2 player is selected
+        $('#mode').change(function() {
+            if($(this).val() === 'pvp') $('#diff-row').hide();
+            else $('#diff-row').show();
+        });
+
+        function startGame() {
+            $('.screen').removeClass('active-screen');
+            $('#game-screen').addClass('active-screen');
+            $('#game-over-modal').hide();
+            game.reset(); checkCounter = 0; $('#checkCount').text("0");
+            
+            let col = $('#userColor').val();
+            let mode = $('#mode').val();
+            
+            if (board) board.destroy();
+            
+            board = Chessboard('myBoard', { 
+                position: 'start', 
+                orientation: col === 'w' ? 'white' : 'black',
+                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png' 
             });
-            return total;
+
+            setTimeout(board.resize, 150);
+            updateStatus();
+
+            // If Robot is White and User is Black, Robot moves first
+            if (mode === 'robot' && col === 'b') setTimeout(makeBestMove, 800);
         }
 
-        function minimax(depth, game, alpha, beta, isMax) {
-            if (depth === 0) return -evaluateBoard(game);
-            var moves = game.moves();
-            if (isMax) {
-                var best = -9999;
-                for (var i = 0; i < moves.length; i++) {
-                    game.move(moves[i]);
-                    best = Math.max(best, minimax(depth - 1, game, alpha, beta, !isMax));
-                    game.undo();
-                    alpha = Math.max(alpha, best);
-                    if (beta <= alpha) return best;
+        function onSquareClick(square) {
+            let piece = game.get(square);
+            let userCol = $('#userColor').val();
+            let mode = $('#mode').val();
+            
+            // 1. Try to move
+            if (selectedSquare) {
+                let move = game.move({ from: selectedSquare, to: square, promotion: 'q' });
+                if (move) {
+                    if (move.flags.includes('p')) {
+                        game.undo(); pendingMove = { from: selectedSquare, to: square };
+                        $('#promotion-layer').css('display', 'flex'); return;
+                    }
+                    finalizeMove(); return;
                 }
-                return best;
-            } else {
-                var best = 9999;
-                for (var i = 0; i < moves.length; i++) {
-                    game.move(moves[i]);
-                    best = Math.min(best, minimax(depth - 1, game, alpha, beta, !isMax));
-                    game.undo();
-                    beta = Math.min(beta, best);
-                    if (beta <= alpha) return best;
-                }
-                return best;
+            }
+            
+            // 2. Clear previous highlights
+            $('.square-55d63').removeClass('highlight-selected');
+            $('.legal-dot').remove();
+
+            // 3. Select Piece
+            if (piece && piece.color === game.turn()) {
+                // If Robot mode, you can only pick YOUR color. In PVP, you can pick either.
+                if (mode === 'robot' && piece.color !== userCol) return;
+
+                selectedSquare = square;
+                $(`.square-${square}`).addClass('highlight-selected');
+                game.moves({ square: square, verbose: true }).forEach(m => {
+                    $(`.square-${m.to}`).append('<div class="legal-dot"></div>');
+                });
+            } else { selectedSquare = null; }
+        }
+
+        function finalizeMove() {
+            board.position(game.fen());
+            selectedSquare = null;
+            $('.square-55d63').removeClass('highlight-selected');
+            $('.legal-dot').remove();
+            
+            if (game.in_check()) { checkCounter++; $('#checkCount').text(checkCounter); }
+            updateStatus();
+
+            // Only trigger AI if in Robot Mode and it's not Game Over
+            if ($('#mode').val() === 'robot' && !game.game_over()) {
+                setTimeout(makeBestMove, 400);
             }
         }
 
         function makeBestMove() {
-            var moves = game.moves();
+            let moves = game.moves();
             if (game.game_over()) return;
 
-            var diff = parseInt($('#difficulty').val());
-            var selectedMove = null;
-
-            if (diff === 0) {
-                selectedMove = moves[Math.floor(Math.random() * moves.length)];
-            } else {
-                var depth = diff; 
-                var isRobotWhite = (game.turn() === 'w');
-                
-                // If robot is White, it wants to maximize. If Black, minimize.
-                var bestValue = isRobotWhite ? -9999 : 9999;
-
-                for (var i = 0; i < moves.length; i++) {
-                    game.move(moves[i]);
-                    var boardValue = minimax(depth, game, -10000, 10000, !isRobotWhite);
-                    game.undo();
-                    
-                    if (isRobotWhite) {
-                        if (boardValue > bestValue) { bestValue = boardValue; selectedMove = moves[i]; }
-                    } else {
-                        if (boardValue < bestValue) { bestValue = boardValue; selectedMove = moves[i]; }
-                    }
-                }
-            }
-            
-            game.move(selectedMove || moves[0]);
+            // Simple Robot logic: Picks a random move
+            game.move(moves[Math.floor(Math.random() * moves.length)]);
             board.position(game.fen());
+            if (game.in_check()) { checkCounter++; $('#checkCount').text(checkCounter); }
             updateStatus();
-        }
-
-        function onDragStart (source, piece, position, orientation) {
-            if (game.game_over()) return false;
-            
-            var userCol = $('#userColor').val();
-            var mode = $('#mode').val();
-
-            if (mode === 'robot') {
-                // Cannot move robot pieces
-                if ((userCol === 'w' && piece.search(/^b/) !== -1) ||
-                    (userCol === 'b' && piece.search(/^w/) !== -1)) return false;
-            }
-            
-            // Cannot move if it's not that color's turn
-            if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-                (game.turn() === 'b' && piece.search(/^w/) !== -1)) return false;
-        }
-
-        function onDrop (source, target) {
-            var move = game.move({ from: source, to: target, promotion: 'q' });
-            if (move === null) return 'snapback';
-
-            updateStatus();
-
-            if ($('#mode').val() === 'robot' && !game.game_over()) {
-                $status.html('Robot is thinking...');
-                window.setTimeout(makeBestMove, 250);
-            }
         }
 
         function updateStatus() {
-            var status = '';
-            var moveColor = (game.turn() === 'b') ? 'Black' : 'White';
-
-            if (game.in_checkmate()) status = 'Checkmate! ' + moveColor + ' lost.';
-            else if (game.in_draw()) status = 'Draw Game';
-            else {
-                status = moveColor + ' to move';
-                if (game.in_check()) status += ' (CHECK)';
-            }
-            $status.html(status);
-        }
-
-        function resetGame() {
-            game.reset();
-            var userCol = $('#userColor').val();
+            if (game.in_checkmate()) return showGameOver((game.turn() === 'w' ? "BLACK" : "WHITE") + " WINS!!");
+            if (game.in_draw()) return showGameOver("DRAW GAME");
+            if (checkCounter >= 16) return showGameOver("DRAW (16 CHECKS)");
             
-            // Flip board based on choice
-            board.orientation(userCol === 'w' ? 'white' : 'black');
-            board.start();
-            updateStatus();
-
-            // If user is Black, Robot (White) moves first
-            if (userCol === 'b' && $('#mode').val() === 'robot') {
-                $status.html('Robot is thinking...');
-                window.setTimeout(makeBestMove, 500);
-            }
+            let turnText = game.turn() === 'w' ? "White to move" : "Black to move";
+            $('#status').text(turnText);
         }
 
-        board = Chessboard('myBoard', {
-            draggable: true,
-            position: 'start',
-            onDragStart: onDragStart,
-            onDrop: onDrop,
-            pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+        function showGameOver(text) {
+            $('#winner-text').text(text);
+            $('#game-over-modal').css('display', 'flex');
+        }
+
+        function exitToHome() {
+            $('.screen').removeClass('active-screen');
+            $('#home-screen').addClass('active-screen');
+            $('#game-over-modal').hide();
+        }
+
+        $('.promo-btn').click(function() {
+            game.move({ ...pendingMove, promotion: $(this).data('piece') });
+            $('#promotion-layer').hide();
+            finalizeMove();
         });
 
-        // Mobile Fix
-        document.getElementById('myBoard').addEventListener('touchmove', function(e) {
-            e.preventDefault();
-        }, { passive: false });
+        $(document).on('click', '.square-55d63', function() { onSquareClick($(this).data('square')); });
+        $(window).on('resize', function() { if(board) board.resize(); });
 
-        updateStatus();
     </script>
 </body>
 </html>
