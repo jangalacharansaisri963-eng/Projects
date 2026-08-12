@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Cosmic Orbit: Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="hud">
+            <div class="stat">DIST <span id="dist-ui">0</span></div>
+            <div class="stat">DUST <span id="stars-ui">0</span></div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="overlay">
+            <h1>COSMIC ORBIT</h1>
+            <p>Use the LEVER to steer & flip orbit.<br>TAP the center to THRUST.</p>
+            <button class="btn" id="start-btn">ENGAGE ENGINES</button>
+        </div>
+
+        <!-- Controller UI -->
+        <div id="controller-area">
+            <div id="swing-track">
+                <div id="swing-handle"></div>
+            </div>
+            <div id="thrust-pad">THRUST</div>
+        </div>
+
+        <div id="game-over-screen" class="overlay hidden">
+            <h1 id="death-reason">SYSTEM FAILURE</h1>
+            <button class="btn" id="retry-btn">REBOOT</button>
+        </div>
+    </div>
+
+    <!-- Logic Split -->
+    <script src="physics.js"></script>
+    <script src="input.js"></script>
+    <script src="entities.js"></script>
+    <script src="render.js"></script>
+    <script src="engine.js"></script>
+</body>
+</html>
