@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Strike: Hyper Cannon</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="announcement" class="ui-layer">SYSTEM LOCKDOWN</div>
+
+        <div id="hud" class="ui-layer">
+            <div class="stats-left">
+                <div class="score-container">0</div>
+                <div class="difficulty-label">THREAT LEVEL: 1</div>
+            </div>
+            <div class="health-bar-bg"><div id="health-bar"></div></div>
+        </div>
+
+        <div id="touch-controls" class="ui-layer">
+            <div id="joystick-base"><div id="joystick-knob"></div></div>
+        </div>
+
+        <div id="action-buttons" class="ui-layer">
+            <div id="cannon-btn" class="control-btn">CANNON <span id="cannon-count">0</span></div>
+            <div id="shoot-btn" class="control-btn">FIRE</div>
+        </div>
+
+        <div id="menu-overlay" class="ui-layer overlay">
+            <div class="content">
+                <h1>NEON STRIKE</h1>
+                <p>WASD to Move | Space to Fire<br>Shift for Cannon</p>
+                <button id="start-btn" class="menu-btn">INITIALIZE</button>
+            </div>
+        </div>
+
+        <div id="game-over-overlay" class="ui-layer overlay hidden">
+            <div class="content">
+                <h1 class="death-text">CORE RUPTURE</h1>
+                <p>Final Score: <span id="final-score">0</span></p>
+                <button id="restart-btn" class="menu-btn">REBOOT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts must be in this order -->
+    <script src="input.js"></script>
+    <script src="entities.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
