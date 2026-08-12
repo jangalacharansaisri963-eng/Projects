@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Strategy RPS</title>
+    <style>
+        :root {
+            --bg: #161512;
+            --panel: #262421;
+            --accent: #95bb4a;
+            --text: #bababa;
+            --win: #95bb4a;
+            --loss: #ff4d4d;
+            --draw: #f0ad4e;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        h1 { color: #fff; text-align: center; margin: 5px 0; font-size: 24px; }
+
+        .scoreboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: var(--panel);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-label { font-size: 10px; text-transform: uppercase; color: #8b8987; display: block; }
+        .stat-val { font-size: 22px; font-weight: bold; color: #fff; }
+
+        .settings-panel {
+            background: var(--panel);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        label { font-size: 11px; text-transform: uppercase; color: #8b8987; }
+        select {
+            background: #3c3934;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+            outline: none;
+        }
+
+        .arena {
+            background: var(--panel);
+            height: 160px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: relative;
+            border: 2px solid #3c3934;
+        }
+
+        .fighter { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .choice-icon { font-size: 50px; }
+        #result-overlay {
+            position: absolute;
+            font-size: 32px;
+            font-weight: 900;
+            text-shadow: 0 0 15px rgba(0,0,0,1);
+            z-index: 10;
+        }
+
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .choice-btn {
+            background: var(--panel);
+            border: 2px solid #3c3934;
+            border-radius: 12px;
+            padding: 15px 5px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: 0.1s;
+        }
+        .choice-btn:active { transform: scale(0.9); }
+        .choice-btn span { font-size: 30px; }
+        .choice-btn b { color: #fff; font-size: 12px; }
+
+        .history-panel {
+            background: var(--panel);
+            border-radius: 12px;
+            padding: 12px;
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 13px;
+        }
+        .history-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #3c3934; }
+
+        .shake { animation: shakeAnim 0.5s infinite; }
+        @keyframes shakeAnim {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>ROBOT RPS AI</h1>
+
+        <div class="scoreboard">
+            <div><span class="stat-label">Wins</span><span id="wins" class="stat-val" style="color:var(--win)">0</span></div>
+            <div><span class="stat-label">Losses</span><span id="losses" class="stat-val" style="color:var(--loss)">0</span></div>
+            <div><span class="stat-label">Draws</span><span id="draws" class="stat-val" style="color:var(--draw)">0</span></div>
+        </div>
+
+        <div class="settings-panel">
+            <label>Robot Intelligence</label>
+            <select id="difficulty">
+                <option value="easy">Easy (Clumsy Robot)</option>
+                <option value="medium">Medium (Random)</option>
+                <option value="hard">Hard (Predictive)</option>
+                <option value="unbeatable">UNBEATABLE (Cheat Mode)</option>
+            </select>
+        </div>
+
+        <div class="arena">
+            <div class="fighter">
+                <span class="choice-icon" id="u-disp">🤜</span>
+                <span class="stat-label">Player</span>
+            </div>
+            <div id="result-overlay"></div>
+            <div class="fighter">
+                <span class="choice-icon" id="r-disp">🤛</span>
+                <span class="stat-label">Robot</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="choice-btn" onclick="play('rock')"><span>🪨</span><b>ROCK</b></button>
+            <button class="choice-btn" onclick="play('paper')"><span>📄</span><b>PAPER</b></button>
+            <button class="choice-btn" onclick="play('scissors')"><span>✂️</span><b>SCISSORS</b></button>
+        </div>
+
+        <div class="history-panel" id="history">
+            <label>Match Log</label>
+        </div>
+    </div>
+
+    <script>
+        let stats = { wins: 0, losses: 0, draws: 0 };
+        let history = { rock: 0, paper: 0, scissors: 0 }; 
+        
+        const config = {
+            rock: { icon: '🪨', beats: 'scissors', losesTo: 'paper' },
+            paper: { icon: '📄', beats: 'rock', losesTo: 'scissors' },
+            scissors: { icon: '✂️', beats: 'paper', losesTo: 'rock' }
+        };
+
+        function play(userChoice) {
+            history[userChoice]++;
+            
+            const uDisp = document.getElementById('u-disp');
+            const rDisp = document.getElementById('r-disp');
+            const resOverlay = document.getElementById('result-overlay');
+            const btns = document.querySelectorAll('.choice-btn');
+
+            // Start animation
+            btns.forEach(b => b.disabled = true);
+            resOverlay.innerText = '';
+            uDisp.innerText = '🤜'; rDisp.innerText = '🤛';
+            uDisp.classList.add('shake'); rDisp.classList.add('shake');
+
+            setTimeout(() => {
+                uDisp.classList.remove('shake');
+                rDisp.classList.remove('shake');
+                
+                // UNBEATABLE LOGIC: 
+                // We pass the userChoice into the robot move function 
+                // so it can decide how to win.
+                const robotChoice = getRobotMove(userChoice);
+                
+                uDisp.innerText = config[userChoice].icon;
+                rDisp.innerText = config[robotChoice].icon;
+
+                determineWinner(userChoice, robotChoice);
+                btns.forEach(b => b.disabled = false);
+            }, 800);
+        }
+
+        function getRobotMove(userChoice) {
+            const diff = document.getElementById('difficulty').value;
+            const keys = ['rock', 'paper', 'scissors'];
+
+            // UNBEATABLE: The robot looks at what you picked and picks the winner.
+            if (diff === 'unbeatable') {
+                return config[userChoice].losesTo;
+            }
+
+            // EASY/HARD LOGIC
+            let mostUsed = Object.keys(history).reduce((a, b) => history[a] > history[b] ? a : b);
+
+            if (diff === 'easy') {
+                if (Math.random() < 0.7) return config[mostUsed].beats;
+            } 
+            
+            if (diff === 'hard') {
+                if (Math.random() < 0.8) return config[mostUsed].losesTo;
+            }
+
+            // RANDOM
+            return keys[Math.floor(Math.random() * 3)];
+        }
+
+        function determineWinner(u, r) {
+            let res = '';
+            let col = '';
+
+            if (u === r) {
+                res = 'DRAW'; col = 'var(--draw)'; stats.draws++;
+            } else if (config[u].beats === r) {
+                res = 'WIN'; col = 'var(--win)'; stats.wins++;
+            } else {
+                res = 'LOSS'; col = 'var(--loss)'; stats.losses++;
+            }
+
+            const overlay = document.getElementById('result-overlay');
+            overlay.innerText = res;
+            overlay.style.color = col;
+            
+            updateDisplay(res, u, r, col);
+        }
+
+        function updateDisplay(res, u, r, col) {
+            document.getElementById('wins').innerText = stats.wins;
+            document.getElementById('losses').innerText = stats.losses;
+            document.getElementById('draws').innerText = stats.draws;
+
+            const log = document.getElementById('history');
+            const row = document.createElement('div');
+            row.className = 'history-row';
+            row.innerHTML = `<span>${config[u].icon} vs ${config[r].icon}</span><b style="color:${col}">${res}</b>`;
+            log.appendChild(row);
+            log.scrollTop = log.scrollHeight;
+        }
+    </script>
+</body>
+</html>
