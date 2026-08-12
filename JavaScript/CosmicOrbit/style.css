@@ -1,0 +1,46 @@
+:root {
+    --cyan: #0ff; --purple: #bc13fe; --yellow: #fff01f; --bg: #05050a;
+}
+body, html { 
+    margin: 0; padding: 0; background: var(--bg); color: white; 
+    overflow: hidden; font-family: 'Segoe UI', sans-serif;
+}
+#game-container { position: relative; width: 100vw; height: 100vh; }
+canvas { display: block; }
+
+#hud {
+    position: absolute; top: 20px; width: 100%; display: flex;
+    justify-content: space-around; pointer-events: none;
+}
+.stat { font-weight: bold; color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+
+.overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.8);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    z-index: 100;
+}
+.hidden { display: none !important; }
+
+/* Controller Logic */
+#controller-area {
+    position: absolute; bottom: 40px; width: 100%; height: 120px;
+    display: flex; flex-direction: column; align-items: center; gap: 15px;
+}
+#swing-track {
+    width: 200px; height: 10px; background: rgba(255,255,255,0.1);
+    border-radius: 5px; position: relative; border: 1px solid var(--purple);
+}
+#swing-handle {
+    width: 40px; height: 40px; background: var(--purple);
+    border-radius: 50%; position: absolute; top: -15px; left: 80px;
+    box-shadow: 0 0 15px var(--purple); cursor: pointer;
+}
+#thrust-pad {
+    width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--cyan);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; color: var(--cyan); background: rgba(0,255,255,0.1);
+}
+.btn {
+    padding: 15px 40px; background: var(--cyan); border: none; font-weight: bold;
+    border-radius: 5px; margin-top: 20px; cursor: pointer;
+}
