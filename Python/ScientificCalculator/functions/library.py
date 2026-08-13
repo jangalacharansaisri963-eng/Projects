@@ -28,6 +28,9 @@ from functions import divisibility as divisibility_mod
 # Import the logarithms module so we can register its public names dynamically
 from functions import logarithms as logarithms_mod
 
+# Import numpy module so we can register its public names dynamically
+from functions import numpy as numpy_mod
+
 from functions.complex_numbers import (
     real,
     imag,
@@ -511,5 +514,27 @@ for _name in log_public:
 # Also expose the logarithms module under a key for convenience
 if "logarithms" not in MATH_LIB:
     MATH_LIB["logarithms"] = logarithms_mod
+
+# -----------------------------------------------------------------------------
+# Dynamically register public names from the numpy module into MATH_LIB.
+# Mirrors other module registrations so functions/constants in functions/numpy.py
+# are automatically available. This will not override existing explicit entries.
+# -----------------------------------------------------------------------------
+numpy_public = getattr(numpy_mod, "__all__", None)
+if numpy_public is None:
+    numpy_public = [n for n in dir(numpy_mod) if not n.startswith("_")]
+
+for _name in numpy_public:
+    if _name in MATH_LIB:
+        continue
+    try:
+        _obj = getattr(numpy_mod, _name)
+    except AttributeError:
+        continue
+    MATH_LIB[_name] = _obj
+
+# Also expose the numpy module under a key for convenience
+if "numpy" not in MATH_LIB:
+    MATH_LIB["numpy"] = numpy_mod
 
 
