@@ -3,184 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Pro Driver: Interstate</title>
+    <title>Highway Dash: Survival</title>
     <style>
         :root {
-            --grass: #52b788;
-            --road: #3d3d3d;
-            --barrier: #999;
-            --player: #ef233c;
+            --sky: #8ecae6;
+            --grass: #7fb069;
+            --road: #333;
+            --health-color: #39ff14;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background-color: var(--grass);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; background-color: var(--sky);
+            font-family: 'Segoe UI', sans-serif;
         }
 
-        canvas { display: block; }
+        #ui-layer {
+            position: absolute; inset: 0; pointer-events: none; z-index: 10;
+        }
 
-        /* HUD Overlay */
+        /* HUD - High position to avoid phone bars */
         #hud {
-            position: absolute; top: 40px; left: 20px; right: 20px;
+            position: absolute; top: 50px; left: 20px; right: 20px;
             display: flex; justify-content: space-between;
-            pointer-events: none; z-index: 10;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 15px; border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            text-align: center; min-width: 80px;
+        .stat {
+            background: rgba(255,255,255,0.9); padding: 10px; border-radius: 10px;
+            text-align: center; min-width: 80px; box-shadow: 0 4px 0 #ccc;
         }
 
-        .label { font-size: 10px; color: #666; text-transform: uppercase; font-weight: 800; display: block;}
-        .value { font-size: 22px; font-weight: 900; color: #222; }
-
-        /* Screens */
-        .screen {
-            position: absolute; inset: 0;
-            background: rgba(255, 255, 255, 0.95);
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            z-index: 100; text-align: center; padding: 20px;
+        #health-container {
+            position: absolute; top: 120px; left: 20px; width: 150px; height: 12px;
+            background: rgba(0,0,0,0.3); border-radius: 6px; overflow: hidden; border: 2px solid white;
         }
-        .hidden { display: none !important; }
+        #health-bar { width: 100%; height: 100%; background: var(--health-color); transition: width 0.3s; }
+
+        .overlay {
+            position: absolute; inset: 0; background: rgba(255,255,255,0.9);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            pointer-events: auto; z-index: 100; text-align: center;
+        }
 
         .btn {
             padding: 20px 50px; font-size: 20px; font-weight: bold;
-            background: #222; color: white; border: none;
-            border-radius: 12px; cursor: pointer; box-shadow: 0 6px 0 #000;
-        }
-        .btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #000; }
-
-        /* STEERING WHEEL & CONTROLS */
-        #ctrl-layer {
-            position: absolute; bottom: 80px; width: 100%;
-            display: flex; justify-content: space-around; align-items: center;
-            padding: 0 20px; z-index: 50;
+            background: #222; color: white; border: none; border-radius: 15px;
+            cursor: pointer; box-shadow: 0 5px 0 #000; margin-top: 20px;
         }
 
-        #wheel-container {
-            width: 160px; height: 160px;
-            background: rgba(0,0,0,0.1); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            position: relative; border: 4px dashed rgba(255,255,255,0.3);
-        }
+        /* Control Instructions */
+        #tip { position: absolute; bottom: 180px; width: 100%; text-align: center; color: white; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
-        #steering-wheel {
-            width: 140px; height: 140px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="black" stroke-width="8"/><circle cx="50" cy="50" r="10" fill="black"/><rect x="46" y="10" width="8" height="80" fill="black"/><rect x="10" y="46" width="80" height="8" fill="black"/></svg>');
-            background-size: contain; transition: transform 0.1s ease-out;
-            border-radius: 50%; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-        }
-
-        #pedals { display: flex; flex-direction: column; gap: 15px; }
-        .pedal {
-            width: 80px; height: 60px; background: #ddd;
-            border-radius: 10px; border-bottom: 5px solid #bbb;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 12px;
-        }
-        #gas { background: #d8f3dc; color: #2d6a4f; border-color: #95d5b2; }
-        #brake { background: #ffccd5; color: #a4133c; border-color: #ff8fa3; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <canvas id="gameCanvas"></canvas>
-
+<div id="ui-layer">
     <div id="hud">
-        <div class="card"><span class="label">Km/h</span><span id="ui-spd" class="value">0</span></div>
-        <div class="card"><span class="label">Coins</span><span id="ui-coin" class="value">0</span></div>
-        <div class="card"><span class="label">Dist</span><span id="ui-dst" class="value">0</span></div>
+        <div class="stat"><small>SPEED</small><br><b id="ui-spd">0</b></div>
+        <div class="stat"><small>COINS</small><br><b id="ui-coin">0</b></div>
+        <div class="stat"><small>DIST</small><br><b id="ui-dist">0</b></div>
     </div>
 
-    <div id="start-screen" class="screen">
-        <h1 style="font-size: 40px; margin: 0; color: var(--player);">INTERSTATE PRO</h1>
-        <p>Rotate the WHEEL to steer.<br>Don't hit the <b>CENTER BARRIER</b>!<br>Use gaps for U-turns.</p>
-        <button class="btn" onclick="Engine.start()">DRIVE</button>
+    <div id="health-container"><div id="health-bar"></div></div>
+
+    <div id="tip">DRAG ANYWHERE TO STEER • HOLD FOR GAS</div>
+
+    <div id="start-screen" class="overlay">
+        <h1 style="font-size: 40px; color: #e63946;">HIGHWAY DASH</h1>
+        <p>Don't hit other cars!<br>The center barrier slows you down.</p>
+        <button class="btn" onclick="Engine.start()">START DRIVING</button>
     </div>
 
-    <div id="game-over" class="screen hidden">
-        <h1 id="crash-type">CRASHED!</h1>
-        <p id="results"></p>
-        <button class="btn" onclick="Engine.start()">RETRY</button>
-    </div>
-
-    <div id="ctrl-layer">
-        <div id="wheel-container">
-            <div id="steering-wheel"></div>
-        </div>
-        <div id="pedals">
-            <div id="brake" class="pedal">BRAKE</div>
-            <div id="gas" class="pedal">GAS</div>
-        </div>
+    <div id="game-over" class="overlay hidden">
+        <h1>WRECKED</h1>
+        <p id="final-results"></p>
+        <button class="btn" onclick="Engine.start()">PLAY AGAIN</button>
     </div>
 </div>
 
+<canvas id="gameCanvas"></canvas>
+
 <script>
 /**
- * INTERSTATE PRO - Steering Wheel & Barrier Engine
+ * HIGHWAY DASH: SURVIVAL
+ * Clean, playable arcade driving
  */
 
 const CONFIG = {
     ROAD_W: 420,
-    LANE_W: 105,
     BARRIER_W: 16,
-    MAX_SPD: 14,
+    MAX_SPD: 12,
     ACCEL: 0.1,
-    FRICTION: 0.04,
-    BRAKE: 0.3,
-    UTURN_INTERVAL: 2500 // Barrier gap every 2.5k units
+    FRICTION: 0.05,
+    LANE_COUNT: 4
 };
 
 const Input = {
-    wheelAngle: 0, gas: false, brake: false,
+    touchX: 0, 
+    isDown: false,
     init() {
-        const wheel = document.getElementById('steering-wheel');
-        const container = document.getElementById('wheel-container');
-        
-        let isDragging = false;
-
-        const handleMove = (e) => {
-            if(!isDragging) return;
-            const rect = container.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            
-            const angle = Math.atan2(clientY - centerY, clientX - centerX);
-            this.wheelAngle = angle + Math.PI/2;
-            // Clamp rotation to roughly 180 degrees
-            if (this.wheelAngle > 1.5) this.wheelAngle = 1.5;
-            if (this.wheelAngle < -1.5) this.wheelAngle = -1.5;
-            
-            wheel.style.transform = `rotate(${this.wheelAngle}rad)`;
-        };
-
-        container.addEventListener('pointerdown', () => isDragging = true);
-        window.addEventListener('pointermove', handleMove);
-        window.addEventListener('pointerup', () => {
-            isDragging = false;
-            // Auto-center wheel slowly
-        });
-
-        document.getElementById('gas').onpointerdown = () => this.gas = true;
-        document.getElementById('gas').onpointerup = () => this.gas = false;
-        document.getElementById('brake').onpointerdown = () => this.brake = true;
-        document.getElementById('brake').onpointerup = () => this.brake = false;
+        window.addEventListener('pointerdown', (e) => { this.isDown = true; this.updateX(e); });
+        window.addEventListener('pointermove', (e) => { this.updateX(e); });
+        window.addEventListener('pointerup', () => { this.isDown = false; });
     },
-    update() {
-        // Slowly return wheel to center if not touching
-        if (Math.abs(this.wheelAngle) > 0.05) {
-            this.wheelAngle *= 0.92;
-            document.getElementById('steering-wheel').style.transform = `rotate(${this.wheelAngle}rad)`;
-        }
+    updateX(e) {
+        this.touchX = (e.clientX / window.innerWidth - 0.5) * 2;
     }
 };
 
@@ -188,9 +119,7 @@ class EngineCore {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
-        this.player = { x: 100, y: 0, spd: 0, w: 48, h: 90 };
-        this.npcs = []; this.nature = []; this.coins = [];
-        this.dist = 0; this.score = 0; this.running = false;
+        this.reset();
         this.init();
     }
 
@@ -203,120 +132,146 @@ class EngineCore {
         Input.init();
     }
 
+    reset() {
+        this.player = { x: 100, y: 0, spd: 0, health: 100, w: 45, h: 85, hitTimer: 0 };
+        this.npcs = [];
+        this.coins = [];
+        this.nature = [];
+        this.dist = 0;
+        this.score = 0;
+        this.isRunning = false;
+        this.laneCooldowns = [0, 0, 0, 0];
+    }
+
     start() {
-        this.player = { x: 100, y: this.canvas.height - 250, spd: 0, w: 48, h: 90 };
-        this.npcs = []; this.nature = []; this.coins = [];
-        this.dist = 0; this.score = 0; this.running = true;
-        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-        if(!this.loopStarted) { this.loop(); this.loopStarted = true; }
+        this.reset();
+        this.player.y = this.canvas.height - 200;
+        this.isRunning = true;
+        document.querySelectorAll('.overlay').forEach(s => s.classList.add('hidden'));
+        if(!this.loopActive) { this.loop(); this.loopActive = true; }
     }
 
     spawn() {
-        if (Math.random() < 0.03) {
-            const lane = Math.floor(Math.random() * 4);
-            const isOncoming = lane < 2;
-            this.npcs.push({
-                lane, y: -200, 
-                spd: isOncoming ? (4 + Math.random()*4) : (2 + Math.random()*3),
-                oncoming: isOncoming,
-                w: 50, h: isOncoming ? 95 : 110,
-                col: isOncoming ? '#2b2d42' : '#fb8500'
-            });
+        // Traffic Spawner with Gap Logic
+        if (Math.random() < 0.04) {
+            let possibleLanes = [];
+            for(let i=0; i<4; i++) {
+                if(this.laneCooldowns[i] <= 0) possibleLanes.push(i);
+            }
+
+            if(possibleLanes.length > 0) {
+                const lane = possibleLanes[Math.floor(Math.random() * possibleLanes.length)];
+                const oncoming = lane < 2;
+                this.npcs.push({
+                    lane, 
+                    y: -200, 
+                    spd: oncoming ? 4 : 2, 
+                    oncoming, 
+                    w: 48, h: 90, 
+                    col: oncoming ? '#444' : '#f4a261'
+                });
+                this.laneCooldowns[lane] = 80; // Prevent cars spawning right on top of each other
+            }
         }
-        if (Math.random() < 0.01) {
-            this.coins.push({ x: (Math.random()-0.5)*380, y: -100 });
-        }
-        if (Math.random() < 0.1) {
-            this.nature.push({
-                x: (Math.random() > 0.5 ? 1 : -1) * (260 + Math.random()*200),
-                y: -100, s: 15 + Math.random()*30
-            });
-        }
+
+        for(let i=0; i<4; i++) this.laneCooldowns[i]--;
+
+        if (Math.random() < 0.01) this.coins.push({ x: (Math.random()-0.5)*380, y: -50 });
+        if (Math.random() < 0.1) this.nature.push({ x: (Math.random()>0.5?1:-1)*(260+Math.random()*200), y: -100, s: 20+Math.random()*30 });
     }
 
     update() {
-        if (!this.running) return;
-        Input.update();
+        if (!this.isRunning) return;
 
-        // Speed Logic
-        if (Input.gas) this.player.spd += CONFIG.ACCEL;
-        else if (Input.brake) this.player.spd -= CONFIG.BRAKE;
-        else this.player.spd -= CONFIG.FRICTION;
-        this.player.spd = Math.max(0, Math.min(this.player.spd, CONFIG.MAX_SPD));
+        const p = this.player;
 
-        // Steering Logic
-        this.player.x += Input.wheelAngle * 6 * (this.player.spd/10 + 0.2);
-        
-        // Road Bounds
-        if (Math.abs(this.player.x) > CONFIG.ROAD_W/2 - 20) this.gameOver("Drove off road!");
+        // Drive Logic
+        if (Input.isDown) p.spd += CONFIG.ACCEL;
+        else p.spd -= CONFIG.FRICTION;
+        p.spd = Math.max(0, Math.min(p.spd, CONFIG.MAX_SPD));
 
-        // Barrier Collision Logic
-        // Barrier Gaps for U-Turns
-        const inGap = (this.dist % CONFIG.UTURN_INTERVAL < 150);
-        if (!inGap && Math.abs(this.player.x) < CONFIG.BARRIER_W) {
-            this.gameOver("Barrier Collision!");
+        // Steering Logic (Follow Finger)
+        const targetX = Input.touchX * (CONFIG.ROAD_W/2 - 25);
+        p.x += (targetX - p.x) * 0.15;
+
+        // Barrier Physics (Non-fatal)
+        const inGap = (this.dist % 3000 < 200);
+        if (!inGap && Math.abs(p.x) < CONFIG.BARRIER_W) {
+            p.spd *= 0.8; // Slow down
+            p.x += p.x > 0 ? 5 : -5; // Bounce off
+            p.hitTimer = 10;
         }
 
-        this.dist += this.player.spd;
+        this.dist += p.spd;
         this.spawn();
 
-        // NPC Update
+        // NPCs Update
         this.npcs.forEach((n, i) => {
-            const relSpd = n.oncoming ? (n.spd + this.player.spd) : (this.player.spd - n.spd);
+            const relSpd = n.oncoming ? (n.spd + p.spd) : (p.spd - n.spd);
             n.y += relSpd;
-            if (this.hitTest(this.player, n)) this.gameOver(n.oncoming ? "Head-on Collision!" : "Rear-end Collision!");
-            if (n.y > this.canvas.height + 200 || n.y < -1000) this.npcs.splice(i, 1);
+
+            if (this.hitTest(p, n)) {
+                this.takeDamage(25);
+                this.npcs.splice(i, 1);
+            }
+            if (n.y > this.canvas.height + 200 || n.y < -500) this.npcs.splice(i, 1);
         });
 
-        // Coins
+        // Coins Update
         this.coins.forEach((c, i) => {
-            c.y += this.player.spd;
-            const dx = (this.player.x + this.canvas.width/2) - (c.x + this.canvas.width/2);
-            const dy = this.player.y - c.y;
-            if (Math.hypot(dx, dy) < 40) { this.score++; this.coins.splice(i, 1); }
+            c.y += p.spd;
+            if (Math.hypot(p.x - c.x, p.y - c.y) < 40) { this.score++; this.coins.splice(i, 1); }
             if (c.y > this.canvas.height) this.coins.splice(i, 1);
         });
 
         this.nature.forEach((n, i) => {
-            n.y += this.player.spd;
+            n.y += p.spd;
             if (n.y > this.canvas.height + 100) this.nature.splice(i, 1);
         });
 
-        document.getElementById('ui-spd').innerText = Math.floor(this.player.spd * 15);
+        if(p.hitTimer > 0) p.hitTimer--;
+
+        // UI
+        document.getElementById('ui-spd').innerText = Math.floor(p.spd * 15);
         document.getElementById('ui-coin').innerText = this.score;
-        document.getElementById('ui-dst').innerText = Math.floor(this.dist/10);
+        document.getElementById('ui-dist').innerText = Math.floor(this.dist/10);
+        document.getElementById('health-bar').style.width = p.health + '%';
+        if(p.health < 30) document.getElementById('health-bar').style.background = 'red';
+        else document.getElementById('health-bar').style.background = 'var(--health-color)';
+    }
+
+    takeDamage(amt) {
+        this.player.health -= amt;
+        this.player.hitTimer = 20;
+        if (this.player.health <= 0) this.gameOver();
     }
 
     hitTest(p, n) {
         const px = p.x + this.canvas.width/2 - p.w/2;
-        const nx = (n.lane - 1.5) * CONFIG.LANE_W + this.canvas.width/2 - n.w/2;
+        const nx = (n.lane - 1.5) * (CONFIG.ROAD_W/4) + this.canvas.width/2 - n.w/2;
         return px < nx + n.w && px + p.w > nx && p.y < n.y + n.h && p.y + p.h > n.y;
     }
 
     draw() {
         const ctx = this.ctx; const cw = this.canvas.width; const ch = this.canvas.height;
-        ctx.fillStyle = CONFIG.BARRIER_W; ctx.fillRect(0,0,cw,ch); // Background
         
-        // Road
+        // Environment
+        ctx.fillStyle = '#7fb069'; ctx.fillRect(0,0,cw,ch);
         ctx.fillStyle = '#333'; ctx.fillRect(cw/2 - CONFIG.ROAD_W/2, 0, CONFIG.ROAD_W, ch);
         
-        // Lane Lines
-        ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.setLineDash([20, 30]);
-        ctx.lineDashOffset = -this.dist; ctx.lineWidth = 3;
+        // Lines
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.setLineDash([20, 30]);
+        ctx.lineDashOffset = -this.dist;
         ctx.beginPath();
-        ctx.moveTo(cw/2 - 105, 0); ctx.lineTo(cw/2 - 105, ch);
-        ctx.moveTo(cw/2 + 105, 0); ctx.lineTo(cw/2 + 105, ch);
+        ctx.moveTo(cw/2 - 100, 0); ctx.lineTo(cw/2 - 100, ch);
+        ctx.moveTo(cw/2 + 100, 0); ctx.lineTo(cw/2 + 100, ch);
         ctx.stroke();
 
-        // Draw Median Barrier
-        const inGap = (this.dist % CONFIG.UTURN_INTERVAL < 150);
+        // Barrier
+        const inGap = (this.dist % 3000 < 200);
         if (!inGap) {
-            ctx.fillStyle = '#999'; ctx.fillRect(cw/2 - 6, 0, 12, ch);
+            ctx.fillStyle = '#888'; ctx.fillRect(cw/2 - 8, 0, 16, ch);
             ctx.fillStyle = '#666'; ctx.fillRect(cw/2 - 2, 0, 4, ch);
-        } else {
-            // Draw U-Turn road paint
-            ctx.fillStyle = 'rgba(255,255,255,0.2)';
-            ctx.fillRect(cw/2 - 40, ch/2, 80, 10);
         }
 
         this.nature.forEach(n => {
@@ -328,26 +283,34 @@ class EngineCore {
             ctx.fillStyle = '#ffb703'; ctx.beginPath(); ctx.arc(c.x + cw/2, c.y, 10, 0, 7); ctx.fill();
         });
 
-        this.npcs.forEach(n => this.drawCar(n.oncoming ? n.x : (n.lane - 1.5)*CONFIG.LANE_W, n.y, n.w, n.h, n.col, n.oncoming));
-        this.drawCar(this.player.x, this.player.y, this.player.w, this.player.h, '#ef233c', false);
+        this.npcs.forEach(n => {
+            const nx = (n.lane - 1.5) * (CONFIG.ROAD_W/4) + cw/2 - n.w/2;
+            this.drawCar(nx, n.y, n.w, n.h, n.col, n.oncoming);
+        });
+
+        const px = this.player.x + cw/2 - this.player.w/2;
+        if (this.player.hitTimer % 2 === 0) {
+            this.drawCar(px, this.player.y, this.player.w, this.player.h, '#e63946', false);
+        }
     }
 
     drawCar(x, y, w, h, col, oncoming) {
-        const ctx = this.ctx; const cx = x + this.canvas.width/2 - w/2;
-        ctx.fillStyle = col; ctx.fillRect(cx, y, w, h);
-        ctx.fillStyle = oncoming ? '#222' : '#ddd';
+        const ctx = this.ctx;
+        ctx.fillStyle = col; ctx.fillRect(x, y, w, h);
+        ctx.fillStyle = oncoming ? '#222' : '#eee';
         const windY = oncoming ? y + h - 25 : y + 10;
-        ctx.fillRect(cx + 4, windY, w - 8, 15);
-        // Mirrors
-        ctx.fillStyle = col;
-        ctx.fillRect(cx - 4, windY + 5, 4, 10);
-        ctx.fillRect(cx + w, windY + 5, 4, 10);
+        ctx.fillRect(x + 5, windY, w - 10, 15);
+        // Headlights
+        if(oncoming) {
+            ctx.fillStyle = 'rgba(255,255,100,0.5)';
+            ctx.beginPath(); ctx.arc(x+10, y, 15, 0, 7); ctx.fill();
+            ctx.beginPath(); ctx.arc(x+w-10, y, 15, 0, 7); ctx.fill();
+        }
     }
 
-    gameOver(type) {
-        this.running = false;
-        document.getElementById('crash-type').innerText = type;
-        document.getElementById('results').innerText = `Dist: ${Math.floor(this.dist/10)}m | Score: ${this.score}`;
+    gameOver() {
+        this.isRunning = false;
+        document.getElementById('final-results').innerText = `Dist: ${Math.floor(this.dist/10)}m | Coins: ${this.score}`;
         document.getElementById('game-over').classList.remove('hidden');
     }
 
