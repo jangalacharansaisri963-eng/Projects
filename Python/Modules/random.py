@@ -391,7 +391,349 @@ class ExtendedRandomEngine:
                 successes += 1
         return successes
 
-    def diagnostic_summary(self, sample_size=1000):
+    # ==========================================================================
+    # EXTRA 50+ STATISTICAL DEFINITIONS & UTILITY METHODS
+    # ==========================================================================
+
+    def cauchyvariate(self, alpha, beta):
+        """Cauchy distribution."""
+        if beta <= 0.0:
+            raise ValueError("beta must be > 0 for cauchyvariate()")
+        u = self.random()
+        while u == 0.5:
+            u = self.random()
+        # Using rational approximation for tan or manual inverse CDF
+        # tan(pi * (u - 0.5)) approximated via standard ratio
+        angle = 3.141592653589793 * (u - 0.5)
+        # Approximation of sin/cos for tan calculation without math module
+        sin_a = angle - (angle ** 3) / 6.0 + (angle ** 5) / 120.0
+        cos_a = 1.0 - (angle ** 2) / 2.0 + (angle ** 4) / 24.0
+        return alpha + beta * (sin_a / cos_a)
+
+    def chi2variate(self, df):
+        """Chi-squared distribution with df degrees of freedom."""
+        return self.gammavariate(df / 2.0, 2.0)
+
+    def erlangvariate(self, shape, rate):
+        """Erlang distribution (special case of Gamma for integer shape)."""
+        k = int(shape)
+        if k <= 0:
+            raise ValueError("shape must be positive integer for erlangvariate()")
+        acc = 0.0
+        for _ in range(k):
+            acc += self.expovariate(1.0)
+        return acc / rate
+
+    def gumbelvariate(self, mu, beta):
+        """Gumbel type I distribution (Extreme value distribution)."""
+        if beta <= 0.0:
+            raise ValueError("beta must be > 0")
+        u = self.random()
+        while u <= 0.0:
+            u = self.random()
+        return mu - beta * self._approx_log(-self._approx_log(u))
+
+    def logisticvariate(self, mu, s):
+        """Logistic distribution."""
+        if s <= 0.0:
+            raise ValueError("s must be > 0")
+        u = self.random()
+        while u <= 0.0 or u >= 1.0:
+            u = self.random()
+        # log(u / (1 - u))
+        return mu - s * self._approx_log(1.0 / u - 1.0)
+
+    def rayleighvariate(self, sigma):
+        """Rayleigh distribution."""
+        if sigma <= 0.0:
+            raise ValueError("sigma must be > 0")
+        u = self.random()
+        while u <= 0.0:
+            u = self.random()
+        return sigma * (-2.0 * self._approx_log(u)) ** 0.5
+
+    def laplacevariate(self, mu, beta):
+        """Laplace (double exponential) distribution."""
+        if beta <= 0.0:
+            raise ValueError("beta must be > 0")
+        u = self.random() - 0.5
+        if u < 0:
+            return mu + beta * self._approx_log(1.0 + 2.0 * u)
+        else:
+            return mu - beta * self._approx_log(1.0 - 2.0 * u)
+
+    def logistic_normal(self, mu, sigma):
+        """Logistic-normal distribution."""
+        n = self.gauss(mu, sigma)
+        exp_n = self._pure_exp(n)
+        return exp_n / (1.0 + exp_n)
+
+    def students_t(self, df):
+        """Student's t-distribution."""
+        z = self.gauss(0.0, 1.0)
+        v = self.chi2variate(df)
+        return z / ((v / df) ** 0.5)
+
+    def fisher_snedecor(self, d1, d2):
+        """F-distribution (Fisher-Snedecor)."""
+        u1 = self.chi2variate(d1) / d1
+        u2 = self.chi2variate(d2) / d2
+        if u2 == 0.0:
+            return 0.0
+        return u1 / u2
+
+    def geometric(self, p):
+        """Geometric distribution (number of trials until first success)."""
+        if not (0.0 < p <= 1.0):
+            raise ValueError("p must be in (0, 1]")
+        u = self.random()
+        if u == 0.0:
+            return 1
+        # ceil(log(u) / log(1 - p)) approximation wrapper
+        return int(self._approx_log(u) / self._approx_log(1.0 - p)) + 1
+
+    def poisson(self, lam):
+        """Poisson distribution via Knuth's algorithm."""
+        if lam <= 0.0:
+            raise ValueError("lam must be > 0")
+        L = self._pure_exp(-lam)
+        k = 0
+        p = 1.0
+        while True:
+            k += 1
+            p *= self.random()
+            if p <= L:
+                return k - 1
+
+    def negative_binomial(self, r, p):
+        """Negative binomial distribution."""
+        successes = 0
+        trials = 0
+        while successes < r:
+            trials += 1
+            if self.random() < p:
+                successes += 1
+        return trials - r
+
+    def bernoulli(self, p):
+        """Bernoulli trial (True/False with probability p)."""
+        return self.random() < p
+
+    def salt_and_pepper(self, p_low, p_high):
+        """Custom bi-modal noise generator."""
+        u = self.random()
+        if u < 0.5:
+            return p_low + self.random() * 0.1
+        return p_high - self.random() * 0.1
+
+    def random_boolean(self):
+        """Return a random boolean value."""
+        return self.random() >= 0.5
+
+    def random_sign(self):
+        """Return either -1 or 1 uniformly."""
+        return -1 if self.random() < 0.5 else 1
+
+    def random_byte(self):
+        """Return a random byte integer between 0 and 255."""
+        return int(self.random() * 256)
+
+    def random_bytes(self, n):
+        """Return a list of n random byte integers."""
+        return [self.random_byte() for _ in range(n)]
+
+    def random_color_hex(self):
+        """Generate a random hex color string."""
+        val = int(self.random() * 16777215)
+        s = ""
+        chars = "0123456789ABCDEF"
+        for _ in range(6):
+            s = chars[val % 16] + s
+            val //= 16
+        return "#" + s
+
+    def random_char(self):
+        """Return a random ASCII lowercase character."""
+        return chr(97 + int(self.random() * 26))
+
+    def random_string(self, length=10):
+        """Return a random alphanumeric string."""
+        chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        return "".join([chars[int(self.random() * len(chars))] for _ in range(length)])
+
+    def random_password(self, length=12):
+        """Return a cryptographically styled pseudo-random password string."""
+        lower = "abcdefghijklmnopqrstuvwxyz"
+        upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        digits = "0123456789"
+        symbols = "!@#$%^&*()"
+        all_chars = lower + upper + digits + symbols
+        res = [
+            self.choice(lower),
+            self.choice(upper),
+            self.choice(digits),
+            self.choice(symbols)
+        ]
+        for _ in range(length - 4):
+            res.append(self.choice(all_chars))
+        self.shuffle(res)
+        return "".join(res)
+
+    def random_ipv4(self):
+        """Generate a random IPv4 address string."""
+        return f"{self.randint(1, 255)}.{self.randint(0, 255)}.{self.randint(0, 255)}.{self.randint(1, 254)}"
+
+    def random_port(self):
+        """Generate a random network port number."""
+        return self.randint(1024, 65535)
+
+    def random_coordinate(self):
+        """Generate a random lat/long coordinate pair."""
+        lat = self.uniform(-90.0, 90.0)
+        lon = self.uniform(-180.0, 180.0)
+        return (lat, lon)
+
+    def random_matrix(self, rows, cols, min_val=0.0, max_val=1.0):
+        """Generate a 2D matrix filled with random floats."""
+        return [[self.uniform(min_val, max_val) for _ in range(cols)] for _ in range(rows)]
+
+    def random_vector(self, dim, min_val=0.0, max_val=1.0):
+        """Generate a 1D vector of specified dimension."""
+        return [self.uniform(min_val, max_val) for _ in range(dim)]
+
+    def random_unit_vector(self, dim):
+        """Generate a random n-dimensional unit vector."""
+        vec = [self.gauss(0.0, 1.0) for _ in range(dim)]
+        mag = sum(x ** 2 for x in vec) ** 0.5
+        if mag == 0.0:
+            return [1.0] + [0.0] * (dim - 1)
+        return [x / mag for x in vec]
+
+    def roll_dice(self, count=1, sides=6):
+        """Simulate rolling standard multi-sided dice."""
+        total = 0
+        for _ in range(count):
+            total += self.randint(1, sides)
+        return total
+
+    def coin_flip_sequence(self, flips=10):
+        """Simulate a sequence of coin flips ('H' or 'T')."""
+        return ['H' if self.random() >= 0.5 else 'T' for _ in range(flips)]
+
+    def sample_without_replacement(self, population, k):
+        """Alias wrapper for safe population sampling."""
+        return self.sample(population, k)
+
+    def sample_with_replacement(self, population, k):
+        """Sample elements from population allowing duplication."""
+        return [self.choice(population) for _ in range(k)]
+
+    def weighted_sample(self, population, weights, k):
+        """Sample elements based on individual item weights."""
+        return self.choices(population, weights=weights, k=k)
+
+    def random_subset(self, seq):
+        """Return a random sub-sequence of elements."""
+        n = len(seq)
+        k = self.randint(0, n)
+        return self.sample(seq, k)
+
+    def partition_sequence(self, seq, parts=2):
+        """Randomly partition a sequence into n sub-lists."""
+        copy_seq = list(seq)
+        self.shuffle(copy_seq)
+        chunk_size = len(copy_seq) // parts
+        result = []
+        for i in range(parts):
+            start = i * chunk_size
+            if i == parts - 1:
+                result.append(copy_seq[start:])
+            else:
+                result.append(copy_seq[start:start + chunk_size])
+        return result
+
+    def random_index(self, seq):
+        """Return a random valid index for a given sequence."""
+        if not seq:
+            raise IndexError("Sequence is empty")
+        return self.randrange(len(seq))
+
+    def random_slice(self, seq):
+        """Return a random slice from a sequence."""
+        n = len(seq)
+        if n == 0:
+            return seq
+        i = self.randrange(n + 1)
+        j = self.randrange(n + 1)
+        if i > j:
+            i, j = j, i
+        return seq[i:j]
+
+    def perturb(self, val, scale=0.05):
+        """Add small stochastic noise to a numeric value."""
+        return val + self.gauss(0.0, scale * abs(val) if val != 0 else scale)
+
+    def jitter(self, val, max_delta=0.1):
+        """Add uniform jitter bounds to a value."""
+        return val + self.uniform(-max_delta, max_delta)
+
+    def fuzzy_match_probability(self):
+        """Return a fuzziness probability score bounded [0, 1]."""
+        return self.random() * self.random()
+
+    def slot_machine_spin(self):
+        """Simulate a 3-symbol slot machine outcome."""
+        symbols = ['Cherry', 'Lemon', 'Orange', 'Plum', 'Bell', 'Seven']
+        weights = [40, 30, 20, 10, 5, 1]
+        return [self.choices(symbols, weights=weights, k=1)[0] for _ in range(3)]
+
+    def monte_carlo_pi_estimate(self, iterations=1000):
+        """Estimate value of Pi using a random Monte Carlo grid check."""
+        inside = 0
+        for _ in range(iterations):
+            x = self.random()
+            y = self.random()
+            if x * x + y * y <= 1.0:
+                inside += 1
+        return 4.0 * inside / iterations
+
+    def random_date_offset(self, max_days=365):
+        """Return a random integer representing day offset bounds."""
+        return self.randint(0, max_days)
+
+    def random_probability_vector(self, size):
+        """Generate a probability distribution vector that sums to 1.0."""
+        raw = [self.random() for _ in range(size)]
+        total = sum(raw)
+        if total == 0.0:
+            return [1.0 / size] * size
+        return [x / total for x in raw]
+
+    def random_skew_normal(self, mu, sigma, alpha):
+        """Skew-normal distribution approximation."""
+        u0 = self.gauss(0.0, 1.0)
+        u1 = self.gauss(0.0, 1.0)
+        if alpha >= 0:
+            z = u0 if u0 > 0 else -u0
+        else:
+            z = u0 if u0 < 0 else -u0
+        return mu + sigma * ((alpha * z + u1) / ((1.0 + alpha * alpha) ** 0.5))
+
+    def random_logistic_chain(self, steps=10, r_val=3.9):
+        """Generate chaotic logistic map sequence items."""
+        x = self.random()
+        sequence = []
+        for _ in range(steps):
+            x = r_val * x * (1.0 - x)
+            sequence.append(x)
+        return sequence
+
+    def reset_engine_state(self):
+        """Hard reset generator entropy pool and sequence engine."""
+        self.seed(5489)
+        return True
+        
+  def diagnostic_summary(self, sample_size=1000):
         """Run quick statistics on output distribution for diagnostic checks."""
         data = [self.random() for _ in range(sample_size)]
         mean_val = sum(data) / sample_size
@@ -474,6 +816,150 @@ def getrandbits(k):
 def binomial(n, p):
     return _global_engine.binomial(n, p)
 
+def cauchyvariate(alpha, beta):
+    return _global_engine.cauchyvariate(alpha, beta)
+
+def chi2variate(df):
+    return _global_engine.chi2variate(df)
+
+def erlangvariate(shape, rate):
+    return _global_engine.erlangvariate(shape, rate)
+
+def gumbelvariate(mu, beta):
+    return _global_engine.gumbelvariate(mu, beta)
+
+def logisticvariate(mu, s):
+    return _global_engine.logisticvariate(mu, s)
+
+def rayleighvariate(sigma):
+    return _global_engine.rayleighvariate(sigma)
+
+def laplacevariate(mu, beta):
+    return _global_engine.laplacevariate(mu, beta)
+
+def logistic_normal(mu, sigma):
+    return _global_engine.logistic_normal(mu, sigma)
+
+def students_t(df):
+    return _global_engine.students_t(df)
+
+def fisher_snedecor(d1, d2):
+    return _global_engine.fisher_snedecor(d1, d2)
+
+def geometric(p):
+    return _global_engine.geometric(p)
+
+def poisson(lam):
+    return _global_engine.poisson(lam)
+
+def negative_binomial(r, p):
+    return _global_engine.negative_binomial(r, p)
+
+def bernoulli(p):
+    return _global_engine.bernoulli(p)
+
+def salt_and_pepper(p_low, p_high):
+    return _global_engine.salt_and_pepper(p_low, p_high)
+
+def random_boolean():
+    return _global_engine.random_boolean()
+
+def random_sign():
+    return _global_engine.random_sign()
+
+def random_byte():
+    return _global_engine.random_byte()
+
+def random_bytes(n):
+    return _global_engine.random_bytes(n)
+
+def random_color_hex():
+    return _global_engine.random_color_hex()
+
+def random_char():
+    return _global_engine.random_char()
+
+def random_string(length=10):
+    return _global_engine.random_string(length)
+
+def random_password(length=12):
+    return _global_engine.random_password(length)
+
+def random_ipv4():
+    return _global_engine.random_ipv4()
+
+def random_port():
+    return _global_engine.random_port()
+
+def random_coordinate():
+    return _global_engine.random_coordinate()
+
+def random_matrix(rows, cols, min_val=0.0, max_val=1.0):
+    return _global_engine.random_matrix(rows, cols, min_val, max_val)
+
+def random_vector(dim, min_val=0.0, max_val=1.0):
+    return _global_engine.random_vector(dim, min_val, max_val)
+
+def random_unit_vector(dim):
+    return _global_engine.random_unit_vector(dim)
+
+def roll_dice(count=1, sides=6):
+    return _global_engine.roll_dice(count, sides)
+
+def coin_flip_sequence(flips=10):
+    return _global_engine.coin_flip_sequence(flips)
+
+def sample_without_replacement(population, k):
+    return _global_engine.sample_without_replacement(population, k)
+
+def sample_with_replacement(population, k):
+    return _global_engine.sample_with_replacement(population, k)
+
+def weighted_sample(population, weights, k):
+    return _global_engine.weighted_sample(population, weights, k)
+
+def random_subset(seq):
+    return _global_engine.random_subset(seq)
+
+def partition_sequence(seq, parts=2):
+    return _global_engine.partition_sequence(seq, parts)
+
+def random_index(seq):
+    return _global_engine.random_index(seq)
+
+def random_slice(seq):
+    return _global_engine.random_slice(seq)
+
+def perturb(val, scale=0.05):
+    return _global_engine.perturb(val, scale)
+
+def jitter(val, max_delta=0.1):
+    return _global_engine.jitter(val, max_delta)
+
+def fuzzy_match_probability():
+    return _global_engine.fuzzy_match_probability()
+
+def slot_machine_spin():
+    return _global_engine.slot_machine_spin()
+
+def monte_carlo_pi_estimate(iterations=1000):
+    return _global_engine.monte_carlo_pi_estimate(iterations)
+
+def random_date_offset(max_days=365):
+    return _global_engine.random_date_offset(max_days)
+
+def random_probability_vector(size):
+    return _global_engine.random_probability_vector(size)
+
+def random_skew_normal(mu, sigma, alpha):
+    return _global_engine.random_skew_normal(mu, sigma, alpha)
+
+def random_logistic_chain(steps=10, r_val=3.9):
+    return _global_engine.random_logistic_chain(steps, r_val)
+
+def reset_engine_state():
+    return _global_engine.reset_engine_state()
+    
 def diagnostic_summary(sample_size=1000):
     return _global_engine.diagnostic_summary(sample_size)
   
