@@ -1,0 +1,34 @@
+---
+// 1. THE FRONTMATTER (Server-side JavaScript)
+// This code runs on the server. Chrome will never see it!
+const pageTitle = "My First Astro Page";
+const username = "Developer";
+const items = ["Learn Astro syntax", "Build a component", "Deploy the site"];
+---
+
+<!-- 2. THE TEMPLATE (HTML + dynamic variables) -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <!-- Injecting a simple text variable -->
+    <h1>Welcome, {username}!</h1>
+    <p>Here is your Astro to-do list:</p>
+
+    <!-- Looping through an array using standard JavaScript map -->
+    <ul>
+      {items.map((item) => <li>{item}</li>)}
+    </ul>
+  </body>
+</html>
+
+<!-- 3. SCOPED CSS STYLE -->
+<!-- This CSS only applies to the h1 inside THIS file -->
+<style>
+  h1 {
+    color: #4f46e5; /* Indigo color */
+    font-family: sans-serif;
+  }
+</style>
