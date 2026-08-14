@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Updated Browser Tab Title -->
+    <title>Snake AI - Dan Studios</title> 
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="game-container">
+        <div id="stats-overlay">LVL: <span id="stat-lvl">1</span> | ROBOTS: <span id="stat-robots">0</span></div>
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="menu-main" class="ui-layer">
+            <!-- Updated Main Menu Title -->
+            <h1 style="color:var(--accent)">SNAKE AI <br><small style="font-size: 14px; color: white; opacity: 0.6;">Dan Studios</small></h1>
+            
+            <div style="text-align:left;">
+                <label style="font-size:10px; color:#888;">DIFFICULTY</label>
+                <select id="difficulty">
+                    <option value="easy">Easy (Very Slow)</option>
+                    <option value="medium" selected>Medium (Smooth - 3 Robots)</option>
+                    <option value="hard">Hard (Normal - 5 Robots)</option>
+                </select>
+                <label id="lbl-robots" style="font-size:10px; color:#888;">ROBOTS (EASY ONLY)</label>
+                <select id="robot-count">
+                    <option value="1">1 Robot</option>
+                    <option value="3">3 Robots</option>
+                    <option value="5">5 Robots</option>
+                </select>
+            </div>
+            <button class="btn-main" id="start-btn">PLAY</button>
+        </div>
+
+        <div id="menu-win" class="ui-layer" style="display:none">
+            <h1 style="color:var(--accent)">YOU WIN!</h1>
+            <button class="btn-main" onclick="initGame()">RESTART</button>
+            <button class="btn-main btn-gray" onclick="location.reload()">HOME</button>
+        </div>
+
+        <div id="menu-loss" class="ui-layer" style="display:none">
+            <h1 style="color:var(--loss-red)">YOU LOST!</h1>
+            <button class="btn-main" onclick="initGame()">TRY AGAIN</button>
+            <button class="btn-main btn-gray" onclick="location.reload()">MENU</button>
+        </div>
+    </div>
+
+    <div id="controller-area">
+        <div class="d-pad">
+            <div></div><div class="btn-ctrl" id="up-btn">▲</div><div></div>
+            <div class="btn-ctrl" id="left-btn">◀</div><div></div><div class="btn-ctrl" id="right-btn">▶</div>
+            <div></div><div class="btn-ctrl" id="down-btn">▼</div><div></div>
+        </div>
+        <div id="swipe-pad">Swipe Area</div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="logic.js"></script>
+    <script src="player.js"></script>
+    <script src="robot.js"></script>
+    <script src="buttons.js"></script>
+</body>
+</html>
