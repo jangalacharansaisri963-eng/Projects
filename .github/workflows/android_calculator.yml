@@ -25,11 +25,11 @@ jobs:
         working-directory: ./Kotlin
         run: touch .env.example
 
-      # FIX: Generate the missing debug.keystore required for signing the debug build
+      # FIX: Added -dname to make keytool non-interactive and prevent prompt crashes
       - name: Generate debug.keystore
         working-directory: ./Kotlin
         run: |
-          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000
+          keytool -genkeypair -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug, OU=Android, O=Unknown, L=Unknown, ST=Unknown, C=US"
 
       - name: Grant execute permission for gradlew
         working-directory: ./Kotlin
