@@ -11,11 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout your repository code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Set up Java Development Kit (Required for Android/Kotlin builds)
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -23,17 +21,24 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      # 3. Grant execute permissions to Gradle wrapper inside the Kotlin folder
+      - name: Create missing .env.example
+        working-directory: ./Kotlin
+        run: touch .env.example
+
+      # FIX: Generate the missing debug.keystore required for signing the debug build
+      - name: Generate debug.keystore
+        working-directory: ./Kotlin
+        run: |
+          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000
+
       - name: Grant execute permission for gradlew
         working-directory: ./Kotlin
         run: chmod +x gradlew
 
-      # 4. Compile and build the Debug APK
       - name: Build Debug APK with Gradle
         working-directory: ./Kotlin
         run: ./gradlew assembleDebug
 
-      # 5. Upload the generated APK so you can download it from GitHub
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
