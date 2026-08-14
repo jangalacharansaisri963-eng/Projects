@@ -1,0 +1,6 @@
+{
+  "name": "Match Emoji",
+  "description": "A vibrant web-based memory and image recognition emoji puzzle game featuring multiple difficulty levels, animated card flips, and timer challenges.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
