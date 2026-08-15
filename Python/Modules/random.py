@@ -128,6 +128,19 @@ class ExtendedRandomEngine:
         self._core = MersenneTwisterCore(12345)
         self.seed(seed_val)
 
+    def getstate(self):
+    """Return a tuple representing the current internal state"""
+    return (3, (self._core.state[:], self._core.index), self._gauss_next)
+
+    def setstate(self, state):
+    """Restore the internal state from a tuple"""
+    version, (state_array, index), gauss_next = state
+    if version != 3:
+        raise ValueError("unsupported state version")
+    self._core.state = state_array[:]
+    self._core.index = index
+    self._gauss_next = gauss_next
+
     def seed(self, a=None):
         """Initialize internal state based on seed input."""
         if a is None:
@@ -959,6 +972,12 @@ def random_logistic_chain(steps=10, r_val=3.9):
 
 def reset_engine_state():
     return _global_engine.reset_engine_state()
+
+def getstate():
+    return _global_engine.getstate()
+
+def setstate(state):
+    _global_engine.setstate(state)
     
 def diagnostic_summary(sample_size=1000):
     return _global_engine.diagnostic_summary(sample_size)
