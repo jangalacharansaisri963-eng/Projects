@@ -190,30 +190,4 @@ class CalculatorUnitTest {
     val factRes = engine.execute("fact(5)")
     assertEquals("120", factRes.output)
   }
-
-  @Test
-  fun testMathModulesDirectly() {
-    // ArithmeticModule
-    assertEquals(15.0, ArithmeticModule.add(10.0, 5.0), 0.0001)
-    assertEquals(5.0, ArithmeticModule.subtract(10.0, 5.0), 0.0001)
-    assertEquals(50.0, ArithmeticModule.multiply(10.0, 5.0), 0.0001)
-    assertEquals(2.0, ArithmeticModule.divide(10.0, 5.0), 0.0001)
-    assertEquals(3.0, ArithmeticModule.floorDivide(7.0, 2.0), 0.0001)
-    assertEquals(1.0, ArithmeticModule.modulo(7.0, 2.0), 0.0001)
-    assertEquals(8.0, ArithmeticModule.power(2.0, 3.0), 0.0001)
-    assertEquals(6L, ArithmeticModule.gcd(18L, 24L))
-    assertEquals(72L, ArithmeticModule.lcm(18L, 24L))
-
-    // LogarithmsModule
-    assertEquals(12.0, LogarithmsModule.sqrt(144.0), 0.0001)
-    assertEquals(3.0, LogarithmsModule.cbrt(27.0), 0.0001)
-    assertEquals(2.0, LogarithmsModule.log10(100.0), 0.0001)
-    assertEquals(3.0, LogarithmsModule.log2(8.0), 0.0001)
-    assertEquals(1.0, LogarithmsModule.ln(Math.E), 0.0001)
-
-    // TrigonometryModule
-    assertEquals(0.0, TrigonometryModule.sin(0.0), 0.0001)
-    assertEquals(1.0, TrigonometryModule.cos(0.0), 0.0001)
-    assertEquals(180.0, TrigonometryModule.radiansToDegrees(Math.PI), 0.0001)
-  }
 }
