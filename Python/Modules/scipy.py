@@ -1,4 +1,4 @@
-# scipy_lite_extended_massive.py
+# scipy.py
 # An additional 50 core mathematical, matrix, statistical, and interpolation functions 
 # extending the SciPy-lite library, written entirely in pure Python without ANY imports.
 
