@@ -5,8 +5,8 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
   return {
-    // Exact repository path structure for GitHub Pages:
-    base: '/Projects/JavaScript/Match-Emoji/',
+    // Vercel root base path
+    base: '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
