@@ -29,14 +29,14 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: JavaScript/HighwayDash/package-lock.json
+          cache-dependency-path: JavaScript/HighwayDash/package.json
 
       - name: Install dependencies & Build
         run: |
           if [ -d "JavaScript/HighwayDash" ] && [ -f "JavaScript/HighwayDash/package.json" ]; then
             echo "Building from JavaScript/HighwayDash/ subfolder..."
             cd JavaScript/HighwayDash
-            npm ci || npm install
+            npm install
             npm run build
           else
             echo "Error: JavaScript/HighwayDash directory or package.json not found!"
