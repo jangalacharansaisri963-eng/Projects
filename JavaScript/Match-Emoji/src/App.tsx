@@ -99,7 +99,8 @@ export default function App() {
   const handleConfirmExit = () => {
     setIsExitModalOpen(false);
     setIsGameOverModalOpen(false);
-    setScreen('MENU');
+    // Exits the game application completely by redirecting the URL
+    window.location.href = '/';
   };
 
   const handleCancelExit = () => {
