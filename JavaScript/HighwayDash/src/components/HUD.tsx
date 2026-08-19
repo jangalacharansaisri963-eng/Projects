@@ -126,64 +126,236 @@ export const HUD: React.FC<HUDProps> = ({
   return (
     <div id="hud-root" className="absolute inset-0 pointer-events-none z-20 flex flex-col justify-between p-2 sm:p-5 select-none touch-none">
       {/* Top Bar Header */}
-      <div id="hud-top-bar" className="flex items-start justify-between gap-2 sm:gap-3 w-full max-w-5xl mx-auto">
-        {/* Left: Speedometer & Health */}
-        <div id="hud-left-stats" className="flex flex-col gap-1.5 sm:gap-2 pointer-events-auto">
-          {/* Speed & Mode Badge */}
-          <div className="flex items-center gap-2 bg-zinc-900/90 backdrop-blur-md px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-zinc-800 shadow-xl">
-            <Gauge className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
-            <div className="flex flex-col">
-              <span className="text-[9px] sm:text-[10px] uppercase font-bold text-zinc-400 tracking-wider">SPEED</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-xl sm:text-3xl font-display text-white tracking-tight font-mono-race">
-                  {currentKmh}
+      <div id="hud-top-bar" className="w-full max-w-5xl mx-auto flex flex-col gap-1.5 pointer-events-none px-1 sm:px-0">
+        {/* Main Stats Row: Left & Right pinned safely to viewport edges */}
+        <div className="flex items-start justify-between gap-1 sm:gap-3 w-full">
+          {/* Left: Speedometer & Health & Nitro */}
+          <div id="hud-left-stats" className="flex flex-col gap-1 sm:gap-2 shrink-0 pointer-events-auto max-w-[48%]">
+            {/* Speed & Mode Badge */}
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-zinc-900/90 backdrop-blur-md px-2 py-1 sm:px-3.5 sm:py-2 rounded-xl border border-zinc-800 shadow-xl w-fit">
+              <Gauge className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-cyan-400 shrink-0" />
+              <div className="flex flex-col">
+                <span className="text-[8px] sm:text-[10px] uppercase font-bold text-zinc-400 tracking-wider">SPEED</span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-base sm:text-3xl font-display text-white tracking-tight font-mono-race">
+                    {currentKmh}
+                  </span>
+                  <span className="text-[9px] sm:text-xs font-semibold text-cyan-400">KM/H</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Health Bar */}
+            <div className="flex flex-col gap-0.5 sm:gap-1 bg-zinc-900/90 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-2 rounded-xl border border-zinc-800 shadow-xl w-28 xs:w-32 sm:w-44">
+              <div className="flex justify-between items-center text-[8px] sm:text-[10px] font-bold text-zinc-400 uppercase">
+                <span>HULL</span>
+                <span className="text-white font-mono-race text-[9px] sm:text-xs">{Math.ceil(player.health)} HP</span>
+              </div>
+              <div className="w-full h-1.5 sm:h-2.5 bg-zinc-800 rounded-full overflow-hidden p-0.5 border border-zinc-700">
+                <div
+                  className={`h-full rounded-full transition-all duration-200 ${healthColor}`}
+                  style={{ width: `${healthPercent}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Nitro Fuel Bar */}
+            <div className="flex flex-col gap-0.5 sm:gap-1 bg-zinc-900/90 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-2 rounded-xl border border-zinc-800 shadow-xl w-28 xs:w-32 sm:w-44">
+              <div className="flex justify-between items-center text-[8px] sm:text-[10px] font-bold text-cyan-400 uppercase">
+                <span className="flex items-center gap-1">
+                  <Flame className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-cyan-400" /> NITRO
                 </span>
-                <span className="text-[10px] sm:text-xs font-semibold text-cyan-400">KM/H</span>
+                <span className="text-white font-mono-race text-[9px] sm:text-xs">{Math.round(nitroPercent)}%</span>
+              </div>
+              <div className="w-full h-1 sm:h-2 bg-zinc-800 rounded-full overflow-hidden p-0.5 border border-zinc-700">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-100"
+                  style={{ width: `${nitroPercent}%` }}
+                />
               </div>
             </div>
           </div>
 
-          {/* Health Bar */}
-          <div className="flex flex-col gap-0.5 sm:gap-1 bg-zinc-900/90 backdrop-blur-md px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-zinc-800 shadow-xl w-32 sm:w-44">
-            <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-bold text-zinc-400 uppercase">
-              <span>HULL</span>
-              <span className="text-white font-mono-race">{Math.ceil(player.health)} HP</span>
+          {/* Center (Desktop / Tablet): Quick Control Switcher & Alerts */}
+          <div id="hud-center-desktop" className="hidden md:flex flex-col items-center gap-1.5 flex-1 min-w-0 pointer-events-auto">
+            {/* Control Mode Switcher Pill */}
+            <div className="flex items-center gap-1 bg-zinc-950/85 backdrop-blur-md px-2.5 py-1 rounded-xl border border-zinc-800 shadow-xl">
+              <button
+                onClick={() => {
+                  triggerHaptic('light');
+                  onChangeControlType('virtual_buttons');
+                }}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  controlType === 'virtual_buttons'
+                    ? 'bg-cyan-500 text-black shadow-cyan-500/30'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                <Gamepad2 className="w-3.5 h-3.5" />
+                <span>BUTTONS</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  triggerHaptic('light');
+                  onChangeControlType('touch_drag');
+                }}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  controlType === 'touch_drag'
+                    ? 'bg-cyan-500 text-black shadow-cyan-500/30'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                <Hand className="w-3.5 h-3.5" />
+                <span>DRAG</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  triggerHaptic('light');
+                  onChangeControlType('virtual_joystick');
+                }}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  controlType === 'virtual_joystick'
+                    ? 'bg-cyan-500 text-black shadow-cyan-500/30'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                <Compass className="w-3.5 h-3.5" />
+                <span>JOYSTICK</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  triggerHaptic('light');
+                  onChangeControlType('tilt');
+                }}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                  controlType === 'tilt'
+                    ? 'bg-cyan-500 text-black shadow-cyan-500/30'
+                    : 'text-zinc-400 hover:text-zinc-200'
+                }`}
+              >
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>TILT</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  triggerHaptic('light');
+                  onToggleAutoGas();
+                }}
+                className={`ml-1 px-2 py-1 rounded-lg text-[9px] font-mono font-bold uppercase transition-all cursor-pointer border ${
+                  autoGas
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                    : 'bg-zinc-800 text-zinc-400 border-zinc-700'
+                }`}
+              >
+                AUTO-GAS: {autoGas ? 'ON' : 'OFF'}
+              </button>
             </div>
-            <div className="w-full h-2 sm:h-2.5 bg-zinc-800 rounded-full overflow-hidden p-0.5 border border-zinc-700">
-              <div
-                className={`h-full rounded-full transition-all duration-200 ${healthColor}`}
-                style={{ width: `${healthPercent}%` }}
-              />
+
+            {/* Time Bomb Warning */}
+            {mode === 'time_bomb' && (
+              <div className="flex items-center gap-1.5 bg-red-950/90 border border-red-500 px-3 py-1 rounded-full shadow-lg animate-bounce">
+                <Bomb className="w-4 h-4 text-red-500 animate-spin" />
+                <div className="text-xs font-bold text-white font-mono-race">
+                  SPEED BOMB: <span className="text-red-400 text-sm">{bombTimer}s</span> ({'>'}90 KM/H)
+                </div>
+              </div>
+            )}
+
+            {/* Near-Miss Combo Banner */}
+            {player.nearMissCombo > 1 && (
+              <div className="flex items-center gap-1.5 bg-cyan-950/90 border border-cyan-400 px-3 py-1 rounded-full shadow-2xl animate-pulse">
+                <Zap className="w-4 h-4 text-cyan-400" />
+                <span className="text-xs sm:text-sm font-display text-white tracking-wide uppercase">
+                  {player.nearMissCombo}X CLOSE CALL COMBO!
+                </span>
+              </div>
+            )}
+
+            {/* Active Powerup Badges */}
+            <div className="flex items-center gap-1.5 flex-wrap justify-center">
+              {player.shieldActive && (
+                <span className="flex items-center gap-1 text-[10px] sm:text-xs bg-cyan-900/80 text-cyan-200 border border-cyan-500 px-2 py-0.5 rounded-lg">
+                  <Shield className="w-3 h-3 text-cyan-400" /> {Math.ceil(player.shieldTimer)}s
+                </span>
+              )}
+              {player.magnetActive && (
+                <span className="flex items-center gap-1 text-[10px] sm:text-xs bg-purple-900/80 text-purple-200 border border-purple-500 px-2 py-0.5 rounded-lg">
+                  <Magnet className="w-3 h-3 text-purple-400" /> {Math.ceil(player.magnetTimer)}s
+                </span>
+              )}
+              {player.multiplierActive && (
+                <span className="flex items-center gap-1 text-[10px] sm:text-xs bg-amber-900/80 text-amber-200 border border-amber-500 px-2 py-0.5 rounded-lg">
+                  <Coins className="w-3 h-3 text-amber-400" /> 2X ({Math.ceil(player.multiplierTimer)}s)
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Nitro Fuel Bar */}
-          <div className="flex flex-col gap-0.5 sm:gap-1 bg-zinc-900/90 backdrop-blur-md px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-zinc-800 shadow-xl w-32 sm:w-44">
-            <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-bold text-cyan-400 uppercase">
-              <span className="flex items-center gap-1">
-                <Flame className="w-3 h-3 text-cyan-400" /> NITRO
-              </span>
-              <span className="text-white font-mono-race">{Math.round(nitroPercent)}%</span>
+          {/* Right: Audio/Pause Buttons, Distance Meter & Cash/Earnings Meter */}
+          <div id="hud-right-stats" className="flex flex-col items-end gap-1 sm:gap-2 shrink-0 pointer-events-auto max-w-[48%]">
+            {/* Pause & Audio Buttons */}
+            <div className="flex items-center gap-1 sm:gap-1.5">
+              <button
+                id="hud-mute-btn"
+                onClick={() => {
+                  triggerHaptic('light');
+                  onToggleMute();
+                }}
+                className="p-1.5 sm:p-2.5 bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-xl border border-zinc-800 shadow-xl transition-all cursor-pointer"
+                title={isMuted ? 'Unmute' : 'Mute'}
+              >
+                {isMuted ? <VolumeX className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-red-400" /> : <Volume2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-emerald-400" />}
+              </button>
+              <button
+                id="hud-pause-btn"
+                onClick={() => {
+                  triggerHaptic('medium');
+                  onPause();
+                }}
+                className="p-1.5 sm:p-2.5 bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-xl border border-zinc-800 shadow-xl transition-all cursor-pointer"
+                title="Pause Game"
+              >
+                <Pause className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-zinc-200" />
+              </button>
             </div>
-            <div className="w-full h-1.5 sm:h-2 bg-zinc-800 rounded-full overflow-hidden p-0.5 border border-zinc-700">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-100"
-                style={{ width: `${nitroPercent}%` }}
-              />
+
+            {/* Distance Meter */}
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-zinc-900/90 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-2 rounded-xl border border-zinc-800 shadow-xl w-fit justify-between">
+              <div className="flex flex-col items-end">
+                <span className="text-[8px] sm:text-[10px] uppercase font-bold text-zinc-400 tracking-wider">DISTANCE</span>
+                <span className="text-sm sm:text-xl font-display text-white font-mono-race tracking-tight">
+                  {stats.distance} <span className="text-[9px] sm:text-xs text-zinc-400">m</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Cash / Coins Meter */}
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-zinc-900/90 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-2 rounded-xl border border-zinc-800 shadow-xl w-fit justify-between">
+              <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
+              <div className="flex flex-col items-end">
+                <span className="text-[8px] sm:text-[10px] uppercase font-bold text-zinc-400 tracking-wider">EARNINGS</span>
+                <span className="text-sm sm:text-xl font-display text-amber-400 font-mono-race">
+                  +${stats.coinsEarned}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Center: Quick Control Switcher & Alerts */}
-        <div id="hud-center-alerts" className="flex flex-col items-center gap-1.5 pointer-events-auto">
+        {/* Mobile-Only Sub-Bar: Controls Selector & Status Alerts (Cleanly Centered Below Stats) */}
+        <div id="hud-center-mobile" className="flex md:hidden flex-col items-center gap-1 w-full pointer-events-auto">
           {/* Quick Mobile Controls Selector Bar */}
-          <div className="flex items-center gap-1 bg-zinc-950/80 backdrop-blur-md px-2 py-1 rounded-xl border border-zinc-800 shadow-xl">
+          <div className="flex items-center gap-0.5 xs:gap-1 bg-zinc-950/90 backdrop-blur-md px-1.5 py-0.5 rounded-xl border border-zinc-800 shadow-xl max-w-full overflow-x-auto">
             <button
               onClick={() => {
                 triggerHaptic('light');
                 onChangeControlType('virtual_buttons');
               }}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[9px] font-bold transition-all cursor-pointer ${
                 controlType === 'virtual_buttons'
                   ? 'bg-cyan-500 text-black shadow-cyan-500/30'
                   : 'text-zinc-400 hover:text-zinc-200'
@@ -199,7 +371,7 @@ export const HUD: React.FC<HUDProps> = ({
                 triggerHaptic('light');
                 onChangeControlType('touch_drag');
               }}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[9px] font-bold transition-all cursor-pointer ${
                 controlType === 'touch_drag'
                   ? 'bg-cyan-500 text-black shadow-cyan-500/30'
                   : 'text-zinc-400 hover:text-zinc-200'
@@ -215,7 +387,7 @@ export const HUD: React.FC<HUDProps> = ({
                 triggerHaptic('light');
                 onChangeControlType('virtual_joystick');
               }}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[9px] font-bold transition-all cursor-pointer ${
                 controlType === 'virtual_joystick'
                   ? 'bg-cyan-500 text-black shadow-cyan-500/30'
                   : 'text-zinc-400 hover:text-zinc-200'
@@ -231,7 +403,7 @@ export const HUD: React.FC<HUDProps> = ({
                 triggerHaptic('light');
                 onChangeControlType('tilt');
               }}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[9px] font-bold transition-all cursor-pointer ${
                 controlType === 'tilt'
                   ? 'bg-cyan-500 text-black shadow-cyan-500/30'
                   : 'text-zinc-400 hover:text-zinc-200'
@@ -242,110 +414,59 @@ export const HUD: React.FC<HUDProps> = ({
               <span className="hidden xs:inline">TILT</span>
             </button>
 
-            {/* Auto-Gas Toggle Pill */}
             <button
               onClick={() => {
                 triggerHaptic('light');
                 onToggleAutoGas();
               }}
-              className={`ml-1 px-1.5 py-0.5 rounded-md text-[9px] font-mono font-bold uppercase transition-all cursor-pointer border ${
+              className={`ml-0.5 px-1 py-0.5 rounded-md text-[8px] font-mono font-bold uppercase transition-all cursor-pointer border ${
                 autoGas
                   ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
                   : 'bg-zinc-800 text-zinc-400 border-zinc-700'
               }`}
               title="Toggle Auto Gas / Cruise"
             >
-              AUTO-GAS: {autoGas ? 'ON' : 'OFF'}
+              AUTO: {autoGas ? 'ON' : 'OFF'}
             </button>
           </div>
 
           {/* Time Bomb Warning */}
           {mode === 'time_bomb' && (
-            <div className="flex items-center gap-1.5 bg-red-950/90 border border-red-500 px-3 py-1 rounded-full shadow-lg animate-bounce">
-              <Bomb className="w-4 h-4 text-red-500 animate-spin" />
-              <div className="text-xs font-bold text-white font-mono-race">
-                SPEED BOMB: <span className="text-red-400 text-sm">{bombTimer}s</span> ({'>'}90 KM/H)
+            <div className="flex items-center gap-1 bg-red-950/90 border border-red-500 px-2.5 py-0.5 rounded-full shadow-lg animate-bounce">
+              <Bomb className="w-3.5 h-3.5 text-red-500 animate-spin" />
+              <div className="text-[10px] font-bold text-white font-mono-race">
+                SPEED BOMB: <span className="text-red-400">{bombTimer}s</span> ({'>'}90 KM/H)
               </div>
             </div>
           )}
 
           {/* Near-Miss Combo Banner */}
           {player.nearMissCombo > 1 && (
-            <div className="flex items-center gap-1.5 bg-cyan-950/90 border border-cyan-400 px-3 py-1 rounded-full shadow-2xl animate-pulse">
-              <Zap className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs sm:text-sm font-display text-white tracking-wide uppercase">
-                {player.nearMissCombo}X CLOSE CALL COMBO!
+            <div className="flex items-center gap-1 bg-cyan-950/90 border border-cyan-400 px-2.5 py-0.5 rounded-full shadow-2xl animate-pulse">
+              <Zap className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="text-[10px] font-display text-white tracking-wide uppercase">
+                      {player.nearMissCombo}X CLOSE CALL COMBO!
               </span>
             </div>
           )}
 
           {/* Active Powerup Badges */}
-          <div className="flex items-center gap-1.5 flex-wrap justify-center">
+          <div className="flex items-center gap-1 flex-wrap justify-center">
             {player.shieldActive && (
-              <span className="flex items-center gap-1 text-[10px] sm:text-xs bg-cyan-900/80 text-cyan-200 border border-cyan-500 px-2 py-0.5 rounded-lg">
-                <Shield className="w-3 h-3 text-cyan-400" /> {Math.ceil(player.shieldTimer)}s
+              <span className="flex items-center gap-1 text-[9px] bg-cyan-900/80 text-cyan-200 border border-cyan-500 px-1.5 py-0.5 rounded-lg">
+                <Shield className="w-2.5 h-2.5 text-cyan-400" /> {Math.ceil(player.shieldTimer)}s
               </span>
             )}
             {player.magnetActive && (
-              <span className="flex items-center gap-1 text-[10px] sm:text-xs bg-purple-900/80 text-purple-200 border border-purple-500 px-2 py-0.5 rounded-lg">
-                <Magnet className="w-3 h-3 text-purple-400" /> {Math.ceil(player.magnetTimer)}s
+              <span className="flex items-center gap-1 text-[9px] bg-purple-900/80 text-purple-200 border border-purple-500 px-1.5 py-0.5 rounded-lg">
+                <Magnet className="w-2.5 h-2.5 text-purple-400" /> {Math.ceil(player.magnetTimer)}s
               </span>
             )}
             {player.multiplierActive && (
-              <span className="flex items-center gap-1 text-[10px] sm:text-xs bg-amber-900/80 text-amber-200 border border-amber-500 px-2 py-0.5 rounded-lg">
-                <Coins className="w-3 h-3 text-amber-400" /> 2X ({Math.ceil(player.multiplierTimer)}s)
+              <span className="flex items-center gap-1 text-[9px] bg-amber-900/80 text-amber-200 border border-amber-500 px-1.5 py-0.5 rounded-lg">
+                <Coins className="w-2.5 h-2.5 text-amber-400" /> 2X ({Math.ceil(player.multiplierTimer)}s)
               </span>
             )}
-          </div>
-        </div>
-
-        {/* Right: Coins, Distance & Controls */}
-        <div id="hud-right-stats" className="flex flex-col items-end gap-1.5 sm:gap-2 pointer-events-auto">
-          {/* Pause & Audio Buttons */}
-          <div className="flex items-center gap-1.5">
-            <button
-              id="hud-mute-btn"
-              onClick={() => {
-                triggerHaptic('light');
-                onToggleMute();
-              }}
-              className="p-2 sm:p-2.5 bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-xl border border-zinc-800 shadow-xl transition-all cursor-pointer"
-              title={isMuted ? 'Unmute' : 'Mute'}
-            >
-              {isMuted ? <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" /> : <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />}
-            </button>
-            <button
-              id="hud-pause-btn"
-              onClick={() => {
-                triggerHaptic('medium');
-                onPause();
-              }}
-              className="p-2 sm:p-2.5 bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-xl border border-zinc-800 shadow-xl transition-all cursor-pointer"
-              title="Pause Game"
-            >
-              <Pause className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-200" />
-            </button>
-          </div>
-
-          {/* Distance Meter */}
-          <div className="flex items-center gap-2 bg-zinc-900/90 backdrop-blur-md px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-zinc-800 shadow-xl min-w-[100px] sm:min-w-[130px] justify-between">
-            <div className="flex flex-col">
-              <span className="text-[9px] sm:text-[10px] uppercase font-bold text-zinc-400 tracking-wider">DISTANCE</span>
-              <span className="text-base sm:text-xl font-display text-white font-mono-race tracking-tight">
-                {stats.distance} <span className="text-[10px] sm:text-xs text-zinc-400">m</span>
-              </span>
-            </div>
-          </div>
-
-          {/* Cash / Coins Meter */}
-          <div className="flex items-center gap-1.5 sm:gap-2 bg-zinc-900/90 backdrop-blur-md px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl border border-zinc-800 shadow-xl min-w-[100px] sm:min-w-[130px] justify-between">
-            <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-            <div className="flex flex-col items-end">
-              <span className="text-[9px] sm:text-[10px] uppercase font-bold text-zinc-400 tracking-wider">EARNINGS</span>
-              <span className="text-base sm:text-xl font-display text-amber-400 font-mono-race">
-                +${stats.coinsEarned}
-              </span>
-            </div>
           </div>
         </div>
       </div>
@@ -532,5 +653,3 @@ export const HUD: React.FC<HUDProps> = ({
     </div>
   );
 };
-
-            
