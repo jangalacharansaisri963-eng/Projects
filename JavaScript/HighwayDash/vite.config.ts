@@ -5,8 +5,8 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
   return {
-    // Change this to a relative base so assets load correctly from any subfolder
-    base: './',
+    // Must match your exact repository subfolder structure
+    base: '/Projects/JavaScript/HighwayDash/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
