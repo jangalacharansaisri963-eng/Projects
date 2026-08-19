@@ -134,7 +134,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       </div>
 
       {/* Bottom Power / Exit Button */}
-      <div className="flex flex-col items-center z-10 mt-6">
+      <div className="flex flex-col items-center z-10 mt-6 pb-6 mb-2">
         <button
           id="menu-btn-power-exit"
           onClick={() => {
