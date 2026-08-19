@@ -1,8 +1,10 @@
-name: Deploy to GitHub Pages
+name: Deploy Match-Emoji to GitHub Pages
 
 on:
   push:
     branches: [ main, master ]
+    paths:
+      - 'JavaScript/Match-Emoji/**'
   workflow_dispatch:
 
 permissions:
@@ -11,7 +13,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: "pages-match-emoji"
   cancel-in-progress: true
 
 jobs:
@@ -31,17 +33,11 @@ jobs:
           cache: 'npm'
           cache-dependency-path: JavaScript/Match-Emoji/package.json
 
-      - name: Install dependencies & Build
+      - name: Install dependencies & Build Match-Emoji
         run: |
-          if [ -d "JavaScript/Match-Emoji" ] && [ -f "JavaScript/Match-Emoji/package.json" ]; then
-            echo "Building from JavaScript/Match-Emoji/ subfolder..."
-            cd JavaScript/Match-Emoji
-            npm install
-            npm run build
-          else
-            echo "Error: JavaScript/Match-Emoji directory or package.json not found!"
-            exit 1
-          fi
+          cd JavaScript/Match-Emoji
+          npm install
+          npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
