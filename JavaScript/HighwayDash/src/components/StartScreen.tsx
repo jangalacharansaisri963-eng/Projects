@@ -55,32 +55,32 @@ export const StartScreen: React.FC<StartScreenProps> = ({
       style={{ paddingBottom: 'max(3rem, calc(env(safe-area-inset-bottom, 0px) + 2rem))' }}
     >
       {/* Top Header Bar */}
-      <div className="w-full max-w-4xl flex items-center justify-between">
+      <div className="w-full max-w-4xl flex items-center justify-between gap-1.5 xs:gap-2 flex-wrap sm:flex-nowrap">
         {/* High Score / Best Distance */}
-        <div className="flex items-center gap-2.5 bg-zinc-900/90 border border-zinc-800 px-4 py-2 rounded-2xl shadow-xl">
-          <Trophy className="w-5 h-5 text-amber-400" />
+        <div className="flex items-center gap-1.5 sm:gap-2.5 bg-zinc-900/90 border border-zinc-800 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-xl">
+          <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 shrink-0" />
           <div className="flex flex-col">
-            <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">RECORD DISTANCE</span>
-            <span className="text-sm font-display text-white font-mono-race">
-              {bestDistance} <span className="text-xs text-zinc-400">m</span>
+            <span className="text-[8px] sm:text-[10px] uppercase font-bold text-zinc-400 tracking-wider">RECORD DISTANCE</span>
+            <span className="text-xs sm:text-sm font-display text-white font-mono-race">
+              {bestDistance} <span className="text-[10px] sm:text-xs text-zinc-400">m</span>
             </span>
           </div>
         </div>
 
         {/* Currency & Achievements button */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2.5">
           <button
             id="achievements-nav-btn"
             onClick={onOpenAchievements}
-            className="flex items-center gap-2 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 px-3.5 py-2 rounded-2xl shadow-xl transition-all cursor-pointer text-zinc-200"
+            className="flex items-center gap-1.5 bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl shadow-xl transition-all cursor-pointer text-zinc-200"
           >
-            <Trophy className="w-4 h-4 text-amber-400" />
-            <span className="text-xs font-bold hidden sm:inline">ACHIEVEMENTS</span>
+            <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
+            <span className="text-[10px] sm:text-xs font-bold hidden xs:inline">ACHIEVEMENTS</span>
           </button>
 
-          <div className="flex items-center gap-2 bg-zinc-900/90 border border-amber-500/30 px-4 py-2 rounded-2xl shadow-xl">
-            <Coins className="w-5 h-5 text-amber-400" />
-            <span className="text-base font-display text-amber-400 font-mono-race">${totalCash}</span>
+          <div className="flex items-center gap-1.5 bg-zinc-900/90 border border-amber-500/30 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl shadow-xl">
+            <Coins className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 shrink-0" />
+            <span className="text-sm sm:text-base font-display text-amber-400 font-mono-race">${totalCash}</span>
           </div>
         </div>
       </div>
@@ -177,3 +177,4 @@ export const StartScreen: React.FC<StartScreenProps> = ({
     </div>
   );
 };
+    
