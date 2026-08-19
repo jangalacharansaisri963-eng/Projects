@@ -5,8 +5,8 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
   return {
-    // Must match your exact repository subfolder structure
-    base: '/Projects/JavaScript/HighwayDash/',
+    // Vercel hosts apps at the root domain, so base must be '/'
+    base: '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
