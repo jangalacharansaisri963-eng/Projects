@@ -351,12 +351,16 @@ export const HUD: React.FC<HUDProps> = ({
       </div>
 
       {/* Bottom Floating Mobile Action Controls */}
-      <div id="hud-bottom-actions" className="flex items-end justify-between w-full max-w-5xl mx-auto pointer-events-auto pb-1 sm:pb-2">
+      <div 
+        id="hud-bottom-actions" 
+        className="flex items-end justify-between w-full max-w-5xl mx-auto pointer-events-auto pb-10 sm:pb-6 md:pb-4 mb-2 sm:mb-0 px-2 sm:px-0"
+        style={{ paddingBottom: 'max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.5rem))' }}
+      >
         {/* Left Side: Steering Controls */}
         <div className="flex items-end gap-2 sm:gap-3">
           {/* Virtual Buttons Mode: Left & Right Steer */}
           {controlType === 'virtual_buttons' && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <button
                 id="hud-steer-left-btn"
                 onPointerDown={(e) => {
@@ -369,10 +373,10 @@ export const HUD: React.FC<HUDProps> = ({
                   onSteerLeftUp();
                 }}
                 onPointerCancel={onSteerLeftUp}
-                className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-900/90 hover:bg-zinc-800 active:bg-cyan-500 active:text-black border-2 border-cyan-500/60 rounded-2xl flex flex-col items-center justify-center shadow-2xl active:scale-90 transition-all text-cyan-400 cursor-pointer select-none touch-none"
+                className="w-14 h-14 sm:w-18 sm:h-18 bg-zinc-900/95 hover:bg-zinc-800 active:bg-cyan-500 active:text-black border-2 border-cyan-500/70 rounded-2xl flex flex-col items-center justify-center shadow-2xl active:scale-90 transition-all text-cyan-400 cursor-pointer select-none touch-none"
               >
-                <ChevronLeft className="w-8 h-8 sm:w-10 sm:h-10" />
-                <span className="text-[9px] sm:text-[10px] font-bold tracking-wider -mt-1">LEFT</span>
+                <ChevronLeft className="w-7 h-7 sm:w-9 sm:h-9" />
+                <span className="text-[8px] sm:text-[10px] font-bold tracking-wider -mt-1">LEFT</span>
               </button>
 
               <button
@@ -387,10 +391,10 @@ export const HUD: React.FC<HUDProps> = ({
                   onSteerRightUp();
                 }}
                 onPointerCancel={onSteerRightUp}
-                className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-900/90 hover:bg-zinc-800 active:bg-cyan-500 active:text-black border-2 border-cyan-500/60 rounded-2xl flex flex-col items-center justify-center shadow-2xl active:scale-90 transition-all text-cyan-400 cursor-pointer select-none touch-none"
+                className="w-14 h-14 sm:w-18 sm:h-18 bg-zinc-900/95 hover:bg-zinc-800 active:bg-cyan-500 active:text-black border-2 border-cyan-500/70 rounded-2xl flex flex-col items-center justify-center shadow-2xl active:scale-90 transition-all text-cyan-400 cursor-pointer select-none touch-none"
               >
-                <ChevronRight className="w-8 h-8 sm:w-10 sm:h-10" />
-                <span className="text-[9px] sm:text-[10px] font-bold tracking-wider -mt-1">RIGHT</span>
+                <ChevronRight className="w-7 h-7 sm:w-9 sm:h-9" />
+                <span className="text-[8px] sm:text-[10px] font-bold tracking-wider -mt-1">RIGHT</span>
               </button>
             </div>
           )}
@@ -403,7 +407,7 @@ export const HUD: React.FC<HUDProps> = ({
               onPointerMove={handleJoystickPointerMove}
               onPointerUp={handleJoystickPointerUp}
               onPointerCancel={handleJoystickPointerUp}
-              className="w-32 h-24 sm:w-36 sm:h-28 bg-zinc-950/80 backdrop-blur-md border-2 border-cyan-500/50 rounded-3xl relative flex items-center justify-center shadow-2xl cursor-pointer select-none touch-none overflow-hidden"
+              className="w-28 h-20 sm:w-36 sm:h-26 bg-zinc-950/90 backdrop-blur-md border-2 border-cyan-500/60 rounded-2xl relative flex items-center justify-center shadow-2xl cursor-pointer select-none touch-none overflow-hidden"
             >
               {/* Center guide line */}
               <div className="absolute inset-y-2 w-0.5 bg-zinc-800 left-1/2 -translate-x-1/2" />
@@ -411,7 +415,7 @@ export const HUD: React.FC<HUDProps> = ({
               
               {/* Joystick Thumb Knob */}
               <div
-                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-b from-cyan-400 to-cyan-600 shadow-lg shadow-cyan-500/50 flex items-center justify-center text-black font-bold text-xs pointer-events-none transition-transform duration-75"
+                className="w-12 h-12 sm:w-15 sm:h-15 rounded-xl bg-gradient-to-b from-cyan-400 to-cyan-600 shadow-lg shadow-cyan-500/50 flex items-center justify-center text-black font-bold text-[10px] sm:text-xs pointer-events-none transition-transform duration-75"
                 style={{
                   transform: `translateX(${joystickOffset}px)`,
                 }}
@@ -423,16 +427,16 @@ export const HUD: React.FC<HUDProps> = ({
 
           {/* Touch Drag or Tilt Mode Tips */}
           {(controlType === 'touch_drag' || controlType === 'tilt') && (
-            <div className="flex items-center gap-2 bg-zinc-900/80 backdrop-blur-md px-3 py-2 rounded-2xl border border-zinc-800 text-zinc-300 text-xs">
+            <div className="flex items-center gap-2 bg-zinc-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-zinc-800 text-zinc-300 text-xs shadow-lg">
               {controlType === 'touch_drag' ? (
                 <>
                   <Hand className="w-4 h-4 text-cyan-400 animate-pulse" />
-                  <span>Drag finger on road to steer</span>
+                  <span className="text-[11px]">Drag road to steer</span>
                 </>
               ) : (
                 <>
                   <Smartphone className="w-4 h-4 text-cyan-400 animate-bounce" />
-                  <span>Tilt phone left/right to steer</span>
+                  <span className="text-[11px]">Tilt phone to steer</span>
                 </>
               )}
             </div>
@@ -445,10 +449,10 @@ export const HUD: React.FC<HUDProps> = ({
               triggerHaptic('medium');
               onHonk();
             }}
-            className="w-13 h-13 sm:w-15 sm:h-15 bg-zinc-900/80 hover:bg-zinc-800 border border-amber-400/50 rounded-2xl flex flex-col items-center justify-center shadow-xl active:scale-95 transition-transform text-amber-400 cursor-pointer select-none touch-none"
+            className="w-11 h-11 sm:w-14 sm:h-14 bg-zinc-900/90 hover:bg-zinc-800 border border-amber-400/60 rounded-2xl flex flex-col items-center justify-center shadow-xl active:scale-95 transition-transform text-amber-400 cursor-pointer select-none touch-none"
           >
-            <Megaphone className="w-5 h-5 sm:w-6 sm:h-6" />
-            <span className="text-[9px] font-bold">HORN</span>
+            <Megaphone className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="text-[8px] sm:text-[9px] font-bold">HORN</span>
           </button>
         </div>
 
@@ -458,7 +462,7 @@ export const HUD: React.FC<HUDProps> = ({
         </div>
 
         {/* Right Side: Throttle, Brake & Nitro Boost */}
-        <div className="flex items-end gap-2 sm:gap-3">
+        <div className="flex items-end gap-1.5 sm:gap-3">
           {/* Manual Gas Pedal (if autoGas is off or user wants throttle burst) */}
           {!autoGas && (
             <button
@@ -473,10 +477,10 @@ export const HUD: React.FC<HUDProps> = ({
                 onGasUp?.();
               }}
               onPointerCancel={onGasUp}
-              className="w-15 h-15 sm:w-18 sm:h-18 bg-emerald-950/80 hover:bg-emerald-900 border-2 border-emerald-500 rounded-2xl flex flex-col items-center justify-center shadow-2xl active:scale-90 transition-all text-emerald-300 cursor-pointer select-none touch-none"
+              className="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-950/90 hover:bg-emerald-900 border-2 border-emerald-500 rounded-2xl flex flex-col items-center justify-center shadow-2xl active:scale-90 transition-all text-emerald-300 cursor-pointer select-none touch-none"
             >
-              <span className="text-xs sm:text-sm font-bold tracking-wider">GAS</span>
-              <span className="text-[8px] opacity-80">HOLD</span>
+              <span className="text-[11px] sm:text-xs font-bold tracking-wider">GAS</span>
+              <span className="text-[7px] opacity-80">HOLD</span>
             </button>
           )}
 
@@ -493,7 +497,7 @@ export const HUD: React.FC<HUDProps> = ({
               onBrakeUp();
             }}
             onPointerCancel={onBrakeUp}
-            className="w-16 h-16 sm:w-20 sm:h-20 bg-red-950/80 hover:bg-red-900 active:bg-red-600 border-2 border-red-500 rounded-2xl flex flex-col items-center justify-center shadow-2xl active:scale-90 transition-all text-white cursor-pointer select-none touch-none"
+            className="w-14 h-14 sm:w-18 sm:h-18 bg-red-950/90 hover:bg-red-900 active:bg-red-600 border-2 border-red-500 rounded-2xl flex flex-col items-center justify-center shadow-2xl active:scale-90 transition-all text-white cursor-pointer select-none touch-none"
           >
             <span className="text-xs sm:text-sm font-bold tracking-wider">BRAKE</span>
           </button>
@@ -512,16 +516,16 @@ export const HUD: React.FC<HUDProps> = ({
             }}
             onPointerCancel={onNitroUp}
             disabled={player.nitroFuel <= 0}
-            className={`w-18 h-18 sm:w-22 sm:h-22 rounded-2xl flex flex-col items-center justify-center shadow-2xl border-2 active:scale-90 transition-all select-none touch-none cursor-pointer ${
+            className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center shadow-2xl border-2 active:scale-90 transition-all select-none touch-none cursor-pointer ${
               player.isNitroActive
                 ? 'bg-cyan-500 border-white text-black shadow-cyan-500/60 ring-4 ring-cyan-400/40'
                 : player.nitroFuel > 0
-                ? 'bg-cyan-950/90 hover:bg-cyan-900 border-cyan-400 text-cyan-200 shadow-cyan-950/50'
-                : 'bg-zinc-900/60 border-zinc-700 text-zinc-500 opacity-60'
+                ? 'bg-cyan-950/95 hover:bg-cyan-900 border-cyan-400 text-cyan-200 shadow-cyan-950/50'
+                : 'bg-zinc-900/70 border-zinc-700 text-zinc-500 opacity-60'
             }`}
           >
-            <Flame className={`w-7 h-7 sm:w-8 sm:h-8 ${player.isNitroActive ? 'animate-bounce' : ''}`} />
-            <span className="text-[11px] sm:text-xs font-display tracking-wider">NITRO</span>
+            <Flame className={`w-6 h-6 sm:w-7 sm:h-7 ${player.isNitroActive ? 'animate-bounce' : ''}`} />
+            <span className="text-[10px] sm:text-xs font-display tracking-wider">NITRO</span>
           </button>
         </div>
       </div>
@@ -529,3 +533,4 @@ export const HUD: React.FC<HUDProps> = ({
   );
 };
 
+            
