@@ -49,7 +49,11 @@ export const StartScreen: React.FC<StartScreenProps> = ({
   };
 
   return (
-    <div id="start-screen-root" className="absolute inset-0 z-30 flex flex-col justify-between items-center p-4 sm:p-8 bg-zinc-950/80 backdrop-blur-sm overflow-y-auto">
+    <div 
+      id="start-screen-root" 
+      className="absolute inset-0 z-30 flex flex-col justify-between items-center p-4 pb-12 sm:pb-8 bg-zinc-950/80 backdrop-blur-sm overflow-y-auto"
+      style={{ paddingBottom: 'max(3rem, calc(env(safe-area-inset-bottom, 0px) + 2rem))' }}
+    >
       {/* Top Header Bar */}
       <div className="w-full max-w-4xl flex items-center justify-between">
         {/* High Score / Best Distance */}
