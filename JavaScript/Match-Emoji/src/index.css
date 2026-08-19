@@ -189,3 +189,8 @@
   background: linear-gradient(180deg, #d1d5db 0%, #ffffff 30%, #9ca3af 70%, #4b5563 100%);
   box-shadow: 0 3px 4px rgba(0, 0, 0, 0.25);
 }
+
+/* Helper utility to ensure bottom-docked action buttons clear screen boundaries cleanly */
+.safe-bottom-spacing {
+  padding-bottom: env(safe-area-inset-bottom, 1.5rem);
+}
