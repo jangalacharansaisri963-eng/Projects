@@ -1,0 +1,6 @@
+{
+  "name": "Code Heist",
+  "description": "Terminal-based cyber heist simulator inspired by script kiddie Python modules, interactive bypass puzzles, trace heat system, and black market upgrades.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
