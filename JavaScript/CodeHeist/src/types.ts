@@ -86,3 +86,5 @@ export interface DarknetBuyer {
   risk: 'low' | 'medium' | 'high';
   quote: string;
 }
+
+export type DataBuyer = DarknetBuyer;
