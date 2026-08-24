@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>PyScript Calculator</title>
+    <!-- PyScript / Pyodide -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css" />
+    <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <h1>PyCalc</h1>
+        <button id="btn-terminal" class="btn-terminal" title="Open Python Terminal" type="button">
+          Terminal
+        </button>
+      </header>
+
+      <main class="calculator" id="calculator">
+        <div class="display-wrapper">
+          <div id="display-expression" class="display-expression"></div>
+          <div id="display-result" class="display-result">0</div>
+        </div>
+
+        <div class="keypad" id="keypad">
+          <!-- Populated by TypeScript -->
+        </div>
+      </main>
+
+      <!-- Terminal modal -->
+      <div id="terminal-overlay" class="terminal-overlay hidden" aria-hidden="true">
+        <div class="terminal-panel">
+          <div class="terminal-header">
+            <span>Python Terminal</span>
+            <div class="terminal-header-actions">
+              <button id="btn-term-clear" type="button" title="Clear">Clear</button>
+              <button id="btn-term-close" type="button" title="Close">✕</button>
+            </div>
+          </div>
+          <div id="terminal-output" class="terminal-output"></div>
+          <div class="terminal-input-row">
+            <span class="prompt">&gt;&gt;&gt;</span>
+            <input
+              id="terminal-input"
+              type="text"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="enter expression…"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading Python engine…</p>
+      </div>
+    </div>
+
+    <!-- PyScript config: fetch Python modules and add them to the runtime -->
+    <script type="py">
+import sys
+from pyodide.http import pyfetch
+import js
+
+async def load_modules():
+    base = "./python/"
+    modules = [
+        "utils.py",
+        "arithmetic.py",
+        "constants.py",
+        "functions.py",
+        "parser.py",
+        "engine.py",
+        "main.py",
+    ]
+    # Ensure current dir is importable
+    if "." not in sys.path:
+        sys.path.insert(0, ".")
+
+    for name in modules:
+        url = base + name
+        resp = await pyfetch(url)
+        code = await resp.string()
+        # Write into virtual FS so import works
+        with open(name, "w") as f:
+            f.write(code)
+
+    # Now import the main module which exposes pyEvaluate
+    import main  # noqa: F401
+
+await load_modules()
+    </script>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
