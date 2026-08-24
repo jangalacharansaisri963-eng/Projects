@@ -48,11 +48,17 @@ const BUTTONS: ButtonDef[] = [
   { label: "=", value: "=", className: "eq" },
 ];
 
+/** Tokens that continue a calculation from the previous result. */
+const OPERATORS = new Set(["+", "-", "*", "/", "**"]);
+
 export class Calculator {
   private display: Display;
   private bridge: PythonBridge;
   private keypad: HTMLElement;
+  /** True after a successful (or failed) evaluation until the user starts typing again. */
   private waitingForNew = false;
+  /** Last successful numeric result (as string), used for chaining after "=". */
+  private lastResult: string | null = null;
 
   constructor(bridge: PythonBridge) {
     this.bridge = bridge;
@@ -87,50 +93,97 @@ export class Calculator {
       case "clear":
         this.display.clear();
         this.waitingForNew = false;
+        this.lastResult = null;
         break;
+
       case "backspace":
-        this.display.backspace();
-        this.waitingForNew = false;
+        if (this.waitingForNew) {
+          // After "=", backspace clears and starts over
+          this.display.clear();
+          this.waitingForNew = false;
+          this.lastResult = null;
+        } else {
+          this.display.backspace();
+        }
         break;
+
       case "=":
         void this.evaluate();
         break;
+
       default:
-        if (this.waitingForNew && /[0-9.]/.test(value)) {
-          this.display.setExpression(value);
-          this.display.setResult(value);
-        } else {
-          this.display.appendToExpression(value);
-        }
-        this.waitingForNew = false;
+        this.handleToken(value);
         break;
     }
   }
 
+  /**
+   * Handle a digit, operator, function, or parenthesis.
+   * After "=", operators chain from the last result; digits start a new expression.
+   */
+  private handleToken(value: string): void {
+    if (this.waitingForNew) {
+      if (OPERATORS.has(value) && this.lastResult != null) {
+        // 12+2 = 14  →  user presses +  →  expression becomes "14+"
+        this.display.setExpression(this.lastResult + value);
+        this.display.setResult(this.lastResult);
+      } else if (/^[0-9.]$/.test(value)) {
+        // Start a brand-new number
+        this.display.setExpression(value);
+        this.display.setResult(value);
+        this.lastResult = null;
+      } else {
+        // Function / paren after "=" → start fresh with that token
+        this.display.setExpression(value);
+        this.display.setResult("0");
+        this.lastResult = null;
+      }
+      this.waitingForNew = false;
+      return;
+    }
+
+    // Normal typing
+    this.display.appendToExpression(value);
+  }
+
   private async evaluate(): Promise<void> {
-    const expr = this.display.getExpression().trim();
-    if (!expr) return;
+    let expr = this.display.getExpression().trim();
+    // Strip a trailing " =" left over from a previous evaluation
+    if (expr.endsWith("=")) {
+      expr = expr.slice(0, -1).trim();
+    }
+    if (!expr) {
+      // Re-evaluate last result if user just hits "=" again
+      if (this.lastResult != null) {
+        this.display.setExpression(this.lastResult + " =");
+        this.display.setResult(this.lastResult);
+        this.waitingForNew = true;
+      }
+      return;
+    }
 
     // Normalize UI symbols to Python
     const normalized = expr
       .replace(/×/g, "*")
       .replace(/÷/g, "/")
-      .replace(/−/g, "-")
-      .replace(/\*\*/g, "**"); // already fine
+      .replace(/−/g, "-");
 
     try {
       const response = await this.bridge.evaluate(normalized);
       if (response.ok && response.result != null) {
+        this.lastResult = response.result;
         this.display.setResult(response.result);
         this.display.setExpression(expr + " =");
         this.waitingForNew = true;
       } else {
         this.display.setResult(response.error ?? "Error", true);
         this.waitingForNew = true;
+        this.lastResult = null;
       }
     } catch (err) {
       this.display.setResult(String(err), true);
       this.waitingForNew = true;
+      this.lastResult = null;
     }
   }
-}
+      }
