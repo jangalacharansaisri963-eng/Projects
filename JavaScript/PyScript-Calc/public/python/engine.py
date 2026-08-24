@@ -24,6 +24,7 @@ from constants import pi_digits, e_digits, list_constants
 from functions import abs_val, negate, list_functions
 from parser import ParseError, parse_expression, eval_node
 from utils import safe_str, format_error
+from integers import gcd, lcm
 
 
 def _help() -> str:
@@ -58,6 +59,8 @@ SAFE_NAMESPACE: Dict[str, Any] = {
     "pow": py_pow,
     "mod": mod,
     "factorial": factorial,
+    "gcd": gcd
+    "lcm": lcm
     # Constants
     "pi_digits": pi_digits,
     "e_digits": e_digits,
