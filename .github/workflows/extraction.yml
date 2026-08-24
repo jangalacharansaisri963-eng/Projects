@@ -1,0 +1,39 @@
+name: Extract Zip to Main
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract Zip File
+        run: |
+          # Unzip the file into a temporary folder
+          unzip -o pyscript-calculator.zip -d temp_extracted/
+          
+          # Move contents from the nested folder to the repository root
+          # (adjust 'temp_extracted' if your zip wraps everything in a single subfolder)
+          cp -r temp_extracted/* ./
+          
+          # Clean up the temp folder so it doesn't get committed back
+          rm -rf temp_extracted
+
+      - name: Commit and Push Extracted Files
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add .
+          
+          # Only commit if there are actual changes
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-extract pyscript-calculator.zip" && git push origin main)
+          
