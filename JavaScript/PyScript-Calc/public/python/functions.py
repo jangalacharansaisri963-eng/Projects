@@ -32,4 +32,6 @@ def list_functions() -> list[str]:
         "negate(x)",
         "pi_digits(n)",
         "e_digits(n)",
+        "lcm(a,b)",
+        "gcd(a,b)",
     ]
