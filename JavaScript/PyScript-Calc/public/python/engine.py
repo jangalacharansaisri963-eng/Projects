@@ -59,8 +59,8 @@ SAFE_NAMESPACE: Dict[str, Any] = {
     "pow": py_pow,
     "mod": mod,
     "factorial": factorial,
-    "gcd": gcd
-    "lcm": lcm
+    "gcd": gcd,
+    "lcm": lcm,
     # Constants
     "pi_digits": pi_digits,
     "e_digits": e_digits,
