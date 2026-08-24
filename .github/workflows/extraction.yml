@@ -1,4 +1,4 @@
-name: Extract Zip to Main
+name: Extract Zip in Folder
 
 on:
   push:
@@ -15,17 +15,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Extract Zip File
+      - name: Extract Zip File in Path
         run: |
-          # Unzip the file into a temporary folder
+          # Navigate into the target directory
+          cd JavaScript/PyScript-Calc/
+          
+          # Unzip into a temp folder inside it
           unzip -o pyscript-calculator.zip -d temp_extracted/
           
-          # Move contents from the nested folder to the repository root
-          # (adjust 'temp_extracted' if your zip wraps everything in a single subfolder)
+          # Move contents out of temp folder to the current directory
           cp -r temp_extracted/* ./
           
-          # Clean up the temp folder so it doesn't get committed back
+          # Remove the temp folder
           rm -rf temp_extracted
+          
+          # Optional: remove the zip file itself after extraction if you don't want it sitting there
+          # rm pyscript-calculator.zip
 
       - name: Commit and Push Extracted Files
         run: |
@@ -34,6 +39,5 @@ jobs:
           
           git add .
           
-          # Only commit if there are actual changes
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-extract pyscript-calculator.zip" && git push origin main)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-extract zip inside JavaScript/PyScript-Calc" && git push origin main)
           
