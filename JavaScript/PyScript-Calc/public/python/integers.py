@@ -25,7 +25,6 @@ def _collect(args: tuple) -> List[Number]:
         raise ValueError("At least one number must be provided")
     return numbers
 
-
 def _to_decimal(n: Number) -> Decimal:
     if isinstance(n, Decimal):
         d = n
@@ -46,7 +45,6 @@ def _to_decimal(n: Number) -> Decimal:
     if not d.is_finite():
         raise ValueError("Only finite numbers are allowed")
     return d
-
 
 def _scale_to_ints(numbers: List[Number]) -> Tuple[List[int], Decimal]:
     """
@@ -94,7 +92,6 @@ def gcd(*args: Number) -> Union[int, Decimal]:
             break
 
     return _unscale(result, scale)
-
 
 def lcm(*args: Number) -> Union[int, Decimal]:
     """
@@ -176,7 +173,6 @@ def greatest_n_digit_number(digits: int, *args: Number) -> int:
     remainder = max_n_digit % lcm_val
     return max_n_digit - remainder
 
-
 def least_n_digit_number(digits: int, *args: Number) -> int:
     """
     Find the least number of 'digits' length that is divisible by all numbers in args.
@@ -239,7 +235,6 @@ def gcd_fraction(*args: Number | str) -> Union[int, Decimal]:
 
     return _to_decimal(top_gcd) / _to_decimal(bottom_lcm)
 
-
 def lcm_fraction(*args: Number | str) -> Union[int, Decimal]:
     """
     Least Common Multiple for fractions.
@@ -282,5 +277,84 @@ def lcm_fraction(*args: Number | str) -> Union[int, Decimal]:
         raise ZeroDivisionError("Denominator GCD resulted in zero")
 
     return _to_decimal(top_lcm) / _to_decimal(bottom_gcd)
+
+def greatest_number_dividing_leaving_same_remainder(*args: Number) -> int:
+    """
+    Find the greatest number that will divide all numbers in args 
+    leaving the same remainder in each case.
+    Logic: GCD of the absolute differences between each pair of numbers 
+    (or successive differences when sorted).
+    Example: 1356, 1868, 2764 -> GCD of (1868-1356), (2764-1868), etc.
+    """
+    numbers = [abs(int(_to_decimal(n))) for n in _collect(args)]
+    if len(numbers) < 2:
+        raise ValueError("At least two numbers are required for this operation")
+    
+    # Sort numbers to easily subtract adjacent elements or find differences
+    numbers.sort()
+    
+    # Calculate differences between adjacent numbers
+    differences = [numbers[i+1] - numbers[i] for i in range(len(numbers) - 1)]
+    
+    # Return the GCD of all these differences
+    return gcd(*differences)
+
+
+def least_number_leaving_remainders(remainders: list[Number], divisors: list[Number]) -> Union[int, Decimal]:
+    """
+    Find the least possible number which when divided by each divisor in 'divisors' 
+    leaves the corresponding remainder in 'remainders'.
+    Example: When divided by 13 leaves 3, and by 5 leaves 2.
+    """
+    if len(divisors) != len(remainders):
+        raise ValueError("Divisors and remainders lists must have the same length")
+    
+    # For a system of two equations (can be generalized):
+    # N = L * k + remainder
+    lcm_val = int(lcm(*divisors))
+    
+    # Check using brute force search over the LCM period or Chinese Remainder approach
+    # For standard olympiad problems, checking modular matches up to LCM works cleanly:
+    for val in range(0, lcm_val * max(int(lcm(*divisors)), 1) + 1):
+        match = True
+        for rem, div in zip(remainders, divisors):
+            if val % int(div) != int(rem):
+                match = False
+                break
+        if match:
+            return val
+            
+    # Fallback generic search step
+    raise ValueError("No common solution found within range")
+
+
+def least_number_leaving_same_remainder(remainder: Number, *args: Number) -> Union[int, Decimal]:
+    """
+    Find the least possible number which when divided by each number in args 
+    leaves the *same* given remainder in each case.
+    Logic: LCM(args) + remainder
+    """
+    lcm_val = lcm(*args)
+    rem_dec = _to_decimal(remainder)
+    return _to_decimal(lcm_val) + rem_dec
+
+
+def least_number_leaving_respective_differences(divisors: list[Number], target_remainders: list[Number]) -> Union[int, Decimal]:
+    """
+    Find the least number such that when divided by divisor[i], 
+    it leaves a difference (divisor - target_remainder) constant across them.
+    Logic: LCM(divisors) - constant_difference
+    """
+    if len(divisors) != len(target_remainders):
+        raise ValueError("Divisors and target remainders must match in length")
+    
+    differences = [int(d) - int(r) for d, r in zip(divisors, target_remainders)]
+    if not all(diff == differences[0] for diff in differences):
+        raise ValueError("The difference between divisor and respective remainder must be constant")
+    
+    common_diff = differences[0]
+    lcm_val = lcm(*divisors)
+    return lcm_val - common_diff
+        
 
         
