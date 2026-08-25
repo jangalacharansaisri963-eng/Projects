@@ -24,7 +24,19 @@ from constants import pi_digits, e_digits, list_constants
 from functions import abs_val, negate, list_functions
 from parser import ParseError, parse_expression, eval_node
 from utils import safe_str, format_error
-from integers import gcd, lcm
+from integers import (
+    gcd,
+    lcm,
+    gcd_fraction,
+    lcm_fraction,
+    least_number_to_add,
+    least_number_to_subtract,
+    greatest_n_digit_number,
+    least_n_digit_number,
+    greatest_number_dividing_leaving_same_remainder,
+    least_number_leaving_same_remainder,
+    least_number_leaving_respective_differences,
+)
 
 
 def _help() -> str:
@@ -41,6 +53,8 @@ def _help() -> str:
         "  pow(2, 8)",
         "  sqrt(144)",
         "  factorial(10)",
+        "  gcd(24, 36, 60)",
+        "  lcm(12, 15, 20)",
         "  pi_digits(20)",
         "  e_digits(50)",
     ]
@@ -59,8 +73,18 @@ SAFE_NAMESPACE: Dict[str, Any] = {
     "pow": py_pow,
     "mod": mod,
     "factorial": factorial,
+    # Number Theory / Integers / Fractions
     "gcd": gcd,
     "lcm": lcm,
+    "gcd_fraction": gcd_fraction,
+    "lcm_fraction": lcm_fraction,
+    "least_number_to_add": least_number_to_add,
+    "least_number_to_subtract": least_number_to_subtract,
+    "greatest_n_digit_number": greatest_n_digit_number,
+    "least_n_digit_number": least_n_digit_number,
+    "greatest_number_dividing_leaving_same_remainder": greatest_number_dividing_leaving_same_remainder,
+    "least_number_leaving_same_remainder": least_number_leaving_same_remainder,
+    "least_number_leaving_respective_differences": least_number_leaving_respective_differences,
     # Constants
     "pi_digits": pi_digits,
     "e_digits": e_digits,
@@ -123,3 +147,4 @@ def call_function(name: str, *args: Any) -> Dict[str, Any]:
         return {"ok": True, "result": safe_str(result), "error": None}
     except Exception as exc:
         return {"ok": False, "result": None, "error": format_error(exc)}
+        
