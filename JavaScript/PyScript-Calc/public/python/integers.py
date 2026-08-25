@@ -123,3 +123,164 @@ def lcm(*args: Number) -> Union[int, Decimal]:
         result = product // x
 
     return _unscale(result, scale)
+
+def least_number_to_add(target: Number, *args: Number) -> Union[int, Decimal]:
+    """
+    Find the least non-negative value that must be added to 'target'
+    so that the result is divisible by all numbers in args (i.e., multiple of their LCM).
+    """
+    lcm_val = lcm(*args)
+    if lcm_val == 0:
+        raise ValueError("LCM of divisors cannot be zero")
+    
+    # Convert everything to Decimal to maintain precise arithmetic with floats/decimals
+    t_dec = _to_decimal(target)
+    lcm_dec = _to_decimal(lcm_val)
+    
+    remainder = t_dec % lcm_dec
+    if remainder == 0:
+        return _to_decimal(0)
+    
+    return lcm_dec - remainder
+
+
+def least_number_to_subtract(target: Number, *args: Number) -> Union[int, Decimal]:
+    """
+    Find the least non-negative value that must be subtracted from 'target'
+    so that the result is divisible by all numbers in args.
+    """
+    lcm_val = lcm(*args)
+    if lcm_val == 0:
+        raise ValueError("LCM of divisors cannot be zero")
+    
+    t_dec = _to_decimal(target)
+    lcm_dec = _to_decimal(lcm_val)
+    
+    remainder = t_dec % lcm_dec
+    return remainder
+
+
+def greatest_n_digit_number(digits: int, *args: Number) -> int:
+    """
+    Find the greatest number of 'digits' length that is divisible by all numbers in args.
+    Example: greatest_n_digit_number(4, 15, 25, 40, 75) -> 9600
+    """
+    if not isinstance(digits, int) or digits <= 0:
+        raise ValueError("Digits must be a positive integer")
+    
+    lcm_val = int(lcm(*args))
+    if lcm_val == 0:
+        raise ValueError("LCM of divisors cannot be zero")
+    
+    max_n_digit = (10 ** digits) - 1
+    remainder = max_n_digit % lcm_val
+    return max_n_digit - remainder
+
+
+def least_n_digit_number(digits: int, *args: Number) -> int:
+    """
+    Find the least number of 'digits' length that is divisible by all numbers in args.
+    """
+    if not isinstance(digits, int) or digits <= 0:
+        raise ValueError("Digits must be a positive integer")
+    
+    lcm_val = int(lcm(*args))
+    if lcm_val == 0:
+        raise ValueError("LCM of divisors cannot be zero")
+    
+    min_n_digit = 10 ** (digits - 1)
+    remainder = min_n_digit % lcm_val
+    if remainder == 0:
+        return min_n_digit
+    return min_n_digit + (lcm_val - remainder)
+
+def gcd_fraction(*args: Number | str) -> Union[int, Decimal]:
+    """
+    Greatest Common Divisor for fractions.
+    Formula: GCD(a/b, c/d, ...) = GCD(a, c, ...) / LCM(b, d, ...)
+    Accepts floats, ints, Decimals, or fraction strings like "3/4".
+    """
+    if not args:
+        raise ValueError("At least one fraction must be provided")
+
+    numerators = []
+    denominators = []
+
+    for arg in args:
+        # Handle string fractions like "3/4" or standard numbers
+        str_arg = str(arg).strip()
+        if "/" in str_arg:
+            parts = str_arg.split("/")
+            if len(parts) != 2:
+                raise ValueError(f"Invalid fraction format: {arg}")
+            num = _to_decimal(parts[0].strip())
+            den = _to_decimal(parts[1].strip())
+        else:
+            num = _to_decimal(arg)
+            den = Decimal(1)
+
+        if den == 0:
+            raise ZeroDivisionError("Fraction denominator cannot be zero")
+        
+        # Normalize to avoid negative denominators
+        if den < 0:
+            num = -num
+            den = -den
+
+        numerators.append(num)
+        denominators.append(den)
+
+    # GCD of fractions = GCD of all numerators / LCM of all denominators
+    top_gcd = gcd(*numerators)
+    bottom_lcm = lcm(*denominators)
+
+    if bottom_lcm == 0:
+        raise ZeroDivisionError("Denominator LCM resulted in zero")
+
+    return _to_decimal(top_gcd) / _to_decimal(bottom_lcm)
+
+
+def lcm_fraction(*args: Number | str) -> Union[int, Decimal]:
+    """
+    Least Common Multiple for fractions.
+    Formula: LCM(a/b, c/d, ...) = LCM(a, c, ...) / GCD(b, d, ...)
+    Accepts floats, ints, Decimals, or fraction strings like "2/3".
+    """
+    if not args:
+        raise ValueError("At least one fraction must be provided")
+
+    numerators = []
+    denominators = []
+
+    for arg in args:
+        str_arg = str(arg).strip()
+        if "/" in str_arg:
+            parts = str_arg.split("/")
+            if len(parts) != 2:
+                raise ValueError(f"Invalid fraction format: {arg}")
+            num = _to_decimal(parts[0].strip())
+            den = _to_decimal(parts[1].strip())
+        else:
+            num = _to_decimal(arg)
+            den = Decimal(1)
+
+        if den == 0:
+            raise ZeroDivisionError("Fraction denominator cannot be zero")
+
+        if den < 0:
+            num = -num
+            den = -den
+
+        numerators.append(num)
+        denominators.append(den)
+
+    # LCM of fractions = LCM of all numerators / GCD of all denominators
+    top_lcm = lcm(*numerators)
+    bottom_gcd = gcd(*denominators)
+
+    if bottom_gcd == 0:
+        raise ZeroDivisionError("Denominator GCD resulted in zero")
+
+    return _to_decimal(top_lcm) / _to_decimal(bottom_gcd)
+
+        
