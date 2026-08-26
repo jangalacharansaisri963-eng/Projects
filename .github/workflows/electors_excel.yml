@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'Excels/Pandas/Basics/generate_electors_list.py'
+      - 'Excels/Pandas/Basics'
       - '.github/workflows/electors_list.yml'
       # Intentionally NOT watching the .xlsx so we avoid infinite loops
 
