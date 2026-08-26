@@ -23,9 +23,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install pandas openpyxl
 
-    - name: Run Python script
-      working-directory: Excels/Pandas/Basics
-      run: python electors_list.py
+    - name: Run Python script from its folder
+      # We call it using its file path directly from the repository root
+      run: python Excels/Pandas/Basics/electors_list.py
 
     - name: Upload Excel file as an artifact
       uses: actions/upload-artifact@v4
