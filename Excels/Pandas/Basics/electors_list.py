@@ -2,7 +2,7 @@ import pandas as pd
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
-# 1. Raw text data parsed into structured rows
+# 1. Raw text data parsed into structured rows (161 electors)
 data = [
     (1, 4, "IDY0646125", "APPANNA BABU TANGETI"),
     (2, 7, "IDY2649911", "ARUN KUMAR SELAMSETTY"),
@@ -147,13 +147,31 @@ data = [
     (141, 698, "IDY3920683", "Satya Rama Jyothi Aripirala"),
     (142, 705, "IDY0793075", "DEEPTHI SRI THOLETI"),
     (143, 706, "IDY0428474", "V S SUBRAMANYA RAJA SHEKAR TOLETI"),
+    (144, 708, "IDY0071613", "SHOBHANA DEVI RAMINENI"),
+    (145, 713, "IDY2977833", "venkatesh vadada"),
+    (146, 715, "IDY0528232", "MAHESH DASARI"),
+    (147, 716, "IDY1468876", "RAJAMMA VADA PALLI"),
+    (148, 717, "IDY3327921", "suresh duvvi"),
+    (149, 720, "IDY1650333", "YATISH PAMIDIMUKKALA"),
+    (150, 726, "IDY0142398", "MANGAVENI MANDULA"),
+    (151, 729, "IDY3584224", "mohini mandula"),
+    (152, 733, "IDY1329440", "RAJARAO AKKARABOYINA"),
+    (153, 735, "IDY2311330", "RAMESH PONNADA"),
+    (154, 748, "IDY3255502", "SIRISHA APPALABATHULA"),
+    (155, 755, "IDY3322179", "VARUN KUMAR PUVVALA"),
+    (156, 758, "IDY3134483", "venkata surya chaitabya rambhatla"),
+    (157, 763, "IDY3816188", "NIRAMALA RAO BALARAM MOHANTY"),
+    (158, 766, "IDY2704898", "SRINIVAS YEKKIRALA"),
+    (159, 769, "IDY2284008", "MARIYADASU KANITI"),
+    (160, 771, "IDY2283992", "KUMARI KANITI"),
+    (161, 772, "IDY0528489", "KRISHNA KISHORE SUSARLA"),
 ]
 
 # 2. Create DataFrame
 df = pd.DataFrame(data, columns=["S.No.", "Serial No.", "EPIC No.", "Elector's Name"])
 
 # 3. Write to Excel using openpyxl engine
-file_name = "electors_list.xlsx"
+file_name = "electors_list_combined.xlsx"
 writer = pd.ExcelWriter(file_name, engine="openpyxl")
 df.to_excel(writer, index=False, startrow=3, sheet_name="Electors")
 
@@ -189,7 +207,7 @@ thin_border = Border(
 # --- Add Title Block ---
 sheet.merge_cells("A1:D1")
 title_cell = sheet["A1"]
-title_cell.value = "ELECTORS LIST"
+title_cell.value = "ELECTORS LIST (COMBINED)"
 title_cell.font = title_font
 title_cell.fill = title_fill
 title_cell.alignment = Alignment(horizontal="center", vertical="center")
@@ -222,7 +240,7 @@ for row_num in range(5, len(df) + 5):
         # Alignments & Formatting
         if col_num in [1, 2]:  # S.No and Serial No
             cell.alignment = Alignment(horizontal="center", vertical="center")
-        elif col_num == 3:  # EPIC No (Code format)
+        elif col_num == 3:  # EPIC No
             cell.alignment = Alignment(horizontal="center", vertical="center")
             cell.font = bold_data_font
         else:  # Name
