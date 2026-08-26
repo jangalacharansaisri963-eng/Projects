@@ -1,4 +1,4 @@
-name: Generate Electors List Excel
+name: Generate and Push Electors List Excel
 
 on:
   push:
@@ -7,13 +7,18 @@ on:
       - 'Excels/Pandas/Basics/electors_list.py'
       - '.github/workflows/electors_list.yml'
 
+permissions:
+  contents: write
+
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -27,6 +32,22 @@ jobs:
 
       - name: Run Python script
         run: python Excels/Pandas/Basics/electors_list.py
+
+      - name: Commit and push Excel file automatically
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add Excels/Pandas/Basics/electors_list.xlsx
+          
+          # Check if there are actual changes to commit to prevent infinite loops
+          if git diff --staged --quiet; then
+            echo "No changes to commit – Excel file is already up to date."
+          else
+            git commit -m "chore: auto-update electors_list.xlsx [skip ci]"
+            git push origin main
+            echo "Successfully pushed updated Excel file to main branch."
+          fi
 
       - name: Upload Excel artifact
         uses: actions/upload-artifact@v4
