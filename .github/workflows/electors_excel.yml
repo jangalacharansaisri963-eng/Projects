@@ -2,10 +2,8 @@ name: Generate and Push Electors List Excel
 
 on:
   push:
-    branches: [ main ]
-    paths:
-      - 'Excels/Pandas/Basics/electors_list.py'
-      - '.github/workflows/electors_list.yml'
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -40,7 +38,6 @@ jobs:
           
           git add Excels/Pandas/Basics/electors_list.xlsx
           
-          # Check if there are actual changes to commit to prevent infinite loops
           if git diff --staged --quiet; then
             echo "No changes to commit – Excel file is already up to date."
           else
