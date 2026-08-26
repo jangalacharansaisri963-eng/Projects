@@ -6,7 +6,7 @@ on:
     branches: [main]
     paths:
       - 'Excels/Pandas/Basics/generate_electors_list.py'
-      - 'Excels/Pandas/Basics/electors_list.yml'
+      - '.github/workflows/electors_list.yml'
       # Intentionally NOT watching the .xlsx so we avoid infinite loops
 
 permissions:
@@ -23,7 +23,6 @@ jobs:
         with:
           ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
-          # fetch-depth: 0 is optional; default is enough for a simple commit
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,9 +38,8 @@ jobs:
       - name: Generate Electors List Excel
         run: |
           python Excels/Pandas/Basics/generate_electors_list.py
-          # Move the generated file into the desired folder (optional)
+          # Ensure target directory exists and verify the file is created properly
           mkdir -p Excels/Pandas/Basics
-          mv electors_list_combined.xlsx Excels/Pandas/Basics/electors_list_combined.xlsx
           ls -lh Excels/Pandas/Basics/electors_list_combined.xlsx
 
       - name: Commit and push Excel to main
@@ -76,3 +74,4 @@ jobs:
           echo "- **Total Electors:** 161" >> $GITHUB_STEP_SUMMARY
           echo "- **Artifact:** available for download from this run" >> $GITHUB_STEP_SUMMARY
           ls -lh Excels/Pandas/Basics/electors_list_combined.xlsx >> $GITHUB_STEP_SUMMARY
+          
