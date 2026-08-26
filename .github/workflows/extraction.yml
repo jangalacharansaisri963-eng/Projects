@@ -15,7 +15,7 @@ jobs:
       - name: Extract zip files and delete archives
         run: |
           # Navigate to the Python folder
-          cd Projects/Python
+          cd Python
           
           # Extract PrimeTerminal.zip into its own folder
           if [ -f "PrimeTerminal.zip" ]; then
