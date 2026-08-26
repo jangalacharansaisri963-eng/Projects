@@ -1,4 +1,4 @@
-name: Extract Zip Files and Cleanup
+name: Extract ScientificCalculator Zip
 
 on:
   push:
@@ -12,28 +12,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract zip files and delete archives
+      - name: Extract ScientificCalculator zip and delete archive
         run: |
           # Navigate to the Python folder
-          cd Python
+          cd Projects/Python
           
-          # Extract PrimeTerminal.zip into its own folder
-          if [ -f "PrimeTerminal.zip" ]; then
-            echo "Extracting PrimeTerminal.zip..."
-            unzip -o PrimeTerminal.zip -d PrimeTerminal
-            rm PrimeTerminal.zip
-          fi
-          
-          # Extract ScientificCalculator.zip into its own folder
+          # Handle ScientificCalculator
           if [ -f "ScientificCalculator.zip" ]; then
             echo "Extracting ScientificCalculator.zip..."
-            unzip -o ScientificCalculator.zip -d ScientificCalculator
+            mkdir -p temp_sci
+            unzip -q ScientificCalculator.zip -d temp_sci
+            
+            # If the zip contained a single root directory, pull its contents up cleanly
+            if [ -d "temp_sci/ScientificCalculator" ]; then
+              mkdir -p ScientificCalculator
+              cp -r temp_sci/ScientificCalculator/* ScientificCalculator/
+            else
+              mkdir -p ScientificCalculator
+              cp -r temp_sci/* ScientificCalculator/
+            fi
+            rm -rf temp_sci
             rm ScientificCalculator.zip
           fi
 
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Extract zips into folders and clean up archive files"
+          commit_message: "Extract ScientificCalculator.zip into single folder and clean up archive"
           branch: main
           
