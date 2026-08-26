@@ -25,7 +25,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: setup-python@v5
         with:
           python-version: '3.12'
           cache: 'pip'
@@ -37,9 +37,10 @@ jobs:
 
       - name: Generate Electors List Excel
         run: |
+          # Run the script directly from its correct folder path
           python Excels/Pandas/Basics/generate_electors_list.py
-          # Ensure target directory exists and verify the file is created properly
-          mkdir -p Excels/Pandas/Basics
+          
+          # Just to be 100% sure the folder and file exist right where they belong
           ls -lh Excels/Pandas/Basics/electors_list_combined.xlsx
 
       - name: Commit and push Excel to main
