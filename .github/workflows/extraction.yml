@@ -1,0 +1,39 @@
+name: Extract Zip Files and Cleanup
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  extract-and-clean:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract zip files and delete archives
+        run: |
+          # Navigate to the Python folder
+          cd Projects/Python
+          
+          # Extract PrimeTerminal.zip into its own folder
+          if [ -f "PrimeTerminal.zip" ]; then
+            echo "Extracting PrimeTerminal.zip..."
+            unzip -o PrimeTerminal.zip -d PrimeTerminal
+            rm PrimeTerminal.zip
+          fi
+          
+          # Extract ScientificCalculator.zip into its own folder
+          if [ -f "ScientificCalculator.zip" ]; then
+            echo "Extracting ScientificCalculator.zip..."
+            unzip -o ScientificCalculator.zip -d ScientificCalculator
+            rm ScientificCalculator.zip
+          fi
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Extract zips into folders and clean up archive files"
+          branch: main
+          
