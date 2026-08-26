@@ -2,11 +2,8 @@ import pandas as pd
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
-# 1. Raw text data parsed into structured rows (161 electors)
-data = [
-    (1, 4, "IDY0646125", "APPANNA BABU TANGETI"),
-    (2, 7, "IDY2649911", "ARUN KUMAR SELAMSETTY"),
-    (3, 15, "IDY1098888", "KUMARAMMA POTTURU"),
+# 1. Raw text data parsed into structured rows
+raw_data = [
     (4, 19, "IDY1132885", "VENKATA RAO GULLIPILLI"),
     (5, 27, "IDY1208552", "VASU BORA"),
     (6, 35, "IDY3161510", "SRI RAMA MURTHY KALLEPALLI"),
@@ -82,7 +79,7 @@ data = [
     (76, 389, "IDY0907535", "UMA MAHESWARA RAO MALLA"),
     (77, 401, "IDY0907626", "APPARAO JAMMU"),
     (78, 415, "IDY2418508", "SURI BABU CHIPPADA"),
-    (79, 429, "IDY1821447", "NARASAYAMMA CHIPPADA"),
+    (79, 416, "IDY1821447", "NARASAYAMMA CHIPPADA"),
     (80, 429, "BGY1906825", "VARALAKSHMI KOTRADA"),
     (81, 434, "BGY1881911", "LAKSHMANARAO KARAGANI"),
     (82, 436, "BGY1882133", "DURGAMMA KARAGANI"),
@@ -115,7 +112,7 @@ data = [
     (109, 567, "IDY1875949", "VENKATA SIMHADRI RAJU KAKARLAPUDI K K"),
     (110, 569, "IDY3804549", "murali krishna moturu"),
     (111, 570, "IDY3804580", "radhika moturu"),
-    (112, 584, "BGY6497200", "LAKSHMI DEVI KOLATI"),
+    (112, 577, "BGY6497200", "LAKSHMI DEVI KOLATI"),
     (113, 584, "IDY3256047", "TANUSHA PILLA"),
     (114, 591, "IDY1876079", "SIVA PRAKASH KONADA"),
     (115, 594, "IDY3075744", "SAI PRAKASH KARAMPUDI"),
@@ -165,13 +162,22 @@ data = [
     (159, 769, "IDY2284008", "MARIYADASU KANITI"),
     (160, 771, "IDY2283992", "KUMARI KANITI"),
     (161, 772, "IDY0528489", "KRISHNA KISHORE SUSARLA"),
+    (162, 115, "IDY1098888", "KUMARAMMA POTTURU"),
+    (163, 171, "IDY2649911", "ARUN KUMAR SELAMSETTY"),
+    (164, 411, "IDY0646125", "APPANNA BABU TANGETI"),
+    (165, 548, "IDY3920766", "ZARINA BEGUM"),
 ]
 
-# 2. Create DataFrame
-df = pd.DataFrame(data, columns=["S.No.", "Serial No.", "EPIC No.", "Elector's Name"])
+# 2. Create DataFrame and Sort by Serial No. in Ascending Order
+df = pd.DataFrame(raw_data, columns=["Original_SNo", "Serial No.", "EPIC No.", "Elector's Name"])
+df = df.sort_values(by="Serial No.").reset_index(drop=True)
+
+# Generate S.No. sequentially starting from 1 and drop original placeholder SNo
+df.insert(0, "S.No.", range(1, len(df) + 1))
+df = df.drop(columns=["Original_SNo"])
 
 # 3. Write to Excel using openpyxl engine
-file_name = "electors_list_combined.xlsx"
+file_name = "electors_list_combined_fixed.xlsx"
 writer = pd.ExcelWriter(file_name, engine="openpyxl")
 df.to_excel(writer, index=False, startrow=3, sheet_name="Electors")
 
@@ -187,15 +193,9 @@ header_font = Font(name=font_family, size=11, bold=True, color="FFFFFF")
 data_font = Font(name=font_family, size=10)
 bold_data_font = Font(name=font_family, size=10, bold=True)
 
-title_fill = PatternFill(
-    start_color="1F4E78", end_color="1F4E78", fill_type="solid"
-)
-header_fill = PatternFill(
-    start_color="2F5597", end_color="2F5597", fill_type="solid"
-)
-zebra_fill = PatternFill(
-    start_color="F9FBFD", end_color="F9FBFD", fill_type="solid"
-)
+title_fill = PatternFill(start_color="1F4E78", end_color="1F4E78", fill_type="solid")
+header_fill = PatternFill(start_color="2F5597", end_color="2F5597", fill_type="solid")
+zebra_fill = PatternFill(start_color="F9FBFD", end_color="F9FBFD", fill_type="solid")
 
 thin_border = Border(
     left=Side(style="thin", color="D9D9D9"),
@@ -219,17 +219,18 @@ for col_num in range(1, 5):
     cell = sheet.cell(row=4, column=col_num)
     cell.font = header_font
     cell.fill = header_fill
-    cell.alignment = Alignment(
-        horizontal="center" if col_num < 4 else "left", vertical="center"
-    )
+    cell.alignment = Alignment(horizontal="center" if col_num < 4 else "left", vertical="center")
 
 # --- Style Data Rows ---
-for row_num in range(5, len(df) + 5):
-    sheet.row_dimensions[row_num].height = 19
-    is_even = row_num % 2 == 0
+start_row = 5
+end_row = start_row + len(df) - 1
 
+for row_idx in range(start_row, end_row + 1):
+    sheet.row_dimensions[row_idx].height = 20
+    is_even = (row_idx - start_row) % 2 == 1
+    
     for col_num in range(1, 5):
-        cell = sheet.cell(row=row_num, column=col_num)
+        cell = sheet.cell(row=row_idx, column=col_num)
         cell.font = data_font
         cell.border = thin_border
 
@@ -247,17 +248,11 @@ for row_num in range(5, len(df) + 5):
             cell.alignment = Alignment(horizontal="left", vertical="center")
 
 # --- Add Total Summary Row at the Bottom ---
-total_row = len(df) + 5
+total_row = end_row + 2
 sheet.row_dimensions[total_row].height = 22
-sheet.cell(row=total_row, column=1, value="Total Electors:").font = Font(
-    name=font_family, size=10, bold=True
-)
-sheet.cell(row=total_row, column=1).alignment = Alignment(
-    horizontal="right", vertical="center"
-)
-sheet.merge_cells(
-    start_row=total_row, start_column=1, end_row=total_row, end_column=3
-)
+sheet.cell(row=total_row, column=1, value="Total Electors:").font = Font(name=font_family, size=10, bold=True)
+sheet.cell(row=total_row, column=1).alignment = Alignment(horizontal="right", vertical="center")
+sheet.merge_cells(start_row=total_row, start_column=1, end_row=total_row, end_column=3)
 
 total_val_cell = sheet.cell(row=total_row, column=4, value=len(df))
 total_val_cell.font = Font(name=font_family, size=10, bold=True)
