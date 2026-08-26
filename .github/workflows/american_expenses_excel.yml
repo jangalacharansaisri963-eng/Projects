@@ -1,4 +1,4 @@
-name: Generate Electors Excel
+name: Generate Expenses Excel
 
 on:
   push:
