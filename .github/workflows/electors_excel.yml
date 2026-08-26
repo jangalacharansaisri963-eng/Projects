@@ -3,7 +3,7 @@ name: Generate Electors Excel
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # Allows you to trigger it manually from the GitHub Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,7 +24,6 @@ jobs:
         pip install pandas openpyxl
 
     - name: Run Python script
-      # Moves into your specific folder before running the script
       working-directory: Excels/Pandas/Basics
       run: python electors_list.py
 
@@ -32,6 +31,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: electors-list-excel
-        # Points directly to the generated file in your folder path
         path: Excels/Pandas/Basics/electors_list.xlsx
         
