@@ -26,7 +26,7 @@ jobs:
     - name: Run Python script
       # Moves into your specific folder before running the script
       working-directory: Excels/Pandas/Basics
-      run: python electors_script.py
+      run: python electors_list.py
 
     - name: Upload Excel file as an artifact
       uses: actions/upload-artifact@v4
