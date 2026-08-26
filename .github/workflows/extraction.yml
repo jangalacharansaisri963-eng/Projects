@@ -15,7 +15,7 @@ jobs:
       - name: Extract ScientificCalculator zip and delete archive
         run: |
           # Navigate to the Python folder
-          cd Projects/Python
+          cd Python
           
           # Handle ScientificCalculator
           if [ -f "ScientificCalculator.zip" ]; then
