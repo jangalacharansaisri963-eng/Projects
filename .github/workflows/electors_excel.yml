@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'Excels/Pandas/Basics/generate_electors_list.py'
+      - 'Excels/Pandas/Basics/electors_list.py'
       - '.github/workflows/electors_list.yml'
 
 jobs:
@@ -26,11 +26,11 @@ jobs:
           pip install pandas openpyxl
 
       - name: Run Python script
-        run: python Excels/Pandas/Basics/generate_electors_list.py
+        run: python Excels/Pandas/Basics/electors_list.py
 
       - name: Upload Excel artifact
         uses: actions/upload-artifact@v4
         with:
           name: electors-list-excel
-          path: Excels/Pandas/Basics/electors_list_combined.xlsx
+          path: Excels/Pandas/Basics/electors_list.xlsx
           
