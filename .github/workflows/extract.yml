@@ -1,4 +1,4 @@
-name: Unzip Project
+name: Extract Sprout and Serenity Zip
 
 on:
   push:
@@ -6,14 +6,42 @@ on:
   workflow_dispatch:
 
 jobs:
-  extract:
+  extract-and-clean:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract project zip
+      - name: Extract zip and clean up archive
         run: |
+          # Navigate to your JavaScript folder
           cd JavaScript
-          unzip sprout-&-serenity---peaceful-garden.zip -d extracted_game
+          
+          # Handle the cozy garden zip
+          if [ -f "sprout-&-serenity---peaceful-garden.zip" ]; then
+            echo "Extracting zip..."
+            mkdir -p temp_garden
+            unzip -q sprout-&-serenity---peaceful-garden.zip -d temp_garden
+            
+            # Create target folder and handle nested or flat structure cleanly
+            mkdir -p peaceful-garden
+            
+            # Find the extracted content (handles single nested root folder if present)
+            if [ -d "temp_garden/sprout-&-serenity---peaceful-garden" ]; then
+              cp -r temp_garden/sprout-&-serenity---peaceful-garden/* peaceful-garden/
+            elif [ -d "temp_garden/sprout-serenity-peaceful-garden" ]; then
+              cp -r temp_garden/sprout-serenity-peaceful-garden/* peaceful-garden/
+            else
+              cp -r temp_garden/* peaceful-garden/
+            fi
+            
+            rm -rf temp_garden
+            rm sprout-&-serenity---peaceful-garden.zip
+          fi
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Extract Sprout and Serenity zip into folder and clean up"
+          branch: main
           
