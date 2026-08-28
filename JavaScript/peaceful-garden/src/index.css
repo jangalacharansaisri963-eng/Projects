@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    overflow-x: hidden;
+  }
+}
+
+.font-hand {
+  font-family: 'Patrick Hand', 'Caveat', cursive, sans-serif;
+}
+
+.font-comfort {
+  font-family: 'Comfortaa', 'Quicksand', cursive, sans-serif;
+}
+
+.font-caveat {
+  font-family: 'Caveat', cursive, sans-serif;
+}
+
+/* Cozy Hand-Drawn Wobble & Sway Keyframes */
+@keyframes plant-sway {
+  0%, 100% {
+    transform: rotate(0deg) skewX(0deg);
+  }
+  50% {
+    transform: rotate(2deg) skewX(1deg);
+  }
+}
+
+@keyframes gentle-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes pollen-drift {
+  0% {
+    transform: translate(0, 0) scale(0.8);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.8;
+  }
+  75% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(30px, -45px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes water-splash {
+  0% {
+    transform: scale(0.5) translateY(0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.2) translateY(-10px);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6) translateY(-18px);
+    opacity: 0;
+  }
+}
+
+.animate-sway {
+  animation: plant-sway 4.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.animate-sway-slow {
+  animation: plant-sway 6.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.animate-float {
+  animation: gentle-float 3s ease-in-out infinite;
+}
+
+.animate-splash {
+  animation: water-splash 0.6s ease-out forwards;
+}
+
+/* Hand-drawn organic border styles */
+.sketch-border {
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+}
+
+.sketch-box {
+  border-radius: 18px 24px 16px 22px / 22px 16px 24px 18px;
+}
+
+.sketch-card {
+  border-radius: 20px 28px 18px 26px / 26px 18px 28px 20px;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #EFECE6;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4CDBC;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B9B09C;
+}

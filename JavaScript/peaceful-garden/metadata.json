@@ -1,0 +1,7 @@
+{
+  "name": "Sprout & Serenity - Peaceful Garden",
+  "description": "A tranquil hand-drawn gardening game featuring real-time plant simulation, soothing ambient soundscapes, daily quests, tools, decorative pots, and customizable garden environments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
