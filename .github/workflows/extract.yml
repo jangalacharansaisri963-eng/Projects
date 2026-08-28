@@ -15,13 +15,13 @@ jobs:
       - name: Extract zip and clean up archive
         run: |
           # Navigate to your JavaScript folder
-          cd JavaScript
+          cd "JavaScript"
           
-          # Handle the cozy garden zip
+          # Handle the cozy garden zip (wrapped in quotes for safety)
           if [ -f "sprout-&-serenity---peaceful-garden.zip" ]; then
             echo "Extracting zip..."
             mkdir -p temp_garden
-            unzip -q sprout-&-serenity---peaceful-garden.zip -d temp_garden
+            unzip -q "sprout-&-serenity---peaceful-garden.zip" -d temp_garden
             
             # Create target folder and handle nested or flat structure cleanly
             mkdir -p peaceful-garden
@@ -36,7 +36,7 @@ jobs:
             fi
             
             rm -rf temp_garden
-            rm sprout-&-serenity---peaceful-garden.zip
+            rm "sprout-&-serenity---peaceful-garden.zip"
           fi
 
       - name: Commit and push changes
