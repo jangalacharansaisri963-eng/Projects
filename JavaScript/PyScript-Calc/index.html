@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>PyCalc – Scientific Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css" />
+    <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-icon">π</span>
+          <h1>PyCalc</h1>
+        </div>
+        <nav class="tabs" role="tablist">
+          <button class="tab active" data-tab="calc" type="button" role="tab">Calculator</button>
+          <button class="tab" data-tab="units" type="button" role="tab">Units</button>
+          <button class="tab" data-tab="terminal" type="button" role="tab" id="btn-terminal">Terminal</button>
+        </nav>
+      </header>
+
+      <!-- Calculator panel -->
+      <main class="panel calculator active" id="panel-calc">
+        <div class="display-wrapper">
+          <div id="display-expression" class="display-expression"></div>
+          <div id="display-result" class="display-result">0</div>
+        </div>
+
+        <div class="mode-bar">
+          <button type="button" class="mode-btn active" data-mode="basic" id="mode-basic">Basic</button>
+          <button type="button" class="mode-btn" data-mode="sci" id="mode-sci">Scientific</button>
+          <button type="button" class="mode-btn" data-mode="const" id="mode-const">Const</button>
+        </div>
+
+        <div class="keypad" id="keypad">
+          <!-- Populated by TypeScript -->
+        </div>
+      </main>
+
+      <!-- Unit Converter panel (UI only; logic in Python) -->
+      <main class="panel units-panel" id="panel-units">
+        <div class="units-card">
+          <h2 class="units-title">Unit Converter</h2>
+          <p class="units-sub">~450 measurement units · pure Python engine</p>
+
+          <label class="field-label">Category</label>
+          <select id="unit-category" class="unit-select">
+            <option value="">All categories</option>
+          </select>
+
+          <div class="unit-row">
+            <div class="unit-col">
+              <label class="field-label">From</label>
+              <input id="unit-value" type="number" class="unit-input" value="1" step="any" />
+              <select id="unit-from" class="unit-select"></select>
+            </div>
+            <button type="button" class="swap-btn" id="unit-swap" title="Swap units">⇄</button>
+            <div class="unit-col">
+              <label class="field-label">To</label>
+              <div id="unit-result" class="unit-result">—</div>
+              <select id="unit-to" class="unit-select"></select>
+            </div>
+          </div>
+
+          <button type="button" class="convert-btn" id="unit-convert">Convert</button>
+          <p id="unit-error" class="unit-error hidden"></p>
+          <p class="units-hint">Tip: also try <code>convert(1, 'm', 'ft')</code> in Terminal</p>
+        </div>
+      </main>
+
+      <!-- Terminal panel -->
+      <main class="panel terminal-panel-full" id="panel-terminal">
+        <div class="terminal-panel">
+          <div class="terminal-header">
+            <span>Python Terminal · 360+ functions</span>
+            <div class="terminal-header-actions">
+              <button id="btn-term-clear" type="button" title="Clear">Clear</button>
+            </div>
+          </div>
+          <div id="terminal-output" class="terminal-output"></div>
+          <div class="terminal-input-row">
+            <span class="prompt">&gt;&gt;&gt;</span>
+            <input
+              id="terminal-input"
+              type="text"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="5!  ·  log(100,10)  ·  convert(1,'mi','km')  ·  help()"
+            />
+          </div>
+        </div>
+      </main>
+
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading pure-Python engine…</p>
+      </div>
+    </div>
+
+    <script type="py">
+import sys
+from pyodide.http import pyfetch
+import js
+
+async def load_modules():
+    base = "./python/"
+    modules = [
+        "utils.py",
+        "arithmetic.py",
+        "integers.py",
+        "constants.py",
+        "functions.py",
+        "puremath.py",
+        "scientific.py",
+        "units.py",
+        "parser.py",
+        "engine.py",
+        "main.py",
+    ]
+    if "." not in sys.path:
+        sys.path.insert(0, ".")
+
+    for name in modules:
+        url = base + name
+        resp = await pyfetch(url)
+        code = await resp.string()
+        with open(name, "w") as f:
+            f.write(code)
+
+    import main  # noqa: F401
+
+await load_modules()
+    </script>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

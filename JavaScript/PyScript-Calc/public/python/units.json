@@ -1,0 +1,626 @@
+{
+  "version": 1,
+  "description": "Editable unit definitions for PyCalc. Each category maps unit name -> factor relative to the base unit (except temperature which uses scale+offset to Kelvin).",
+  "categories": {
+    "length": {
+      "base": "m",
+      "units": {
+        "m": 1.0,
+        "metre": 1.0,
+        "meter": 1.0,
+        "metres": 1.0,
+        "meters": 1.0,
+        "km": 1000.0,
+        "kilometre": 1000.0,
+        "kilometer": 1000.0,
+        "cm": 0.01,
+        "centimetre": 0.01,
+        "centimeter": 0.01,
+        "mm": 0.001,
+        "millimetre": 0.001,
+        "millimeter": 0.001,
+        "um": 1e-06,
+        "µm": 1e-06,
+        "micron": 1e-06,
+        "micrometre": 1e-06,
+        "nm": 1e-09,
+        "nanometre": 1e-09,
+        "nanometer": 1e-09,
+        "pm": 1e-12,
+        "picometre": 1e-12,
+        "fm": 1e-15,
+        "femtometre": 1e-15,
+        "angstrom": 1e-10,
+        "Å": 1e-10,
+        "in": 0.0254,
+        "inch": 0.0254,
+        "inches": 0.0254,
+        "ft": 0.3048,
+        "foot": 0.3048,
+        "feet": 0.3048,
+        "yd": 0.9144,
+        "yard": 0.9144,
+        "yards": 0.9144,
+        "mi": 1609.344,
+        "mile": 1609.344,
+        "miles": 1609.344,
+        "nmi": 1852.0,
+        "nautical_mile": 1852.0,
+        "au": 149597870700.0,
+        "astronomical_unit": 149597870700.0,
+        "ly": 9460730472580800.0,
+        "light_year": 9460730472580800.0,
+        "pc": 3.085677581491367e+16,
+        "parsec": 3.085677581491367e+16,
+        "furlong": 201.168,
+        "chain": 20.1168,
+        "rod": 5.0292,
+        "perch": 5.0292,
+        "pole": 5.0292,
+        "fathom": 1.8288,
+        "cubit": 0.4572,
+        "hand": 0.1016,
+        "span": 0.2286,
+        "mil": 2.54e-05,
+        "thou": 2.54e-05,
+        "league": 4828.032,
+        "point": 0.0003527778,
+        "pica": 0.004233333,
+        "ell": 1.143,
+        "arpent": 58.5216
+      }
+    },
+    "area": {
+      "base": "m2",
+      "units": {
+        "m2": 1.0,
+        "sqm": 1.0,
+        "square_metre": 1.0,
+        "square_meter": 1.0,
+        "km2": 1000000.0,
+        "sqkm": 1000000.0,
+        "cm2": 0.0001,
+        "sqcm": 0.0001,
+        "mm2": 1e-06,
+        "sqmm": 1e-06,
+        "ha": 10000.0,
+        "hectare": 10000.0,
+        "acre": 4046.8564224,
+        "sqmi": 2589988.110336,
+        "square_mile": 2589988.110336,
+        "sqyd": 0.83612736,
+        "square_yard": 0.83612736,
+        "sqft": 0.09290304,
+        "square_foot": 0.09290304,
+        "sqin": 0.00064516,
+        "square_inch": 0.00064516,
+        "are": 100.0,
+        "barn": 1e-28,
+        "rood": 1011.7141056
+      }
+    },
+    "volume": {
+      "base": "m3",
+      "units": {
+        "m3": 1.0,
+        "cubic_metre": 1.0,
+        "cubic_meter": 1.0,
+        "l": 0.001,
+        "liter": 0.001,
+        "litre": 0.001,
+        "liters": 0.001,
+        "litres": 0.001,
+        "ml": 1e-06,
+        "millilitre": 1e-06,
+        "milliliter": 1e-06,
+        "cl": 1e-05,
+        "centilitre": 1e-05,
+        "dl": 0.0001,
+        "decilitre": 0.0001,
+        "ul": 1e-09,
+        "µl": 1e-09,
+        "microlitre": 1e-09,
+        "cm3": 1e-06,
+        "cc": 1e-06,
+        "mm3": 1e-09,
+        "km3": 1000000000.0,
+        "gal": 0.003785411784,
+        "gallon": 0.003785411784,
+        "us_gallon": 0.003785411784,
+        "gal_uk": 0.00454609,
+        "imperial_gallon": 0.00454609,
+        "qt": 0.000946352946,
+        "quart": 0.000946352946,
+        "pt": 0.000473176473,
+        "pint": 0.000473176473,
+        "cup": 0.0002365882365,
+        "floz": 2.95735295625e-05,
+        "fluid_ounce": 2.95735295625e-05,
+        "tbsp": 1.478676478125e-05,
+        "tablespoon": 1.478676478125e-05,
+        "tsp": 4.92892159375e-06,
+        "teaspoon": 4.92892159375e-06,
+        "bbl": 0.158987294928,
+        "barrel": 0.158987294928,
+        "cuft": 0.028316846592,
+        "cubic_foot": 0.028316846592,
+        "cuin": 1.6387064e-05,
+        "cubic_inch": 1.6387064e-05,
+        "cuyd": 0.764554857984,
+        "cubic_yard": 0.764554857984,
+        "bushel": 0.03523907016688,
+        "peck": 0.00880976754172,
+        "gill": 0.00011829411825,
+        "hogshead": 0.238480942392
+      }
+    },
+    "mass": {
+      "base": "kg",
+      "units": {
+        "kg": 1.0,
+        "kilogram": 1.0,
+        "kilogramme": 1.0,
+        "g": 0.001,
+        "gram": 0.001,
+        "gramme": 0.001,
+        "mg": 1e-06,
+        "milligram": 1e-06,
+        "ug": 1e-09,
+        "µg": 1e-09,
+        "microgram": 1e-09,
+        "ng": 1e-12,
+        "nanogram": 1e-12,
+        "t": 1000.0,
+        "tonne": 1000.0,
+        "metric_ton": 1000.0,
+        "lb": 0.45359237,
+        "pound": 0.45359237,
+        "lbs": 0.45359237,
+        "oz": 0.028349523125,
+        "ounce": 0.028349523125,
+        "st": 6.35029318,
+        "stone": 6.35029318,
+        "ton": 907.18474,
+        "short_ton": 907.18474,
+        "long_ton": 1016.0469088,
+        "slug": 14.59390294,
+        "ct": 0.0002,
+        "carat": 0.0002,
+        "gr": 6.479891e-05,
+        "grain": 6.479891e-05,
+        "dr": 0.0017718451953125,
+        "dram": 0.0017718451953125,
+        "cwt": 45.359237,
+        "hundredweight": 45.359237,
+        "cwt_uk": 50.80234544,
+        "amu": 1.6605390666e-27,
+        "u": 1.6605390666e-27,
+        "dalton": 1.6605390666e-27,
+        "solar_mass": 1.98847e+30,
+        "earth_mass": 5.9722e+24
+      }
+    },
+    "time": {
+      "base": "s",
+      "units": {
+        "s": 1.0,
+        "sec": 1.0,
+        "second": 1.0,
+        "seconds": 1.0,
+        "ms": 0.001,
+        "millisecond": 0.001,
+        "us": 1e-06,
+        "µs": 1e-06,
+        "microsecond": 1e-06,
+        "ns": 1e-09,
+        "nanosecond": 1e-09,
+        "ps": 1e-12,
+        "picosecond": 1e-12,
+        "min": 60.0,
+        "minute": 60.0,
+        "minutes": 60.0,
+        "h": 3600.0,
+        "hr": 3600.0,
+        "hour": 3600.0,
+        "hours": 3600.0,
+        "d": 86400.0,
+        "day": 86400.0,
+        "days": 86400.0,
+        "wk": 604800.0,
+        "week": 604800.0,
+        "weeks": 604800.0,
+        "fortnight": 1209600.0,
+        "mo": 2629746.0,
+        "month": 2629746.0,
+        "yr": 31556952.0,
+        "year": 31556952.0,
+        "years": 31556952.0,
+        "decade": 315569520.0,
+        "century": 3155695200.0,
+        "millennium": 31556952000.0,
+        "shake": 1e-08,
+        "jiffy": 0.01,
+        "sidereal_day": 86164.0905,
+        "sidereal_year": 31558149.8
+      }
+    },
+    "speed": {
+      "base": "m/s",
+      "units": {
+        "mps": 1.0,
+        "m/s": 1.0,
+        "metre_per_second": 1.0,
+        "kph": 0.2777777777777778,
+        "km/h": 0.2777777777777778,
+        "kmh": 0.2777777777777778,
+        "mph": 0.44704,
+        "mi/h": 0.44704,
+        "fps": 0.3048,
+        "ft/s": 0.3048,
+        "knot": 0.514444,
+        "kn": 0.514444,
+        "kt": 0.514444,
+        "c": 299792458.0,
+        "speed_of_light": 299792458.0,
+        "mach": 340.29,
+        "ips": 0.0254
+      }
+    },
+    "acceleration": {
+      "base": "m/s2",
+      "units": {
+        "mps2": 1.0,
+        "m/s2": 1.0,
+        "g": 9.80665,
+        "gee": 9.80665,
+        "standard_gravity": 9.80665,
+        "gal": 0.01,
+        "galileo": 0.01,
+        "ft/s2": 0.3048
+      }
+    },
+    "force": {
+      "base": "N",
+      "units": {
+        "n": 1.0,
+        "newton": 1.0,
+        "kn": 1000.0,
+        "kilonewton": 1000.0,
+        "dyn": 1e-05,
+        "dyne": 1e-05,
+        "lbf": 4.4482216152605,
+        "pound_force": 4.4482216152605,
+        "kgf": 9.80665,
+        "kilogram_force": 9.80665,
+        "kp": 9.80665,
+        "pdl": 0.138254954376,
+        "poundal": 0.138254954376,
+        "ozf": 0.2780138509537812
+      }
+    },
+    "pressure": {
+      "base": "Pa",
+      "units": {
+        "pa": 1.0,
+        "pascal": 1.0,
+        "kpa": 1000.0,
+        "kilopascal": 1000.0,
+        "mpa": 1000000.0,
+        "megapascal": 1000000.0,
+        "bar": 100000.0,
+        "mbar": 100.0,
+        "millibar": 100.0,
+        "atm": 101325.0,
+        "atmosphere": 101325.0,
+        "torr": 133.322368421,
+        "mmhg": 133.322368421,
+        "millimetre_mercury": 133.322368421,
+        "inhg": 3386.389,
+        "psi": 6894.757293168,
+        "lbf/in2": 6894.757293168,
+        "psf": 47.88025898,
+        "ba": 0.1,
+        "barye": 0.1,
+        "at": 98066.5,
+        "technical_atmosphere": 98066.5
+      }
+    },
+    "energy": {
+      "base": "J",
+      "units": {
+        "j": 1.0,
+        "joule": 1.0,
+        "kj": 1000.0,
+        "kilojoule": 1000.0,
+        "mj": 1000000.0,
+        "megajoule": 1000000.0,
+        "gj": 1000000000.0,
+        "cal": 4.184,
+        "calorie": 4.184,
+        "kcal": 4184.0,
+        "kilocalorie": 4184.0,
+        "cal_food": 4184.0,
+        "wh": 3600.0,
+        "watt_hour": 3600.0,
+        "kwh": 3600000.0,
+        "kilowatt_hour": 3600000.0,
+        "mwh": 3600000000.0,
+        "ev": 1.602176634e-19,
+        "electronvolt": 1.602176634e-19,
+        "kev": 1.602176634e-16,
+        "mev": 1.602176634e-13,
+        "btu": 1055.05585262,
+        "therm": 105505585.262,
+        "ft_lbf": 1.3558179483314,
+        "erg": 1e-07,
+        "hartree": 4.3597447222071e-18,
+        "rydberg": 2.1798723611035e-18
+      }
+    },
+    "power": {
+      "base": "W",
+      "units": {
+        "w": 1.0,
+        "watt": 1.0,
+        "kw": 1000.0,
+        "kilowatt": 1000.0,
+        "mw": 1000000.0,
+        "megawatt": 1000000.0,
+        "gw": 1000000000.0,
+        "gigawatt": 1000000000.0,
+        "hp": 745.6998715822702,
+        "horsepower": 745.6998715822702,
+        "ps": 735.49875,
+        "metric_horsepower": 735.49875,
+        "btu/h": 0.29307107,
+        "ft_lbf/s": 1.3558179483314,
+        "erg/s": 1e-07,
+        "ton_refrigeration": 3516.85284
+      }
+    },
+    "angle": {
+      "base": "rad",
+      "units": {
+        "rad": 1.0,
+        "radian": 1.0,
+        "deg": 0.017453292519943295,
+        "degree": 0.017453292519943295,
+        "°": 0.017453292519943295,
+        "grad": 0.015708,
+        "gon": 0.015708,
+        "grade": 0.015708,
+        "arcmin": 0.0002908882086657216,
+        "arcminute": 0.0002908882086657216,
+        "arcsec": 4.84813681109536e-06,
+        "arcsecond": 4.84813681109536e-06,
+        "turn": 6.283185307179586,
+        "rev": 6.283185307179586,
+        "revolution": 6.283185307179586,
+        "mil_nato": 0.0009817477
+      }
+    },
+    "data": {
+      "base": "byte",
+      "units": {
+        "b": 1.0,
+        "byte": 1.0,
+        "bit": 0.125,
+        "kb": 1024.0,
+        "kib": 1024.0,
+        "kilobyte": 1024.0,
+        "mb": 1048576.0,
+        "mib": 1048576.0,
+        "megabyte": 1048576.0,
+        "gb": 1073741824.0,
+        "gib": 1073741824.0,
+        "gigabyte": 1073741824.0,
+        "tb": 1099511627776.0,
+        "tib": 1099511627776.0,
+        "terabyte": 1099511627776.0,
+        "pb": 1125899906842624.0,
+        "pib": 1125899906842624.0,
+        "kbit": 128.0,
+        "kibit": 128.0,
+        "mbit": 131072.0,
+        "mibit": 131072.0,
+        "gbit": 134217728.0,
+        "gibit": 134217728.0,
+        "nibble": 0.5
+      }
+    },
+    "frequency": {
+      "base": "Hz",
+      "units": {
+        "hz": 1.0,
+        "hertz": 1.0,
+        "khz": 1000.0,
+        "kilohertz": 1000.0,
+        "mhz": 1000000.0,
+        "megahertz": 1000000.0,
+        "ghz": 1000000000.0,
+        "gigahertz": 1000000000.0,
+        "thz": 1000000000000.0,
+        "rpm": 0.016666666666666666,
+        "rps": 1.0
+      }
+    },
+    "density": {
+      "base": "kg/m3",
+      "units": {
+        "kg/m3": 1.0,
+        "g/cm3": 1000.0,
+        "g/ml": 1000.0,
+        "lb/ft3": 16.01846337,
+        "lb/in3": 27679.90471,
+        "slug/ft3": 515.3788184
+      }
+    },
+    "viscosity": {
+      "base": "Pa·s",
+      "units": {
+        "pas": 1.0,
+        "pa_s": 1.0,
+        "poise": 0.1,
+        "cp": 0.001,
+        "centipoise": 0.001
+      }
+    },
+    "illuminance": {
+      "base": "lx",
+      "units": {
+        "lx": 1.0,
+        "lux": 1.0,
+        "fc": 10.7639104167,
+        "footcandle": 10.7639104167,
+        "phot": 10000.0
+      }
+    },
+    "magnetic": {
+      "base": "T",
+      "units": {
+        "t": 1.0,
+        "tesla": 1.0,
+        "gauss": 0.0001,
+        "gamma": 1e-09
+      }
+    },
+    "charge": {
+      "base": "C",
+      "units": {
+        "c": 1.0,
+        "coulomb": 1.0,
+        "ah": 3600.0,
+        "amp_hour": 3600.0,
+        "mah": 3.6,
+        "e": 1.602176634e-19
+      }
+    },
+    "voltage": {
+      "base": "V",
+      "units": {
+        "v": 1.0,
+        "volt": 1.0,
+        "mv": 0.001,
+        "millivolt": 0.001,
+        "kv": 1000.0,
+        "kilovolt": 1000.0
+      }
+    },
+    "current": {
+      "base": "A",
+      "units": {
+        "a": 1.0,
+        "amp": 1.0,
+        "ampere": 1.0,
+        "ma": 0.001,
+        "milliamp": 0.001,
+        "ua": 1e-06,
+        "µa": 1e-06,
+        "microamp": 1e-06,
+        "ka": 1000.0
+      }
+    },
+    "resistance": {
+      "base": "ohm",
+      "units": {
+        "ohm": 1.0,
+        "Ω": 1.0,
+        "kohm": 1000.0,
+        "kΩ": 1000.0,
+        "mohm": 1000000.0,
+        "MΩ": 1000000.0
+      }
+    },
+    "capacitance": {
+      "base": "F",
+      "units": {
+        "f": 1.0,
+        "farad": 1.0,
+        "uf": 1e-06,
+        "µf": 1e-06,
+        "microfarad": 1e-06,
+        "nf": 1e-09,
+        "nanofarad": 1e-09,
+        "pf": 1e-12,
+        "picofarad": 1e-12
+      }
+    },
+    "inductance": {
+      "base": "H",
+      "units": {
+        "h": 1.0,
+        "henry": 1.0,
+        "mh": 0.001,
+        "millihenry": 0.001,
+        "uh": 1e-06,
+        "µh": 1e-06,
+        "microhenry": 1e-06
+      }
+    },
+    "dose": {
+      "base": "Gy",
+      "units": {
+        "gy": 1.0,
+        "gray": 1.0,
+        "rad": 0.01,
+        "sv": 1.0,
+        "sievert": 1.0,
+        "rem": 0.01
+      }
+    }
+  },
+  "temperature": {
+    "base": "K",
+    "note": "T_kelvin = value * scale + offset",
+    "units": {
+      "k": {
+        "scale": 1.0,
+        "offset": 0.0
+      },
+      "kelvin": {
+        "scale": 1.0,
+        "offset": 0.0
+      },
+      "c": {
+        "scale": 1.0,
+        "offset": 273.15
+      },
+      "celsius": {
+        "scale": 1.0,
+        "offset": 273.15
+      },
+      "°c": {
+        "scale": 1.0,
+        "offset": 273.15
+      },
+      "f": {
+        "scale": 0.5555555555555556,
+        "offset": 255.37222222222223
+      },
+      "fahrenheit": {
+        "scale": 0.5555555555555556,
+        "offset": 255.37222222222223
+      },
+      "°f": {
+        "scale": 0.5555555555555556,
+        "offset": 255.37222222222223
+      },
+      "r": {
+        "scale": 0.5555555555555556,
+        "offset": 0.0
+      },
+      "rankine": {
+        "scale": 0.5555555555555556,
+        "offset": 0.0
+      },
+      "re": {
+        "scale": 1.25,
+        "offset": 273.15
+      },
+      "reaumur": {
+        "scale": 1.25,
+        "offset": 273.15
+      }
+    }
+  }
+}
