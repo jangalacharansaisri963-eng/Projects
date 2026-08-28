@@ -1,0 +1,19 @@
+name: Unzip Project
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract project zip
+        run: |
+          cd JavaScript
+          unzip sprout-&-serenity---peaceful-garden.zip -d extracted_game
+          
