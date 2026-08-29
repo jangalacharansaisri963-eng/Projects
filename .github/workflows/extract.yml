@@ -1,4 +1,4 @@
-name: Extract PyScript-Calc Zip
+name: Extract Retro-Arcade Zip
 
 on:
   push:
@@ -16,21 +16,21 @@ jobs:
         run: |
           cd "JavaScript"
           
-          if [ -f "PyScript-Calc.zip" ]; then
-            echo "Extracting PyScript-Calc.zip..."
-            mkdir -p temp_calc
-            unzip -q "PyScript-Calc.zip" -d temp_calc
+          if [ -f "retro-arcade-game-engine.zip" ]; then
+            echo "Extracting retro-arcade-game-engine.zip..."
+            mkdir -p temp_engine
+            unzip -q "retro-arcade-game-engine.zip" -d temp_engine
             
-            mkdir -p PyScript-Calc
+            mkdir -p retro-arcade-game-engine
             
-            if [ -d "temp_calc/PyScript-Calc" ]; then
-              cp -r temp_calc/PyScript-Calc/* PyScript-Calc/
+            if [ -d "temp_engine/retro-arcade-game-engine" ]; then
+              cp -r temp_engine/retro-arcade-game-engine/* retro-arcade-game-engine/
             else
-              cp -r temp_calc/* PyScript-Calc/
+              cp -r temp_engine/* retro-arcade-game-engine/
             fi
             
-            rm -rf temp_calc
-            rm "PyScript-Calc.zip"
+            rm -rf temp_engine
+            rm "retro-arcade-game-engine.zip"
             echo "Done."
           else
             echo "No zip found in JavaScript/"
@@ -39,5 +39,5 @@ jobs:
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Extract PyScript-Calc zip into folder and clean up"
+          commit_message: "Extract retro-arcade-game-engine zip into folder and clean up"
           branch: main
