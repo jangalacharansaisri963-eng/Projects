@@ -1,0 +1,6 @@
+{
+  "name": "Retro Arcade Game Engine",
+  "description": "A browser-based retro arcade game engine in TypeScript and HTML5 Canvas with physics collisions, sprite renderer, Web Audio synthesizer, touch controls, and high-score persistence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
