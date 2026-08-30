@@ -140,9 +140,9 @@ SAFE_NAMESPACE: Dict[str, Any] = {
     "abs_val": abs_val,
     "negate": negate,
     # --- Utilities ---
-    "sqrtrem": sqrtrem
-    "cbrtrem": cbrtrem
-    "divrem": divrem
+    "sqrtrem": sqrtrem,
+    "cbrtrem": cbrtrem,
+    "divrem": divrem,
     # --- Meta ---
     "help": _help,
     "functions": _list_all_functions,
