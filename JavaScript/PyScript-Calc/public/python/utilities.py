@@ -2,13 +2,11 @@ def sqrtrem(n):
   if n < 0:
     raise ValueError("Number must be non-negative")
   r = int(n**0.5)
-  # Adjust if precision issues cause r*r > n
   if (r + 1) * (r + 1) <= n:
     r += 1
   elif r * r > n:
     r -= 1
-  remainder = n - r * r
-  return r, remainder
+  return r, n - r * r
 
 
 def cbrtrem(n):
@@ -29,7 +27,7 @@ def cbrtrem(n):
 def divrem(a, b):
   if b == 0:
     raise ZeroDivisionError("Division by zero")
-  q = a // b
-  r = a % b
-  return q, r
-  
+  return a // b, a % b
+
+
+__all__ = ["sqrtrem", "cbrtrem", "divrem"]
