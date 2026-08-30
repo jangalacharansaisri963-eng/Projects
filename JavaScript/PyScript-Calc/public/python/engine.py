@@ -22,6 +22,7 @@ from arithmetic import (
     factorial as arith_factorial,
 )
 from constants import pi_digits, e_digits, list_constants
+from utilities import sqrtrem, cbrtrem, divrem
 from functions import abs_val, negate, list_functions as list_basic_functions
 from parser import ParseError, parse_expression, eval_node
 from utils import safe_str, format_error
@@ -138,6 +139,10 @@ SAFE_NAMESPACE: Dict[str, Any] = {
     "abs": abs_val,
     "abs_val": abs_val,
     "negate": negate,
+    # --- Utilities ---
+    "sqrtrem": sqrtrem
+    "cbrtrem": cbrtrem
+    "divrem": divrem
     # --- Meta ---
     "help": _help,
     "functions": _list_all_functions,
