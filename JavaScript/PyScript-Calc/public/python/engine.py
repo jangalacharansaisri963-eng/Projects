@@ -38,6 +38,7 @@ from integers import (
     greatest_number_dividing_leaving_same_remainder,
     least_number_leaving_same_remainder,
     least_number_leaving_respective_differences,
+    expand,
 )
 
 # Pure-Python scientific layer
@@ -125,6 +126,7 @@ SAFE_NAMESPACE: Dict[str, Any] = {
     "greatest_number_dividing_leaving_same_remainder": greatest_number_dividing_leaving_same_remainder,
     "least_number_leaving_same_remainder": least_number_leaving_same_remainder,
     "least_number_leaving_respective_differences": least_number_leaving_respective_differences,
+    "expand": expand,
     # --- Constants ---
     "pi_digits": pi_digits,
     "e_digits": e_digits,
