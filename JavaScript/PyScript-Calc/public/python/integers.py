@@ -355,6 +355,28 @@ def least_number_leaving_respective_differences(divisors: list[Number], target_r
     common_diff = differences[0]
     lcm_val = lcm(*divisors)
     return lcm_val - common_diff
+
+def expand(n):
+    if not isinstance(n, int):
+        raise TypeError("n must be an integer")
+
+    if n < 2:
+        raise ValueError("n must be >= 2")
+
+    factors = []
+    divisor = 2
+
+    while divisor * divisor <= n:
+        while n % divisor == 0:
+            factors.append(str(divisor))
+            n //= divisor
+
+        divisor += 1
+
+    if n > 1:
+        factors.append(str(n))
+
+    return "*".join(factors)
         
 
         
